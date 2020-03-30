@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winteree.core.dao.VerificationCodeDOMapper">
+  <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.VerificationCodeDO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="verification_code" jdbcType="VARCHAR" property="verificationCode" />
+    <result column="dead_date" jdbcType="TIMESTAMP" property="deadDate" />
+    <result column="usable" jdbcType="TINYINT" property="usable" />
+    <result column="sended" jdbcType="TINYINT" property="sended" />
+    <result column="content_text" jdbcType="VARCHAR" property="contentText" />
+    <result column="validation_type" jdbcType="VARCHAR" property="validationType" />
+    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, account_id, phone, email, verification_code, dead_date, usable, sended, content_text, 
+    validation_type, creat_time
+  </sql>
+  <select id="selectByExample" parameterType="com.winteree.core.dao.entity.VerificationCodeDOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from winteree_core_verification_code
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from winteree_core_verification_code
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from winteree_core_verification_code
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.VerificationCodeDOExample">
+    delete from winteree_core_verification_code
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
+    insert into winteree_core_verification_code (id, account_id, phone, 
+      email, verification_code, dead_date, 
+      usable, sended, content_text, 
+      validation_type, creat_time)
+    values (#{id,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, #{deadDate,jdbcType=TIMESTAMP}, 
+      #{usable,jdbcType=TINYINT}, #{sended,jdbcType=TINYINT}, #{contentText,jdbcType=VARCHAR}, 
+      #{validationType,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
+    insert into winteree_core_verification_code
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="verificationCode != null">
+        verification_code,
+      </if>
+      <if test="deadDate != null">
+        dead_date,
+      </if>
+      <if test="usable != null">
+        usable,
+      </if>
+      <if test="sended != null">
+        sended,
+      </if>
+      <if test="contentText != null">
+        content_text,
+      </if>
+      <if test="validationType != null">
+        validation_type,
+      </if>
+      <if test="creatTime != null">
+        creat_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="verificationCode != null">
+        #{verificationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deadDate != null">
+        #{deadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="usable != null">
+        #{usable,jdbcType=TINYINT},
+      </if>
+      <if test="sended != null">
+        #{sended,jdbcType=TINYINT},
+      </if>
+      <if test="contentText != null">
+        #{contentText,jdbcType=VARCHAR},
+      </if>
+      <if test="validationType != null">
+        #{validationType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null">
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.winteree.core.dao.entity.VerificationCodeDOExample" resultType="java.lang.Long">
+    select count(*) from winteree_core_verification_code
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update winteree_core_verification_code
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountId != null">
+        account_id = #{record.accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.verificationCode != null">
+        verification_code = #{record.verificationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deadDate != null">
+        dead_date = #{record.deadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.usable != null">
+        usable = #{record.usable,jdbcType=TINYINT},
+      </if>
+      <if test="record.sended != null">
+        sended = #{record.sended,jdbcType=TINYINT},
+      </if>
+      <if test="record.contentText != null">
+        content_text = #{record.contentText,jdbcType=VARCHAR},
+      </if>
+      <if test="record.validationType != null">
+        validation_type = #{record.validationType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.creatTime != null">
+        creat_time = #{record.creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update winteree_core_verification_code
+    set id = #{record.id,jdbcType=VARCHAR},
+      account_id = #{record.accountId,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      verification_code = #{record.verificationCode,jdbcType=VARCHAR},
+      dead_date = #{record.deadDate,jdbcType=TIMESTAMP},
+      usable = #{record.usable,jdbcType=TINYINT},
+      sended = #{record.sended,jdbcType=TINYINT},
+      content_text = #{record.contentText,jdbcType=VARCHAR},
+      validation_type = #{record.validationType,jdbcType=VARCHAR},
+      creat_time = #{record.creatTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
+    update winteree_core_verification_code
+    <set>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="verificationCode != null">
+        verification_code = #{verificationCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deadDate != null">
+        dead_date = #{deadDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="usable != null">
+        usable = #{usable,jdbcType=TINYINT},
+      </if>
+      <if test="sended != null">
+        sended = #{sended,jdbcType=TINYINT},
+      </if>
+      <if test="contentText != null">
+        content_text = #{contentText,jdbcType=VARCHAR},
+      </if>
+      <if test="validationType != null">
+        validation_type = #{validationType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null">
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
+    update winteree_core_verification_code
+    set account_id = #{accountId,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      verification_code = #{verificationCode,jdbcType=VARCHAR},
+      dead_date = #{deadDate,jdbcType=TIMESTAMP},
+      usable = #{usable,jdbcType=TINYINT},
+      sended = #{sended,jdbcType=TINYINT},
+      content_text = #{contentText,jdbcType=VARCHAR},
+      validation_type = #{validationType,jdbcType=VARCHAR},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

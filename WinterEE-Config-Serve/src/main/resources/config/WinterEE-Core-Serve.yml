@@ -1,0 +1,33 @@
+server:
+  port: 8090
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+mybatis:
+  typeAliasesPackage: com.winteree.core.dao.entity
+  mapperLocations: classpath*:mapper/*.xml
+  #  configuration:
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+security:
+  oauth2:
+    client:
+      clientId: WinterEE-Core-Serve
+      clientSecret: w4nHQGH8oBsj4HMrgcYVyZRFPFbMUuLK
+      accessTokenUri: http://localhost:8081/uaa/oauth/token
+      scope: WinterEE-Core-Serve
+    resource:
+      user-info-uri: http://localhost:8081/uaa/user/current
+      token-info-uri: http://localhost:8081/uaa/oauth/check_token
+feign:
+  hystrix:
+    enabled: true
+core:
