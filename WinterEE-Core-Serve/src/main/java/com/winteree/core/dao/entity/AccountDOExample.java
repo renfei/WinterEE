@@ -634,6 +634,206 @@ public class AccountDOExample {
             addCriterion("lock_time not between", value1, value2, "lockTime");
             return (Criteria) this;
         }
+
+        public Criteria andErrorCountIsNull() {
+            addCriterion("error_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountIsNotNull() {
+            addCriterion("error_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountEqualTo(Integer value) {
+            addCriterion("error_count =", value, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountNotEqualTo(Integer value) {
+            addCriterion("error_count <>", value, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountGreaterThan(Integer value) {
+            addCriterion("error_count >", value, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("error_count >=", value, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountLessThan(Integer value) {
+            addCriterion("error_count <", value, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountLessThanOrEqualTo(Integer value) {
+            addCriterion("error_count <=", value, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountIn(List<Integer> values) {
+            addCriterion("error_count in", values, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountNotIn(List<Integer> values) {
+            addCriterion("error_count not in", values, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountBetween(Integer value1, Integer value2) {
+            addCriterion("error_count between", value1, value2, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andErrorCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("error_count not between", value1, value2, "errorCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameIsNull() {
+            addCriterion("last_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameIsNotNull() {
+            addCriterion("last_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameEqualTo(String value) {
+            addCriterion("last_name =", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameNotEqualTo(String value) {
+            addCriterion("last_name <>", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameGreaterThan(String value) {
+            addCriterion("last_name >", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameGreaterThanOrEqualTo(String value) {
+            addCriterion("last_name >=", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameLessThan(String value) {
+            addCriterion("last_name <", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameLessThanOrEqualTo(String value) {
+            addCriterion("last_name <=", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameLike(String value) {
+            addCriterion("last_name like", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameNotLike(String value) {
+            addCriterion("last_name not like", value, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameIn(List<String> values) {
+            addCriterion("last_name in", values, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameNotIn(List<String> values) {
+            addCriterion("last_name not in", values, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameBetween(String value1, String value2) {
+            addCriterion("last_name between", value1, value2, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andLastNameNotBetween(String value1, String value2) {
+            addCriterion("last_name not between", value1, value2, "lastName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameIsNull() {
+            addCriterion("first_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameIsNotNull() {
+            addCriterion("first_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameEqualTo(String value) {
+            addCriterion("first_name =", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameNotEqualTo(String value) {
+            addCriterion("first_name <>", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameGreaterThan(String value) {
+            addCriterion("first_name >", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameGreaterThanOrEqualTo(String value) {
+            addCriterion("first_name >=", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameLessThan(String value) {
+            addCriterion("first_name <", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameLessThanOrEqualTo(String value) {
+            addCriterion("first_name <=", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameLike(String value) {
+            addCriterion("first_name like", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameNotLike(String value) {
+            addCriterion("first_name not like", value, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameIn(List<String> values) {
+            addCriterion("first_name in", values, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameNotIn(List<String> values) {
+            addCriterion("first_name not in", values, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameBetween(String value1, String value2) {
+            addCriterion("first_name between", value1, value2, "firstName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstNameNotBetween(String value1, String value2) {
+            addCriterion("first_name not between", value1, value2, "firstName");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

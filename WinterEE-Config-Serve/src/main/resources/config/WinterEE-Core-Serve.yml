@@ -30,4 +30,7 @@ security:
 feign:
   hystrix:
     enabled: true
-core:
+winteree:
+  core:
+    systemname: WinterEE
+    totpseed: FycVPCjKmVLfMup4aV8Q7VHgsmkxLaTt

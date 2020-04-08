@@ -53,7 +53,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.allowFormAuthenticationForClients()
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
+                .checkTokenAccess("permitAll()")
                 .passwordEncoder(passwordEncoder)
                 .allowFormAuthenticationForClients();
     }
@@ -63,7 +63,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         List<TokenGranter> tokenGranters = getTokenGranters(endpoints.getAuthorizationCodeServices(), endpoints.getTokenStore(), endpoints.getTokenServices(), endpoints.getClientDetailsService(), endpoints.getOAuth2RequestFactory());
         endpoints.tokenGranter(new CompositeTokenGranter(tokenGranters))
                 .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
-                .tokenServices(tokenService())
+                .tokenServices(tokenServices())
                 .reuseRefreshTokens(false)
                 .exceptionTranslator(new WebResponseExceptionTranslatorImpl());
     }
@@ -88,8 +88,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
      *
      * @return
      */
-    @Bean
-    public AuthorizationServerTokenServices tokenService() {
+    public AuthorizationServerTokenServices tokenServices() {
         DefaultTokenServices service = new DefaultTokenServices();
         service.setClientDetailsService(jdbcClientDetailsService);
         service.setSupportRefreshToken(true);

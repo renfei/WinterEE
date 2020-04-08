@@ -49,6 +49,7 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   main:
     allow-bean-definition-overriding: true
 mybatis:
@@ -67,11 +68,9 @@ security:
     client:
       clientId: WinterEE-UAA-Serve
       clientSecret: w4nHQGH8oBsj4HMrgcYVyZRFPFbMUuLK
-      accessTokenUri: http://localhost:8081/uaa/oauth/token
-      scope: WinterEE-Core-Serve
-    resource:
-      user-info-uri: http://localhost:8081/uaa/user/current
-      token-info-uri: http://localhost:8081/uaa/oauth/check_token
+      accessTokenUri: http://localhost:8114/oauth/token
+      scope:
+        - WinterEE-Core-Serve
 ribbon:
   eureka:
     enabled: true

@@ -4,6 +4,7 @@ zuul:
   routes:
     WinterEE-UAA-Serve: /uaa/**
     WinterEE-Config-Serve: /api/config/**
+    WinterEE-Core-Serve: /core/**
   host:
     maxTotalConnections: 10000
     maxPerRouteConnections: 10000

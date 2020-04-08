@@ -2,9 +2,8 @@ package com.winteree.uaa.dao;
 
 import com.winteree.uaa.dao.entity.AccountDO;
 import com.winteree.uaa.dao.entity.AccountDOExample;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 public interface AccountDOMapper {
     long countByExample(AccountDOExample example);

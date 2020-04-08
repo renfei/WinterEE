@@ -63,6 +63,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/system/i18n/**").permitAll()
+                .antMatchers("/secretkey/**").permitAll()
+                .antMatchers("/account/check/**").permitAll()
+                .and()
+                .authorizeRequests()
                 .antMatchers("/**").access("#oauth2.hasScope('WinterEE-Core-Serve')")
                 .and()
                 .csrf().disable()

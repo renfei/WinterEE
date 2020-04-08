@@ -1,7 +1,6 @@
 package com.winteree.uaa.service;
 
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
@@ -25,6 +24,7 @@ public class VerificationCodeCustomTokenGranter extends AbstractCustomTokenGrant
     protected User getCustomUser(Map<String, String> parameters) {
         String phone = parameters.get("name");
         String smsCode = parameters.get("code");
-        return userDetailsService.loadUserByVerificationCode(phone, smsCode);
+        String language = parameters.get("language");
+        return userDetailsService.loadUserByVerificationCode(phone, smsCode, language);
     }
 }

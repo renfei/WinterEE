@@ -1,4 +1,4 @@
-package com.winteree.core.account.service;
+package com.winteree.core.service;
 
 import com.winteree.core.dao.AccountDOMapper;
 import com.winteree.core.dao.entity.AccountDO;
@@ -7,7 +7,7 @@ import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.winteree.api.account.entity.AccountDTO;
+import com.winteree.api.entity.AccountDTO;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * @author RenFei
  */
 @Service
-public class AccountDataService {
+public class AccountService {
     @Autowired
     private AccountDOMapper accountDOMapper;
 

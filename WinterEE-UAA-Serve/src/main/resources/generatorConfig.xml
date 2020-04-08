@@ -39,7 +39,7 @@
         <!--<table tableName="winteree_core_verification_code" domainObjectName="VerificationCodeDO"></table>-->
         <!--<table tableName="t_token" domainObjectName="TokenDO"></table>-->
         <!--<table tableName="t_map" domainObjectName="MapDO"></table>-->
-        <!--<table tableName="winteree_core_secret_key" domainObjectName="SecretKeyDO"></table>-->
+        <!--<table tableName="t_secret_key" domainObjectName="SecretKeyDO"></table>-->
         <!--<table tableName="t_log" domainObjectName="LogDO"></table>-->
         <!--<table tableName="t_log_access" domainObjectName="LogAccessDO"></table>-->
 

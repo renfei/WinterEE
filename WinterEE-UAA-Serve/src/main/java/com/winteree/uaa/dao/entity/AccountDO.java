@@ -19,6 +19,12 @@ public class AccountDO {
 
     private Date lockTime;
 
+    private Integer errorCount;
+
+    private String lastName;
+
+    private String firstName;
+
     public String getUuid() {
         return uuid;
     }
@@ -81,5 +87,29 @@ public class AccountDO {
 
     public void setLockTime(Date lockTime) {
         this.lockTime = lockTime;
+    }
+
+    public Integer getErrorCount() {
+        return errorCount;
+    }
+
+    public void setErrorCount(Integer errorCount) {
+        this.errorCount = errorCount;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName == null ? null : lastName.trim();
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName == null ? null : firstName.trim();
     }
 }

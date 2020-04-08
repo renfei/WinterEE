@@ -10,6 +10,9 @@
     <result column="passwd" jdbcType="VARCHAR" property="passwd" />
     <result column="user_status" jdbcType="INTEGER" property="userStatus" />
     <result column="lock_time" jdbcType="TIMESTAMP" property="lockTime" />
+    <result column="error_count" jdbcType="INTEGER" property="errorCount" />
+    <result column="last_name" jdbcType="VARCHAR" property="lastName" />
+    <result column="first_name" jdbcType="VARCHAR" property="firstName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,7 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    uuid, create_time, user_name, email, phone, passwd, user_status, lock_time
+    uuid, create_time, user_name, email, phone, passwd, user_status, lock_time, error_count, 
+    last_name, first_name
   </sql>
   <select id="selectByExample" parameterType="com.winteree.uaa.dao.entity.AccountDOExample" resultMap="BaseResultMap">
     select
@@ -105,10 +109,12 @@
   <insert id="insert" parameterType="com.winteree.uaa.dao.entity.AccountDO">
     insert into winteree_core_account (uuid, create_time, user_name, 
       email, phone, passwd, 
-      user_status, lock_time)
+      user_status, lock_time, error_count, 
+      last_name, first_name)
     values (#{uuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, 
-      #{userStatus,jdbcType=INTEGER}, #{lockTime,jdbcType=TIMESTAMP})
+      #{userStatus,jdbcType=INTEGER}, #{lockTime,jdbcType=TIMESTAMP}, #{errorCount,jdbcType=INTEGER}, 
+      #{lastName,jdbcType=VARCHAR}, #{firstName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.winteree.uaa.dao.entity.AccountDO">
     insert into winteree_core_account
@@ -137,6 +143,15 @@
       <if test="lockTime != null">
         lock_time,
       </if>
+      <if test="errorCount != null">
+        error_count,
+      </if>
+      <if test="lastName != null">
+        last_name,
+      </if>
+      <if test="firstName != null">
+        first_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="uuid != null">
@@ -162,6 +177,15 @@
       </if>
       <if test="lockTime != null">
         #{lockTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="errorCount != null">
+        #{errorCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastName != null">
+        #{lastName,jdbcType=VARCHAR},
+      </if>
+      <if test="firstName != null">
+        #{firstName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -198,6 +222,15 @@
       <if test="record.lockTime != null">
         lock_time = #{record.lockTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.errorCount != null">
+        error_count = #{record.errorCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastName != null">
+        last_name = #{record.lastName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.firstName != null">
+        first_name = #{record.firstName,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -212,7 +245,10 @@
       phone = #{record.phone,jdbcType=VARCHAR},
       passwd = #{record.passwd,jdbcType=VARCHAR},
       user_status = #{record.userStatus,jdbcType=INTEGER},
-      lock_time = #{record.lockTime,jdbcType=TIMESTAMP}
+      lock_time = #{record.lockTime,jdbcType=TIMESTAMP},
+      error_count = #{record.errorCount,jdbcType=INTEGER},
+      last_name = #{record.lastName,jdbcType=VARCHAR},
+      first_name = #{record.firstName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -241,6 +277,15 @@
       <if test="lockTime != null">
         lock_time = #{lockTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="errorCount != null">
+        error_count = #{errorCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastName != null">
+        last_name = #{lastName,jdbcType=VARCHAR},
+      </if>
+      <if test="firstName != null">
+        first_name = #{firstName,jdbcType=VARCHAR},
+      </if>
     </set>
     where uuid = #{uuid,jdbcType=VARCHAR}
   </update>
@@ -252,7 +297,10 @@
       phone = #{phone,jdbcType=VARCHAR},
       passwd = #{passwd,jdbcType=VARCHAR},
       user_status = #{userStatus,jdbcType=INTEGER},
-      lock_time = #{lockTime,jdbcType=TIMESTAMP}
+      lock_time = #{lockTime,jdbcType=TIMESTAMP},
+      error_count = #{errorCount,jdbcType=INTEGER},
+      last_name = #{lastName,jdbcType=VARCHAR},
+      first_name = #{firstName,jdbcType=VARCHAR}
     where uuid = #{uuid,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -16,7 +16,7 @@
  *
  */
 
-package com.winteree.api.account.entity;
+package com.winteree.api.entity;
 
 import lombok.Data;
 

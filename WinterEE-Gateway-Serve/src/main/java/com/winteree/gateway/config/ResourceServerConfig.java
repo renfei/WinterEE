@@ -72,7 +72,8 @@ public class ResourceServerConfig {
         public void configure(HttpSecurity http) throws Exception {
             http
                     .authorizeRequests()
-                    .antMatchers("/core/**").access("#oauth2.hasScope('wq')");
+                    .antMatchers("/core/account/check/**").permitAll()
+                    .antMatchers("/core/**").access("#oauth2.hasScope('WinterEE-Core-Serve')");
 //                    .accessDecisionManager(accessDecisionManager());//.accessDecisionManager(accessDecisionManager());
 //            http
 //                    .authorizeRequests()
