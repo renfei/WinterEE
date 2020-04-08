@@ -84,10 +84,10 @@ public class WebResponseExceptionTranslatorImpl implements WebResponseExceptionT
         // 客户端异常直接返回客户端,不然无法解析
         if (e instanceof ClientAuthenticationException) {
             return new ResponseEntity<>(e, headers,
-                    HttpStatus.valueOf(status));
+                    HttpStatus.OK);
         }
         return new ResponseEntity<>(new WinterAuth2Exception(e.getMessage(), e.getOAuth2ErrorCode()), headers,
-                HttpStatus.valueOf(status));
+                HttpStatus.OK);
 
     }
 }

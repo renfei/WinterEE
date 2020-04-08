@@ -37,7 +37,7 @@ public class AuthTokenAspect {
                         .code(StateCode.Failure)
                         .message("获取授权码失败")
                         .data(body)
-                        .build(), responseEntity.getHeaders(), responseEntity.getStatusCode());
+                        .build(), responseEntity.getHeaders(), HttpStatus.OK);
             }
         }
         return new ResponseEntity(APIResult.builder()
