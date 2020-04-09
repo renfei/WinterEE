@@ -1,5 +1,7 @@
-package com.winteree.uaa.service;
+package com.winteree.uaa.granter;
 
+import com.winteree.uaa.granter.AbstractCustomTokenGranter;
+import com.winteree.uaa.service.CustomUserDetailsService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;

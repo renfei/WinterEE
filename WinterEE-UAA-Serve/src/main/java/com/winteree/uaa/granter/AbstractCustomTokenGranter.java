@@ -1,4 +1,4 @@
-package com.winteree.uaa.service;
+package com.winteree.uaa.granter;
 
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
