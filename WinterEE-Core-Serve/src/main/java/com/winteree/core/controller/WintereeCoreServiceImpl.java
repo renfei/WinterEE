@@ -6,6 +6,7 @@ import com.winteree.api.service.WintereeCoreService;
 import com.winteree.core.service.AccountService;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.service.I18nMessageService;
+import com.winteree.core.service.SecretKeyService;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
@@ -13,6 +14,8 @@ import net.renfei.sdk.utils.GoogleAuthenticator;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * WinterEE-Core-Serve 提供的服务实现
@@ -27,6 +30,8 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     private WintereeCoreConfig wintereeCoreConfig;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private SecretKeyService secretKeyService;
 
     @Override
     public String getMessage(String language, String message, String defaultMessage) {
@@ -35,12 +40,22 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
 
     @Override
     public APIResult secretKey() {
-        return null;
+        Map<Integer, String> map = secretKeyService.secretKey();
+        if (BeanUtils.isEmpty(map)) {
+            return APIResult.builder()
+                    .code(StateCode.Error)
+                    .build();
+        }
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message(map.get(1))
+                .data(map.get(0))
+                .build();
     }
 
     @Override
     public APIResult setSecretKey(ReportPublicKeyVO reportPublicKeyVO) {
-        return null;
+        return secretKeyService.setSecretKey(reportPublicKeyVO);
     }
 
     @Override

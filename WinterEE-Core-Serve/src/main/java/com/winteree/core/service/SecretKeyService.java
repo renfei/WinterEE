@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
+ * 秘钥服务
+ *
  * @author RenFei
  */
 @Slf4j

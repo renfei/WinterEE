@@ -73,6 +73,7 @@ public class ResourceServerConfig {
             http
                     .authorizeRequests()
                     .antMatchers("/core/account/check/**").permitAll()
+                    .antMatchers("/core/secretkey/**").permitAll()
                     .antMatchers("/core/**").access("#oauth2.hasScope('WinterEE-Core-Serve')");
 //                    .accessDecisionManager(accessDecisionManager());//.accessDecisionManager(accessDecisionManager());
 //            http
