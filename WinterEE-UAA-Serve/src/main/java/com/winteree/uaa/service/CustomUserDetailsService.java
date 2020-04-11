@@ -1,6 +1,7 @@
 package com.winteree.uaa.service;
 
 import com.winteree.uaa.dao.entity.AccountDO;
+import net.renfei.sdk.utils.AESUtil;
 import net.renfei.sdk.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
@@ -23,6 +24,8 @@ public class CustomUserDetailsService {
     private AccountService accountService;
     @Autowired
     private I18nService i18nService;
+    @Autowired
+    private SecretKeyService secretKeyService;
 
     /**
      * 使用用户名和密码登陆
@@ -30,9 +33,10 @@ public class CustomUserDetailsService {
      * @param userName 用户名
      * @param password 密码
      * @param language 语言
+     * @param keyid    AES秘钥ID
      * @return Spring Security 的对象
      */
-    public User loadUserByUsernameAndPassword(String userName, String password, String language) {
+    public User loadUserByUsernameAndPassword(String userName, String password, String language, String keyid) {
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
             throw new InvalidGrantException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
         }
@@ -41,8 +45,10 @@ public class CustomUserDetailsService {
         if (accountDO == null) {
             throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
         }
-        //检查账户的状态
+        // 检查账户的状态
         checkAccountState(accountDO, language);
+        // AES解密密码
+        password = decryptPassword(password, language, keyid);
         if (!PasswordUtils.verifyPassword(password, accountDO.getPasswd())) {
             //TODO 错误计数
             throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
@@ -57,9 +63,10 @@ public class CustomUserDetailsService {
      * @param userName 用户名（手机号）
      * @param code     验证码
      * @param language 语言
+     * @param keyid    AES秘钥ID
      * @return Spring Security 的对象
      */
-    public User loadUserByVerificationCode(String userName, String code, String language) {
+    public User loadUserByVerificationCode(String userName, String code, String language, String keyid) {
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(code)) {
             throw new InvalidGrantException(i18nService.getMessage(language, "uaa.invalidphonenumberorverificationcode", "无效的手机号或验证码"));
         }
@@ -68,8 +75,10 @@ public class CustomUserDetailsService {
         if (accountDO == null) {
             throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidphonenumberorverificationcode", "无效的手机号或验证码"));
         }
-        //检查账户的状态
+        // 检查账户的状态
         checkAccountState(accountDO, language);
+        // AES解密密码
+        code = decryptPassword(code, language, keyid);
         //TODO 验证验证码
         return getUser(accountDO);
     }
@@ -111,5 +120,26 @@ public class CustomUserDetailsService {
             accountDO = accountService.findAccountByUsername(name);
         }
         return accountDO;
+    }
+
+    /**
+     * 解密密码
+     *
+     * @param password 密文密码
+     * @param language 语言
+     * @param keyId    AES的ID
+     * @return 明文密码
+     */
+    private String decryptPassword(String password, String language, String keyId) {
+        String aesKey = secretKeyService.getSecretKeyStringById(keyId);
+        if (aesKey == null) {
+            throw new InvalidGrantException(i18nService.getMessage(language, "uaa.aeskeyiddoesnotexist", "AESKeyId不存在"));
+        }
+        try {
+            password = AESUtil.decrypt(password, aesKey);
+        } catch (Exception ex) {
+            throw new InvalidGrantException(i18nService.getMessage(language, "uaa.passworddecryptionfailed", "密码解密失败"));
+        }
+        return password;
     }
 }

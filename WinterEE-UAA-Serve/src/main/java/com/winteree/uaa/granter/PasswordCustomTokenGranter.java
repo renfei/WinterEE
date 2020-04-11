@@ -25,6 +25,7 @@ public class PasswordCustomTokenGranter extends AbstractCustomTokenGranter {
         String username = parameters.get("name");
         String password = parameters.get("password");
         String language = parameters.get("language");
-        return userDetailsService.loadUserByUsernameAndPassword(username, password,language);
+        String keyid = parameters.get("keyid");
+        return userDetailsService.loadUserByUsernameAndPassword(username, password, language, keyid);
     }
 }

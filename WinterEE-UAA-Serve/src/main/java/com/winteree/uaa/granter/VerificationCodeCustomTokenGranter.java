@@ -27,6 +27,7 @@ public class VerificationCodeCustomTokenGranter extends AbstractCustomTokenGrant
         String phone = parameters.get("name");
         String smsCode = parameters.get("code");
         String language = parameters.get("language");
-        return userDetailsService.loadUserByVerificationCode(phone, smsCode, language);
+        String keyid = parameters.get("keyid");
+        return userDetailsService.loadUserByVerificationCode(phone, smsCode, language,keyid);
     }
 }

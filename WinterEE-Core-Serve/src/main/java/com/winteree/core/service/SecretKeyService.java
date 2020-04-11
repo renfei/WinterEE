@@ -27,7 +27,7 @@ public class SecretKeyService {
     private SecretKeyDOMapper secretKeyDOMapper;
 
     public Map<Integer, String> secretKey() {
-        Map<Integer, String> map = RSAUtils.genKeyPair(1024);
+        Map<Integer, String> map = RSAUtils.genKeyPair(2048);
         if (BeanUtils.isEmpty(map)) {
             return null;
         }
@@ -67,7 +67,7 @@ public class SecretKeyService {
         String aes = StringUtils.getRandomString(16);
         String aesEnc;
         try {
-            aesEnc = RSAUtils.encrypt(aes, clentKey);
+            aesEnc = RSAUtils.encrypt(aes, clentKey.replaceAll("\n",""));
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
             return APIResult.builder()
