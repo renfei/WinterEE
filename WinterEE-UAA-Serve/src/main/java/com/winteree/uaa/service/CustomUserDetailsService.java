@@ -2,6 +2,7 @@ package com.winteree.uaa.service;
 
 import com.winteree.uaa.dao.entity.AccountDO;
 import net.renfei.sdk.utils.AESUtil;
+import net.renfei.sdk.utils.DateUtils;
 import net.renfei.sdk.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
@@ -26,6 +27,10 @@ public class CustomUserDetailsService {
     private I18nService i18nService;
     @Autowired
     private SecretKeyService secretKeyService;
+    /**
+     * 密码错误次数锁定
+     */
+    public static final int PASSWORD_ERROR_TIMES_LOCKED = 3;
 
     /**
      * 使用用户名和密码登陆
@@ -50,7 +55,8 @@ public class CustomUserDetailsService {
         // AES解密密码
         password = decryptPassword(password, language, keyid);
         if (!PasswordUtils.verifyPassword(password, accountDO.getPasswd())) {
-            //TODO 错误计数
+            // 错误计数
+            accountPasswordErrorCont(accountDO);
             throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
         }
         //TODO TOTP两步验证
@@ -84,6 +90,27 @@ public class CustomUserDetailsService {
     }
 
     /**
+     * 账户密码错误计数
+     *
+     * @param accountDO 账户对象
+     */
+    private void accountPasswordErrorCont(AccountDO accountDO) {
+        if (accountDO != null) {
+            if (accountDO.getErrorCount() == null) {
+                accountDO.setErrorCount(1);
+            } else {
+                accountDO.setErrorCount(accountDO.getErrorCount() + 1);
+                if (accountDO.getErrorCount() > PASSWORD_ERROR_TIMES_LOCKED) {
+                    // 锁定时间，每错误一次增加10秒锁定时间
+                    int lockMin = (accountDO.getErrorCount() - 1) * 10;
+                    accountDO.setLockTime(new Date(System.currentTimeMillis() + lockMin * 1000));
+                }
+            }
+            accountService.updateByPrimaryKeySelective(accountDO);
+        }
+    }
+
+    /**
      * 检查账户的状态
      *
      * @param accountDO
@@ -92,6 +119,7 @@ public class CustomUserDetailsService {
     private void checkAccountState(AccountDO accountDO, String language) {
         if (accountDO.getLockTime() != null &&
                 new Date().before(accountDO.getLockTime())) {
+            long min = (accountDO.getLockTime().getTime() - System.currentTimeMillis()) / 1000;
             throw new LockedException(i18nService.getMessage(language, "uaa.accountlocked", "账户被锁定，请稍后再试"));
         }
         if (accountDO.getUserStatus() <= 0) {

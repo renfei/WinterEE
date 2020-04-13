@@ -175,6 +175,76 @@ public class AccountDOExample {
             return (Criteria) this;
         }
 
+        public Criteria andTenantIdIsNull() {
+            addCriterion("tenant_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdIsNotNull() {
+            addCriterion("tenant_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdEqualTo(String value) {
+            addCriterion("tenant_id =", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdNotEqualTo(String value) {
+            addCriterion("tenant_id <>", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdGreaterThan(String value) {
+            addCriterion("tenant_id >", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdGreaterThanOrEqualTo(String value) {
+            addCriterion("tenant_id >=", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdLessThan(String value) {
+            addCriterion("tenant_id <", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdLessThanOrEqualTo(String value) {
+            addCriterion("tenant_id <=", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdLike(String value) {
+            addCriterion("tenant_id like", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdNotLike(String value) {
+            addCriterion("tenant_id not like", value, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdIn(List<String> values) {
+            addCriterion("tenant_id in", values, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdNotIn(List<String> values) {
+            addCriterion("tenant_id not in", values, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdBetween(String value1, String value2) {
+            addCriterion("tenant_id between", value1, value2, "tenantId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantIdNotBetween(String value1, String value2) {
+            addCriterion("tenant_id not between", value1, value2, "tenantId");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;

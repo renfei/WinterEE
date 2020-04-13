@@ -55,4 +55,8 @@ public class AccountService {
                 .andPhoneEqualTo(phone);
         return ListUtils.getOne(accountDOMapper.selectByExample(accountDOExample));
     }
+
+    int updateByPrimaryKeySelective(AccountDO accountDO) {
+        return accountDOMapper.updateByPrimaryKeySelective(accountDO);
+    }
 }

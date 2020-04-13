@@ -1,5 +1,6 @@
 package com.winteree.gateway.config;
 
+import com.winteree.gateway.filter.AccessFilter;
 import com.winteree.gateway.filter.AuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,11 @@ public class ZuulConfig {
     @Bean
     public AuthFilter perFilter() {
         return new AuthFilter();
+    }
+
+    @Bean
+    public AccessFilter accessFilter() {
+        return new AccessFilter();
     }
 
     @Bean

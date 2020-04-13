@@ -1,3 +1,5 @@
+application:
+  version: 1.0.0-SNAPSHOT
 #这个文件是spring知道在哪里查找配置文件并保存初始配置的入口点
 spring:
   application:

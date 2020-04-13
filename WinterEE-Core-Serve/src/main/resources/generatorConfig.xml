@@ -42,6 +42,9 @@
         <!--<table tableName="winteree_core_secret_key" domainObjectName="SecretKeyDO"></table>-->
         <!--<table tableName="t_log" domainObjectName="LogDO"></table>-->
         <!--<table tableName="t_log_access" domainObjectName="LogAccessDO"></table>-->
+        <!--<table tableName="winteree_core_account" domainObjectName="AccountDO"></table>-->
+        <!--<table tableName="winteree_core_log" domainObjectName="LogDO"></table>-->
+        <!--<table tableName="oauth_client_details" domainObjectName="OauthClientDO"></table>-->
 
     </context>
 </generatorConfiguration>

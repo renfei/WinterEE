@@ -1,11 +1,13 @@
 package com.winteree.core.controller;
 
 import com.winteree.api.entity.AccountDTO;
+import com.winteree.api.entity.LogDTO;
 import com.winteree.api.entity.ReportPublicKeyVO;
 import com.winteree.api.service.WintereeCoreService;
 import com.winteree.core.service.AccountService;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.service.I18nMessageService;
+import com.winteree.core.service.LogService;
 import com.winteree.core.service.SecretKeyService;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
@@ -24,6 +26,7 @@ import java.util.Map;
  */
 @RestController
 public class WintereeCoreServiceImpl implements WintereeCoreService {
+    //<editor-fold desc="@Autowired" defaultstate="collapsed">
     @Autowired
     private I18nMessageService i18nMessageService;
     @Autowired
@@ -32,10 +35,18 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     private AccountService accountService;
     @Autowired
     private SecretKeyService secretKeyService;
+    @Autowired
+    private LogService logService;
+    //</editor-fold>
 
     @Override
     public String getMessage(String language, String message, String defaultMessage) {
         return i18nMessageService.getMessage(language, message, defaultMessage);
+    }
+
+    @Override
+    public APIResult log(LogDTO logDTO) {
+        return logService.log(logDTO);
     }
 
     @Override

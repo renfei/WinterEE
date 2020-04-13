@@ -5,6 +5,8 @@ import java.util.Date;
 public class AccountDO {
     private String uuid;
 
+    private String tenantId;
+
     private Date createTime;
 
     private String userName;
@@ -31,6 +33,14 @@ public class AccountDO {
 
     public void setUuid(String uuid) {
         this.uuid = uuid == null ? null : uuid.trim();
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId == null ? null : tenantId.trim();
     }
 
     public Date getCreateTime() {

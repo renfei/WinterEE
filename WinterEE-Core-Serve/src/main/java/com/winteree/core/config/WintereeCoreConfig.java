@@ -13,6 +13,13 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @ConfigurationProperties(prefix = "winteree.core")
 public class WintereeCoreConfig {
+    private Oauth2 oauth2;
     private String systemname;
     private String totpseed;
+
+    @Data
+    public static class Oauth2{
+        private String privateKey;
+        private String publicKey;
+    }
 }

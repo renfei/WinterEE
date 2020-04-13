@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,7 @@ import java.util.*;
 /**
  * @author RenFei
  */
+@Slf4j
 public class AuthFilter extends ZuulFilter {
     @Override
     public String filterType() {
@@ -45,6 +47,9 @@ public class AuthFilter extends ZuulFilter {
         OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         String name = userAuthentication.getName();
+        log.info("getCredentials:{}", JSON.toJSONString(userAuthentication.getCredentials()));
+        log.info("getDetails:{}", JSON.toJSONString(userAuthentication.getDetails()));
+        log.info("getPrincipal:{}", JSON.toJSONString(userAuthentication.getPrincipal()));
         /*
          * 组装明文token
          */

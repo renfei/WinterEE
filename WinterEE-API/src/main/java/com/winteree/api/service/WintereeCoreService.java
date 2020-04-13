@@ -1,6 +1,7 @@
 package com.winteree.api.service;
 
 import com.winteree.api.entity.AccountDTO;
+import com.winteree.api.entity.LogDTO;
 import com.winteree.api.entity.ReportPublicKeyVO;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public interface WintereeCoreService {
      */
     @GetMapping("/i18n/{language}/{message}/{defaultMessage}")
     String getMessage(@PathVariable("language") String language, @PathVariable("message") String message, @PathVariable("defaultMessage") String defaultMessage);
+
+    @PostMapping("/core/log")
+    APIResult log(@RequestBody LogDTO logDTO);
 
     //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
 

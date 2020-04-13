@@ -18,6 +18,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.*;
+import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
@@ -76,9 +77,15 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     private List<TokenGranter> getTokenGranters(AuthorizationCodeServices authorizationCodeServices, TokenStore tokenStore, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         return new ArrayList<>(Arrays.asList(
+                // 客户端模式
+                new ClientCredentialsTokenGranter(tokenServices, clientDetailsService, requestFactory),
+                // 授权码模式
                 new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetailsService, requestFactory),
+                // 刷新Token
                 new CustomRefreshTokenGranter(false, tokenStore, tokenServices, clientDetailsService, requestFactory),
+                // 密码模式（自定义）
                 new PasswordCustomTokenGranter(customUserDetailsService, tokenServices, clientDetailsService, requestFactory),
+                // 验证码模式（自定义）
                 new VerificationCodeCustomTokenGranter(customUserDetailsService, tokenServices, clientDetailsService, requestFactory)
         ));
     }
