@@ -18,7 +18,7 @@ public class I18nMessageUtil {
     private static MessageSourceAccessor accessor;
     private static final String PATH_PARENT = "classpath:i18n/";
     private static final String SUFFIX = ".properties";
-    private static ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
+    private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
 
     private I18nMessageUtil() {
     }
@@ -30,16 +30,12 @@ public class I18nMessageUtil {
      * @param language 语言类型(文件名即为语言类型,eg: en_us 表明使用 美式英文 语言配置)
      */
     private static void initMessageSourceAccessor(String language) throws IOException {
-        /**
-         * 获取配置文件名
-         */
-        Resource resource = resourcePatternResolver.getResource(PATH_PARENT + language + SUFFIX);
+        // 获取配置文件名
+        Resource resource = RESOURCE_PATTERN_RESOLVER.getResource(PATH_PARENT + language + SUFFIX);
         String fileName = resource.getURL().toString();
         int lastIndex = fileName.lastIndexOf(".");
         String baseName = fileName.substring(0, lastIndex);
-        /**
-         * 读取配置文件
-         */
+        // 读取配置文件
         ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
         reloadableResourceBundleMessageSource.setBasename(baseName);
         reloadableResourceBundleMessageSource.setCacheSeconds(5);

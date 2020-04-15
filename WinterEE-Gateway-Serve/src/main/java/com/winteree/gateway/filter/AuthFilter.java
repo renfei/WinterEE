@@ -47,20 +47,22 @@ public class AuthFilter extends ZuulFilter {
         OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         String name = userAuthentication.getName();
-        log.info("getCredentials:{}", JSON.toJSONString(userAuthentication.getCredentials()));
-        log.info("getDetails:{}", JSON.toJSONString(userAuthentication.getDetails()));
-        log.info("getPrincipal:{}", JSON.toJSONString(userAuthentication.getPrincipal()));
+//        log.info("getCredentials:{}", JSON.toJSONString(userAuthentication.getCredentials()));
+//        log.info("getDetails:{}", JSON.toJSONString(userAuthentication.getDetails()));
+//        log.info("getPrincipal:{}", JSON.toJSONString(userAuthentication.getPrincipal()));
         /*
          * 组装明文token
          */
         List<String> authorities = new ArrayList<>();
-        userAuthentication.getAuthorities().stream().forEach(c -> authorities.add(((GrantedAuthority) c).getAuthority()));
+        userAuthentication.getAuthorities().forEach(c -> authorities.add(c.getAuthority()));
         OAuth2Request oAuth2Request = oAuth2Authentication.getOAuth2Request();
         Map<String, String> requestParameters = oAuth2Request.getRequestParameters();
         Map<String, Object> jsonToken = new HashMap<>(requestParameters);
         jsonToken.put("name", name);
         jsonToken.put("authorities", authorities);
-        ctx.addZuulRequestHeader("json-token", StringUtils.encodeUTF8StringBase64(JSON.toJSONString(jsonToken)));
+        String json_token = StringUtils.encodeUTF8StringBase64(JSON.toJSONString(jsonToken));
+        log.info("json_token:{}", json_token);
+        ctx.addZuulRequestHeader("json-token", json_token);
         return null;
     }
 }

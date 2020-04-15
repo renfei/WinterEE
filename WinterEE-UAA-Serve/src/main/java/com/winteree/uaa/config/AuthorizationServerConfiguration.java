@@ -3,7 +3,8 @@ package com.winteree.uaa.config;
 import com.winteree.uaa.granter.CustomRefreshTokenGranter;
 import com.winteree.uaa.granter.PasswordCustomTokenGranter;
 import com.winteree.uaa.granter.VerificationCodeCustomTokenGranter;
-import com.winteree.uaa.service.*;
+import com.winteree.uaa.service.CustomUserDetailsService;
+import com.winteree.uaa.service.WebResponseExceptionTranslatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +18,24 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.*;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.CompositeTokenGranter;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
-import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
-import org.springframework.security.oauth2.provider.token.*;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 import javax.sql.DataSource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 认证服务器配置
@@ -39,32 +47,52 @@ import java.util.*;
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
     @Autowired
-    private TokenStore tokenStore;
-    @Autowired
-    private WintereeUaaConfig wintereeUaaConfig;
-    @Autowired
-    private JwtAccessTokenConverter accessTokenConverter;
-    @Autowired
     private JdbcClientDetailsService jdbcClientDetailsService;
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private final TokenStore tokenStore;
+    private final WintereeUaaConfig wintereeUaaConfig;
+    private final JwtAccessTokenConverter accessTokenConverter;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomUserDetailsService customUserDetailsService;
 
+    public AuthorizationServerConfiguration(TokenStore tokenStore,
+                                            WintereeUaaConfig wintereeUaaConfig,
+                                            JwtAccessTokenConverter accessTokenConverter,
+                                            PasswordEncoder passwordEncoder,
+                                            CustomUserDetailsService customUserDetailsService) {
+        this.tokenStore = tokenStore;
+        this.wintereeUaaConfig = wintereeUaaConfig;
+        this.accessTokenConverter = accessTokenConverter;
+        this.passwordEncoder = passwordEncoder;
+        this.customUserDetailsService = customUserDetailsService;
+    }
+
+    /**
+     * 定义客户详细信息服务的配置器。客户端详细信息可以被初始化，或者您可以直接引用一个现有的存储。（client_id ，client_secret，redirect_uri 等配置信息）
+     * @param clients
+     * @throws Exception
+     */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.withClientDetails(jdbcClientDetailsService);
     }
 
+    /**
+     * 配置令牌端点的安全约束
+     * @param security
+     * @throws Exception
+     */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.allowFormAuthenticationForClients()
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("permitAll()")
-                .passwordEncoder(passwordEncoder)
-                .allowFormAuthenticationForClients();
+                .checkTokenAccess("isAuthenticated()")
+                .passwordEncoder(passwordEncoder);
     }
 
+    /**
+     * 配置授权以及令牌的访问端点和令牌服务（比如：配置令牌的签名与存储方式）
+     * @param endpoints
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         List<TokenGranter> tokenGranters = getTokenGranters(endpoints.getAuthorizationCodeServices(), tokenStore, tokenServices(), endpoints.getClientDetailsService(), endpoints.getOAuth2RequestFactory());

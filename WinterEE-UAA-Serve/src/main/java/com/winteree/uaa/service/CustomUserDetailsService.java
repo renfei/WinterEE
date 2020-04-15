@@ -1,14 +1,15 @@
 package com.winteree.uaa.service;
 
+import com.winteree.api.entity.LogSubTypeEnum;
 import com.winteree.uaa.dao.entity.AccountDO;
 import net.renfei.sdk.utils.AESUtil;
-import net.renfei.sdk.utils.DateUtils;
 import net.renfei.sdk.utils.PasswordUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,25 @@ import java.util.Date;
  * @author RenFei
  */
 @Service
-public class CustomUserDetailsService {
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private I18nService i18nService;
-    @Autowired
-    private SecretKeyService secretKeyService;
+public class CustomUserDetailsService implements UserDetailsService {
+    private final AccountService accountService;
+    private final I18nService i18nService;
+    private final SecretKeyService secretKeyService;
+    private final LogService logService;
     /**
      * 密码错误次数锁定
      */
     public static final int PASSWORD_ERROR_TIMES_LOCKED = 3;
+
+    public CustomUserDetailsService(AccountService accountService,
+                                    I18nService i18nService,
+                                    SecretKeyService secretKeyService,
+                                    LogService logService) {
+        this.accountService = accountService;
+        this.i18nService = i18nService;
+        this.secretKeyService = secretKeyService;
+        this.logService = logService;
+    }
 
     /**
      * 使用用户名和密码登陆
@@ -57,6 +66,7 @@ public class CustomUserDetailsService {
         if (!PasswordUtils.verifyPassword(password, accountDO.getPasswd())) {
             // 错误计数
             accountPasswordErrorCont(accountDO);
+            logService.log(accountDO.getUuid(), LogSubTypeEnum.FAIL, "密码错误，拒绝登陆");
             throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
         }
         //TODO TOTP两步验证
@@ -120,9 +130,11 @@ public class CustomUserDetailsService {
         if (accountDO.getLockTime() != null &&
                 new Date().before(accountDO.getLockTime())) {
             long min = (accountDO.getLockTime().getTime() - System.currentTimeMillis()) / 1000;
+            logService.log(accountDO.getUuid(), LogSubTypeEnum.FAIL, "账户被锁定，请稍后再试");
             throw new LockedException(i18nService.getMessage(language, "uaa.accountlocked", "账户被锁定，请稍后再试"));
         }
         if (accountDO.getUserStatus() <= 0) {
+            logService.log(accountDO.getUuid(), LogSubTypeEnum.FAIL, "账户未激活或被禁用");
             throw new DisabledException(i18nService.getMessage(language, "uaa.Accountnotactivatedordisabled", "账户未激活或被禁用"));
         }
     }
@@ -135,7 +147,8 @@ public class CustomUserDetailsService {
      */
     private User getUser(AccountDO accountDO) {
         //TODO 用户角色
-        return new User(accountDO.getUuid(), accountDO.getPasswd(), AuthorityUtils.commaSeparatedStringToAuthorityList("admin,user,root"));
+        logService.log(accountDO.getUuid(), LogSubTypeEnum.SUCCESS, "登陆成功，授予用户角色：" + "signed");
+        return new User(accountDO.getUuid(), accountDO.getPasswd(), AuthorityUtils.commaSeparatedStringToAuthorityList("signed"));
     }
 
     private AccountDO getAccountByName(String name) {
@@ -169,5 +182,10 @@ public class CustomUserDetailsService {
             throw new InvalidGrantException(i18nService.getMessage(language, "uaa.passworddecryptionfailed", "密码解密失败"));
         }
         return password;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }

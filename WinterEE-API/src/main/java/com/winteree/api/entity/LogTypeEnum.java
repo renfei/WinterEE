@@ -17,6 +17,10 @@ public enum LogTypeEnum {
      */
     OPERATION("OPERATION"),
     /**
+     * 登陆类型日志
+     */
+    SIGNING("SIGNING"),
+    /**
      * 系统类型日志
      */
     SYSTEM("SYSTEM");

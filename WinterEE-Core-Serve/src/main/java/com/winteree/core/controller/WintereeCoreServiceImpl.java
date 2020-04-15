@@ -15,6 +15,7 @@ import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.GoogleAuthenticator;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -26,18 +27,24 @@ import java.util.Map;
  */
 @RestController
 public class WintereeCoreServiceImpl implements WintereeCoreService {
-    //<editor-fold desc="@Autowired" defaultstate="collapsed">
-    @Autowired
-    private I18nMessageService i18nMessageService;
-    @Autowired
-    private WintereeCoreConfig wintereeCoreConfig;
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private SecretKeyService secretKeyService;
-    @Autowired
-    private LogService logService;
-    //</editor-fold>
+
+    private final I18nMessageService i18nMessageService;
+    private final WintereeCoreConfig wintereeCoreConfig;
+    private final AccountService accountService;
+    private final SecretKeyService secretKeyService;
+    private final LogService logService;
+
+    public WintereeCoreServiceImpl(I18nMessageService i18nMessageService,
+                                   WintereeCoreConfig wintereeCoreConfig,
+                                   AccountService accountService,
+                                   SecretKeyService secretKeyService,
+                                   LogService logService) {
+        this.i18nMessageService = i18nMessageService;
+        this.wintereeCoreConfig = wintereeCoreConfig;
+        this.accountService = accountService;
+        this.secretKeyService = secretKeyService;
+        this.logService = logService;
+    }
 
     @Override
     public String getMessage(String language, String message, String defaultMessage) {
@@ -85,6 +92,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
     public APIResult createTotp(String username) {
         String secret = GoogleAuthenticator.generateSecretKey(wintereeCoreConfig.getTotpseed());
         return APIResult.builder()

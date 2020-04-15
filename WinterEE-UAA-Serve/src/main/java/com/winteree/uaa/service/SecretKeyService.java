@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SecretKeyService {
-    @Autowired
-    private SecretKeyDOMapper secretKeyDOMapper;
+    private final SecretKeyDOMapper secretKeyDOMapper;
+
+    public SecretKeyService(SecretKeyDOMapper secretKeyDOMapper) {
+        this.secretKeyDOMapper = secretKeyDOMapper;
+    }
 
     public String getSecretKeyStringById(String id) {
         SecretKeyDOExample secretKeyDOExample = new SecretKeyDOExample();

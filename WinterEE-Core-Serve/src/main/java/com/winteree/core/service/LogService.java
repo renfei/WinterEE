@@ -23,8 +23,11 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class LogService {
-    @Autowired
-    private LogDOMapper logDOMapper;
+    private final LogDOMapper logDOMapper;
+
+    public LogService(LogDOMapper logDOMapper) {
+        this.logDOMapper = logDOMapper;
+    }
 
     public APIResult log(LogDTO logDTO) {
         LogDOWithBLOBs logDOWithBLOBs = convert(logDTO);

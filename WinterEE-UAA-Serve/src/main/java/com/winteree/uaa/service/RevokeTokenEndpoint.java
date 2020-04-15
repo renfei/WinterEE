@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 @FrameworkEndpoint
 public class RevokeTokenEndpoint {
 
-    @Autowired
-    AuthorizationServerConfiguration authorizationServerConfiguration;
+    private final AuthorizationServerConfiguration authorizationServerConfiguration;
+
+    public RevokeTokenEndpoint(AuthorizationServerConfiguration authorizationServerConfiguration) {
+        this.authorizationServerConfiguration = authorizationServerConfiguration;
+    }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/oauth/token")
     @ResponseBody

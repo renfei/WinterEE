@@ -13,7 +13,7 @@ import java.util.Map;
  * @author RenFei
  */
 public class PasswordCustomTokenGranter extends AbstractCustomTokenGranter {
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     public PasswordCustomTokenGranter(CustomUserDetailsService userDetailsService, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(tokenServices, clientDetailsService, requestFactory, "auto_password");
@@ -25,7 +25,7 @@ public class PasswordCustomTokenGranter extends AbstractCustomTokenGranter {
         String username = parameters.get("name");
         String password = parameters.get("password");
         String language = parameters.get("language");
-        String keyid = parameters.get("keyid");
-        return userDetailsService.loadUserByUsernameAndPassword(username, password, language, keyid);
+        String keyId = parameters.get("keyid");
+        return userDetailsService.loadUserByUsernameAndPassword(username, password, language, keyId);
     }
 }

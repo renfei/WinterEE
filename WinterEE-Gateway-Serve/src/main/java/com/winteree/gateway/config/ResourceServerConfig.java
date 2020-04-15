@@ -37,9 +37,12 @@ public class ResourceServerConfig {
      */
     @Configuration
     @EnableResourceServer
-    public class UaaServerConfig extends ResourceServerConfigurerAdapter {
-        @Autowired
-        private TokenStore tokenStore;
+    public static class UaaServerConfig extends ResourceServerConfigurerAdapter {
+        private final TokenStore tokenStore;
+
+        public UaaServerConfig(TokenStore tokenStore) {
+            this.tokenStore = tokenStore;
+        }
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -59,9 +62,12 @@ public class ResourceServerConfig {
      */
     @Configuration
     @EnableResourceServer
-    public class CoreServerConfig extends ResourceServerConfigurerAdapter {
-        @Autowired
-        private TokenStore tokenStore;
+    public static class CoreServerConfig extends ResourceServerConfigurerAdapter {
+        private final TokenStore tokenStore;
+
+        public CoreServerConfig(TokenStore tokenStore) {
+            this.tokenStore = tokenStore;
+        }
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -75,13 +81,6 @@ public class ResourceServerConfig {
                     .antMatchers("/core/account/check/**").permitAll()
                     .antMatchers("/core/secretkey/**").permitAll()
                     .antMatchers("/core/**").access("#oauth2.hasScope('WinterEE-Core-Serve')");
-//                    .accessDecisionManager(accessDecisionManager());//.accessDecisionManager(accessDecisionManager());
-//            http
-//                    .authorizeRequests()
-//                    .antMatchers("/core/**").access("#oauth2.hasScope('wq')")
-//                    .and()
-//                    .authorizeRequests()
-//                    .accessDecisionManager(accessDecisionManager());
         }
     }
 

@@ -18,8 +18,11 @@ import java.util.List;
  */
 @Service
 public class AccountService {
-    @Autowired
-    private AccountDOMapper accountDOMapper;
+    private final AccountDOMapper accountDOMapper;
+
+    public AccountService(AccountDOMapper accountDOMapper) {
+        this.accountDOMapper = accountDOMapper;
+    }
 
     public AccountDTO getAccountById(String uuid) {
         if (!BeanUtils.isEmpty(uuid)) {

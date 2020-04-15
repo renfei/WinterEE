@@ -26,40 +26,40 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 @Slf4j
 public class WebResponseExceptionTranslatorImpl implements WebResponseExceptionTranslator {
 
-    private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
+    private final ThrowableAnalyzer THROWABLE_ANALYZER = new DefaultThrowableAnalyzer();
 
     @Override
     @SneakyThrows
     public ResponseEntity<OAuth2Exception> translate(Exception e) {
 
         // Try to extract a SpringSecurityException from the stacktrace
-        Throwable[] causeChain = throwableAnalyzer.determineCauseChain(e);
+        Throwable[] causeChain = THROWABLE_ANALYZER.determineCauseChain(e);
 
-        Exception ase = (AuthenticationException) throwableAnalyzer.getFirstThrowableOfType(AuthenticationException.class,
+        Exception ase = (AuthenticationException) THROWABLE_ANALYZER.getFirstThrowableOfType(AuthenticationException.class,
                 causeChain);
         if (ase != null) {
             return handleOAuth2Exception(new UnauthorizedException(e.getMessage(), e));
         }
 
-        ase = (AccessDeniedException) throwableAnalyzer
+        ase = (AccessDeniedException) THROWABLE_ANALYZER
                 .getFirstThrowableOfType(AccessDeniedException.class, causeChain);
         if (ase != null) {
             return handleOAuth2Exception(new ForbiddenException(ase.getMessage(), ase));
         }
 
-        ase = (InvalidGrantException) throwableAnalyzer
+        ase = (InvalidGrantException) THROWABLE_ANALYZER
                 .getFirstThrowableOfType(InvalidGrantException.class, causeChain);
         if (ase != null) {
             return handleOAuth2Exception(new InvalidException(ase.getMessage(), ase));
         }
 
-        ase = (HttpRequestMethodNotSupportedException) throwableAnalyzer
+        ase = (HttpRequestMethodNotSupportedException) THROWABLE_ANALYZER
                 .getFirstThrowableOfType(HttpRequestMethodNotSupportedException.class, causeChain);
         if (ase != null) {
             return handleOAuth2Exception(new MethodNotAllowed(ase.getMessage(), ase));
         }
 
-        ase = (OAuth2Exception) throwableAnalyzer.getFirstThrowableOfType(
+        ase = (OAuth2Exception) THROWABLE_ANALYZER.getFirstThrowableOfType(
                 OAuth2Exception.class, causeChain);
 
         if (ase != null) {

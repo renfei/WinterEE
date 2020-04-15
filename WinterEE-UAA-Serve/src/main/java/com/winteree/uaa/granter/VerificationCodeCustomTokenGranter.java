@@ -15,7 +15,7 @@ import java.util.Map;
  * @author RenFei
  */
 public class VerificationCodeCustomTokenGranter extends AbstractCustomTokenGranter {
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     public VerificationCodeCustomTokenGranter(CustomUserDetailsService userDetailsService, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(tokenServices, clientDetailsService, requestFactory, "verification_code");
@@ -27,7 +27,7 @@ public class VerificationCodeCustomTokenGranter extends AbstractCustomTokenGrant
         String phone = parameters.get("name");
         String smsCode = parameters.get("code");
         String language = parameters.get("language");
-        String keyid = parameters.get("keyid");
-        return userDetailsService.loadUserByVerificationCode(phone, smsCode, language,keyid);
+        String keyId = parameters.get("keyid");
+        return userDetailsService.loadUserByVerificationCode(phone, smsCode, language, keyId);
     }
 }

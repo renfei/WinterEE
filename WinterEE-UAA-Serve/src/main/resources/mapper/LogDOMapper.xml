@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winteree.uaa.dao.LogDOMapper">
+  <resultMap id="BaseResultMap" type="com.winteree.uaa.dao.entity.LogDO">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="date_time" jdbcType="TIMESTAMP" property="dateTime" />
+    <result column="log_type" jdbcType="VARCHAR" property="logType" />
+    <result column="log_sub_type" jdbcType="VARCHAR" property="logSubType" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <result column="client_id" jdbcType="VARCHAR" property="clientId" />
+    <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+    <result column="request_method" jdbcType="VARCHAR" property="requestMethod" />
+    <result column="status_code" jdbcType="VARCHAR" property="statusCode" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
+    <result column="logValue" jdbcType="LONGVARCHAR" property="logvalue" />
+    <result column="request_url" jdbcType="LONGVARCHAR" property="requestUrl" />
+    <result column="request_head" jdbcType="LONGVARCHAR" property="requestHead" />
+    <result column="request_body" jdbcType="LONGVARCHAR" property="requestBody" />
+    <result column="response_head" jdbcType="LONGVARCHAR" property="responseHead" />
+    <result column="response_body" jdbcType="LONGVARCHAR" property="responseBody" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, date_time, log_type, log_sub_type, tenant_id, account_id, client_id, client_ip, 
+    request_method, status_code
+  </sql>
+  <sql id="Blob_Column_List">
+    logValue, request_url, request_head, request_body, response_head, response_body
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.winteree.uaa.dao.entity.LogDOExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from winteree_core_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.winteree.uaa.dao.entity.LogDOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from winteree_core_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from winteree_core_log
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from winteree_core_log
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.winteree.uaa.dao.entity.LogDOExample">
+    delete from winteree_core_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
+    insert into winteree_core_log (id, date_time, log_type, 
+      log_sub_type, tenant_id, account_id, 
+      client_id, client_ip, request_method, 
+      status_code, logValue, request_url, 
+      request_head, request_body, response_head, 
+      response_body)
+    values (#{id,jdbcType=VARCHAR}, #{dateTime,jdbcType=TIMESTAMP}, #{logType,jdbcType=VARCHAR}, 
+      #{logSubType,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, 
+      #{clientId,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, #{requestMethod,jdbcType=VARCHAR}, 
+      #{statusCode,jdbcType=VARCHAR}, #{logvalue,jdbcType=LONGVARCHAR}, #{requestUrl,jdbcType=LONGVARCHAR}, 
+      #{requestHead,jdbcType=LONGVARCHAR}, #{requestBody,jdbcType=LONGVARCHAR}, #{responseHead,jdbcType=LONGVARCHAR}, 
+      #{responseBody,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
+    insert into winteree_core_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="dateTime != null">
+        date_time,
+      </if>
+      <if test="logType != null">
+        log_type,
+      </if>
+      <if test="logSubType != null">
+        log_sub_type,
+      </if>
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="accountId != null">
+        account_id,
+      </if>
+      <if test="clientId != null">
+        client_id,
+      </if>
+      <if test="clientIp != null">
+        client_ip,
+      </if>
+      <if test="requestMethod != null">
+        request_method,
+      </if>
+      <if test="statusCode != null">
+        status_code,
+      </if>
+      <if test="logvalue != null">
+        logValue,
+      </if>
+      <if test="requestUrl != null">
+        request_url,
+      </if>
+      <if test="requestHead != null">
+        request_head,
+      </if>
+      <if test="requestBody != null">
+        request_body,
+      </if>
+      <if test="responseHead != null">
+        response_head,
+      </if>
+      <if test="responseBody != null">
+        response_body,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="dateTime != null">
+        #{dateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logType != null">
+        #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="logSubType != null">
+        #{logSubType,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientId != null">
+        #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="requestMethod != null">
+        #{requestMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="statusCode != null">
+        #{statusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="logvalue != null">
+        #{logvalue,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="requestUrl != null">
+        #{requestUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="requestHead != null">
+        #{requestHead,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="requestBody != null">
+        #{requestBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseHead != null">
+        #{responseHead,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseBody != null">
+        #{responseBody,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.winteree.uaa.dao.entity.LogDOExample" resultType="java.lang.Long">
+    select count(*) from winteree_core_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update winteree_core_log
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dateTime != null">
+        date_time = #{record.dateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.logType != null">
+        log_type = #{record.logType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logSubType != null">
+        log_sub_type = #{record.logSubType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tenantId != null">
+        tenant_id = #{record.tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountId != null">
+        account_id = #{record.accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clientId != null">
+        client_id = #{record.clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.clientIp != null">
+        client_ip = #{record.clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.requestMethod != null">
+        request_method = #{record.requestMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="record.statusCode != null">
+        status_code = #{record.statusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.logvalue != null">
+        logValue = #{record.logvalue,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.requestUrl != null">
+        request_url = #{record.requestUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.requestHead != null">
+        request_head = #{record.requestHead,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.requestBody != null">
+        request_body = #{record.requestBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.responseHead != null">
+        response_head = #{record.responseHead,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.responseBody != null">
+        response_body = #{record.responseBody,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update winteree_core_log
+    set id = #{record.id,jdbcType=VARCHAR},
+      date_time = #{record.dateTime,jdbcType=TIMESTAMP},
+      log_type = #{record.logType,jdbcType=VARCHAR},
+      log_sub_type = #{record.logSubType,jdbcType=VARCHAR},
+      tenant_id = #{record.tenantId,jdbcType=VARCHAR},
+      account_id = #{record.accountId,jdbcType=VARCHAR},
+      client_id = #{record.clientId,jdbcType=VARCHAR},
+      client_ip = #{record.clientIp,jdbcType=VARCHAR},
+      request_method = #{record.requestMethod,jdbcType=VARCHAR},
+      status_code = #{record.statusCode,jdbcType=VARCHAR},
+      logValue = #{record.logvalue,jdbcType=LONGVARCHAR},
+      request_url = #{record.requestUrl,jdbcType=LONGVARCHAR},
+      request_head = #{record.requestHead,jdbcType=LONGVARCHAR},
+      request_body = #{record.requestBody,jdbcType=LONGVARCHAR},
+      response_head = #{record.responseHead,jdbcType=LONGVARCHAR},
+      response_body = #{record.responseBody,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update winteree_core_log
+    set id = #{record.id,jdbcType=VARCHAR},
+      date_time = #{record.dateTime,jdbcType=TIMESTAMP},
+      log_type = #{record.logType,jdbcType=VARCHAR},
+      log_sub_type = #{record.logSubType,jdbcType=VARCHAR},
+      tenant_id = #{record.tenantId,jdbcType=VARCHAR},
+      account_id = #{record.accountId,jdbcType=VARCHAR},
+      client_id = #{record.clientId,jdbcType=VARCHAR},
+      client_ip = #{record.clientIp,jdbcType=VARCHAR},
+      request_method = #{record.requestMethod,jdbcType=VARCHAR},
+      status_code = #{record.statusCode,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
+    update winteree_core_log
+    <set>
+      <if test="dateTime != null">
+        date_time = #{dateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logType != null">
+        log_type = #{logType,jdbcType=VARCHAR},
+      </if>
+      <if test="logSubType != null">
+        log_sub_type = #{logSubType,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantId != null">
+        tenant_id = #{tenantId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientId != null">
+        client_id = #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        client_ip = #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="requestMethod != null">
+        request_method = #{requestMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="statusCode != null">
+        status_code = #{statusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="logvalue != null">
+        logValue = #{logvalue,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="requestUrl != null">
+        request_url = #{requestUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="requestHead != null">
+        request_head = #{requestHead,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="requestBody != null">
+        request_body = #{requestBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseHead != null">
+        response_head = #{responseHead,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseBody != null">
+        response_body = #{responseBody,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
+    update winteree_core_log
+    set date_time = #{dateTime,jdbcType=TIMESTAMP},
+      log_type = #{logType,jdbcType=VARCHAR},
+      log_sub_type = #{logSubType,jdbcType=VARCHAR},
+      tenant_id = #{tenantId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      client_id = #{clientId,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      request_method = #{requestMethod,jdbcType=VARCHAR},
+      status_code = #{statusCode,jdbcType=VARCHAR},
+      logValue = #{logvalue,jdbcType=LONGVARCHAR},
+      request_url = #{requestUrl,jdbcType=LONGVARCHAR},
+      request_head = #{requestHead,jdbcType=LONGVARCHAR},
+      request_body = #{requestBody,jdbcType=LONGVARCHAR},
+      response_head = #{responseHead,jdbcType=LONGVARCHAR},
+      response_body = #{responseBody,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.winteree.uaa.dao.entity.LogDO">
+    update winteree_core_log
+    set date_time = #{dateTime,jdbcType=TIMESTAMP},
+      log_type = #{logType,jdbcType=VARCHAR},
+      log_sub_type = #{logSubType,jdbcType=VARCHAR},
+      tenant_id = #{tenantId,jdbcType=VARCHAR},
+      account_id = #{accountId,jdbcType=VARCHAR},
+      client_id = #{clientId,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      request_method = #{requestMethod,jdbcType=VARCHAR},
+      status_code = #{statusCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

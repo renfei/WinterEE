@@ -14,9 +14,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
  *
  * @author RenFei
  */
-@EnableAsync
 @SpringCloudApplication
 @EnableConfigurationProperties
+@EnableAsync(proxyTargetClass = true)
 @MapperScan(basePackages = "com.winteree.uaa.dao")
 @EnableFeignClients(basePackages = "com.winteree.uaa.client")
 public class UaaApplication {

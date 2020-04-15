@@ -13,6 +13,7 @@ zuul:
   ignored-patterns:
     - /admin
     - /config
+  sensitiveHeaders:
 ribbon:
   ReadTimeout: 5000
 hystrix:
@@ -22,17 +23,20 @@ hystrix:
         isolation:
           thread:
             timeoutInMilliseconds: 5000
+feign:
+  hystrix:
+    enabled: false
 security:
   oauth2:
     client:
       clientId: WinterEE-Gateway-Serve
       clientSecret: w4nHQGH8oBsj4HMrgcYVyZRFPFbMUuLK
-      accessTokenUri: http://localhost:8081/uaa/oauth/token
+      accessTokenUri: http://localhost:8114/oauth/token
       scope:
         - WinterEE-Core-Serve
     resource:
-      user-info-uri: http://localhost:8081/uaa/user/current
-      token-info-uri: http://localhost:8081/uaa/oauth/check_token
+      user-info-uri: http://localhost:8114/oauth2/userinfo
+      token-info-uri: http://localhost:8114/oauth/check_token
 gateway:
   oauth2:
     # openssl genrsa -out jwt.pem 2048

@@ -1,6 +1,5 @@
 package com.winteree.uaa.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -14,8 +13,11 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
  */
 @Configuration
 public class TokenConfig {
-    @Autowired
-    private WintereeUaaConfig wintereeUaaConfig;
+    private final WintereeUaaConfig wintereeUaaConfig;
+
+    public TokenConfig(WintereeUaaConfig wintereeUaaConfig) {
+        this.wintereeUaaConfig = wintereeUaaConfig;
+    }
 
     /**
      * 令牌存储策略

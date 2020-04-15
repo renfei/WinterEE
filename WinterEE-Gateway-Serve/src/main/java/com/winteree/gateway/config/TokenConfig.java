@@ -1,6 +1,7 @@
 package com.winteree.gateway.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -12,6 +13,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
  *
  * @author RenFei
  */
+@RefreshScope
 @Configuration
 public class TokenConfig {
     @Value("${gateway.oauth2.privateKey}")

@@ -23,8 +23,11 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class SecretKeyService {
-    @Autowired
-    private SecretKeyDOMapper secretKeyDOMapper;
+    private final SecretKeyDOMapper secretKeyDOMapper;
+
+    public SecretKeyService(SecretKeyDOMapper secretKeyDOMapper) {
+        this.secretKeyDOMapper = secretKeyDOMapper;
+    }
 
     public Map<Integer, String> secretKey() {
         Map<Integer, String> map = RSAUtils.genKeyPair(2048);

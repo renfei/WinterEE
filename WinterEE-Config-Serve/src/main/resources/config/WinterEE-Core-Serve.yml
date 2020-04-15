@@ -22,11 +22,11 @@ security:
     client:
       clientId: WinterEE-Core-Serve
       clientSecret: w4nHQGH8oBsj4HMrgcYVyZRFPFbMUuLK
-      accessTokenUri: http://localhost:8081/uaa/oauth/token
+      accessTokenUri: http://localhost:8114/oauth/token
       scope: WinterEE-Core-Serve
     resource:
-      user-info-uri: http://localhost:8081/uaa/user/current
-      token-info-uri: http://localhost:8081/uaa/oauth/check_token
+      user-info-uri: http://localhost:8114/oauth2/userinfo
+      token-info-uri: http://localhost:8114/oauth/check_token
 feign:
   hystrix:
     enabled: true

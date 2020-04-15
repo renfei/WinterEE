@@ -18,9 +18,9 @@ import java.util.UUID;
  */
 public class CustomRefreshTokenGranter extends RefreshTokenGranter {
 
-    private int refreshTokenValiditySeconds = 2592000;
-    private TokenStore tokenStore;
-    private boolean reuseRefreshToken;
+    private final int REFRESH_TOKEN_VALIDITY_SECONDS = 2592000;
+    private final TokenStore tokenStore;
+    private final boolean reuseRefreshToken;
 
     public CustomRefreshTokenGranter(boolean reuseRefreshToken, TokenStore tokenStore, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(tokenServices, clientDetailsService, requestFactory);
@@ -47,7 +47,7 @@ public class CustomRefreshTokenGranter extends RefreshTokenGranter {
                     tokenStore.removeRefreshToken(refreshToken);
                     Integer validity = client.getRefreshTokenValiditySeconds();
                     if (validity == null) {
-                        validity = refreshTokenValiditySeconds;
+                        validity = REFRESH_TOKEN_VALIDITY_SECONDS;
                     }
                     String value = UUID.randomUUID().toString();
                     refreshToken = (validity > 0 ? new DefaultExpiringOAuth2RefreshToken(value, new Date(System.currentTimeMillis() + (long)validity * 1000L)) : new DefaultOAuth2RefreshToken(value));

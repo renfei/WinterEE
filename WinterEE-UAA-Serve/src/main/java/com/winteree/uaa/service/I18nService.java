@@ -11,8 +11,11 @@ import org.springframework.util.StringUtils;
  */
 @Service
 public class I18nService {
-    @Autowired
-    private WintereeCoreServiceClient wintereeCoreServiceClient;
+    private final WintereeCoreServiceClient wintereeCoreServiceClient;
+
+    public I18nService(WintereeCoreServiceClient wintereeCoreServiceClient) {
+        this.wintereeCoreServiceClient = wintereeCoreServiceClient;
+    }
 
     @HystrixCommand(fallbackMethod = "getMessageFallback")
     public String getMessage(String language, String message, String defaultMessage) {

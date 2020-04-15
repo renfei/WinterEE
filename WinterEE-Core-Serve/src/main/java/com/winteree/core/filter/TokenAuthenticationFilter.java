@@ -18,22 +18,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * 将请求头中的信息转为SecurityContextHolder上下文
+ *
  * @author RenFei
- * @version 1.0
- **/
+ */
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest httpServletRequest,
+                                    HttpServletResponse httpServletResponse,
+                                    FilterChain filterChain) throws ServletException, IOException {
         //解析出头中的token
         String token = httpServletRequest.getHeader("json-token");
         if (token != null) {
             String json = StringUtils.decodeUTF8StringBase64(token);
             //将token转成json对象
             JSONObject jsonObject = JSON.parseObject(json);
-            String uuid = JSON.parseObject(jsonObject.getString("name"), String.class);
+            String uuid = jsonObject.getString("name");
             //用户权限
             JSONArray authoritiesArray = jsonObject.getJSONArray("authorities");
             String[] authorities = authoritiesArray.toArray(new String[authoritiesArray.size()]);

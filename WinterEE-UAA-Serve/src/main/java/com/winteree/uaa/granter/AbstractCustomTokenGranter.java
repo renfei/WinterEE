@@ -36,5 +36,11 @@ public abstract class AbstractCustomTokenGranter extends AbstractTokenGranter {
         return oAuth2Authentication;
     }
 
+    /**
+     * 根据自定义条件获取User
+     *
+     * @param parameters 参数列表
+     * @return User
+     */
     protected abstract User getCustomUser(Map<String, String> parameters);
 }

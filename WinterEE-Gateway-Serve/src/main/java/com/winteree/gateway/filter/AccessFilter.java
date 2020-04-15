@@ -1,5 +1,6 @@
 package com.winteree.gateway.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -10,6 +11,7 @@ import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,11 +56,14 @@ public class AccessFilter extends ZuulFilter {
          * 获取令牌内容
          */
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication userAuthentication = null;
+        OAuth2Request oAuth2Request = null;
         if ((authentication instanceof OAuth2Authentication)) {
             OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
-            Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
+            userAuthentication = oAuth2Authentication.getUserAuthentication();
+            oAuth2Request = oAuth2Authentication.getOAuth2Request();
         }
-        logService.log(request, response);
+        logService.log(request, response, userAuthentication, oAuth2Request);
         return null;
     }
 }

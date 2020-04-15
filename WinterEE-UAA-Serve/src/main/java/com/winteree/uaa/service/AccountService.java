@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AccountService {
-    @Autowired
-    private AccountDOMapper accountDOMapper;
+    private final AccountDOMapper accountDOMapper;
+
+    public AccountService(AccountDOMapper accountDOMapper) {
+        this.accountDOMapper = accountDOMapper;
+    }
 
     /**
      * 根据用户名获取账号对象

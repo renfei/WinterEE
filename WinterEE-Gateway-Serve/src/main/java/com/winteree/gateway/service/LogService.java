@@ -11,6 +11,8 @@ import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.IpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
@@ -35,22 +37,29 @@ import java.util.UUID;
 @Service
 public class LogService {
     private static final String CHECK_TOKEN = "/uaa/oauth/check_token";
-    @Autowired
-    private WintereeCoreServiceClient wintereeCoreServiceClient;
+    private final WintereeCoreServiceClient wintereeCoreServiceClient;
+
+    public LogService(WintereeCoreServiceClient wintereeCoreServiceClient) {
+        this.wintereeCoreServiceClient = wintereeCoreServiceClient;
+    }
 
     @Async
-    public void log(HttpServletRequest request, HttpServletResponse response) {
-        if (CHECK_TOKEN.equals(request.getRequestURI().toLowerCase())) {
-            return;
+    public void log(HttpServletRequest request, HttpServletResponse response, Authentication userAuthentication, OAuth2Request oAuth2Request) {
+        String reqUri = request.getRequestURI();
+        if (reqUri != null) {
+            if (CHECK_TOKEN.equals(reqUri.toLowerCase())) {
+                return;
+            }
         }
+
         LogDTO logDTO = Builder.of(LogDTO::new)
                 .with(LogDTO::setId, UUID.randomUUID().toString())
                 .with(LogDTO::setDateTime, new Date())
                 .with(LogDTO::setLogType, LogTypeEnum.ACCESS)
-//                .with(LogDTO::setAccountId, logDTO.getAccountId())
-//                .with(LogDTO::setClientId, logDTO.getClientId())
+                .with(LogDTO::setAccountId, userAuthentication == null ? null : userAuthentication.getName())
+                .with(LogDTO::setClientId, oAuth2Request == null ? null : oAuth2Request.getClientId())
                 .with(LogDTO::setClientIp, IpUtils.getIpAddress(request))
-                .with(LogDTO::setRequestUrl, request.getRequestURI())
+                .with(LogDTO::setRequestUrl, reqUri)
                 .with(LogDTO::setRequestMethod, request.getMethod())
                 .with(LogDTO::setRequestHead, getHeaders(request))
                 .with(LogDTO::setRequestBody, getRequestBody(request))

@@ -28,7 +28,7 @@ public class ZuulConfig {
     }
 
     @Bean
-    public FilterRegistrationBean corsFilter() {
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
@@ -38,7 +38,7 @@ public class ZuulConfig {
         configuration.setMaxAge(18000L);
         source.registerCorsConfiguration("/**", configuration);
         CorsFilter corsFilter = new CorsFilter(source);
-        FilterRegistrationBean bean = new FilterRegistrationBean(corsFilter);
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(corsFilter);
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
