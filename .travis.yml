@@ -1,0 +1,17 @@
+language: java
+sudo: false # faster builds
+
+jdk:
+  - openjdk8
+
+#branches: # build only on these branches
+#  only:
+#    - master
+
+script:
+  - mvn clean package -B -f pom.xml
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - mvn clean test org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
+  - mvn org.eluder.coveralls:coveralls-maven-plugin:report -DrepoToken="${coveralls_token}"
