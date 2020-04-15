@@ -85,4 +85,4 @@ spring:
     url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
