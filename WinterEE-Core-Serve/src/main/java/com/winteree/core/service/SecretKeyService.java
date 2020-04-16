@@ -61,7 +61,7 @@ public class SecretKeyService {
         try {
             clentKey = RSAUtils.decrypt(reportPublicKeyVO.getPublicKey(), secretKeyDO.getPrivateKey());
         } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+            log.error(ex.getMessage());
             return APIResult.builder()
                     .code(StateCode.BadRequest)
                     .message("publicKey解密失败")
@@ -72,7 +72,7 @@ public class SecretKeyService {
         try {
             aesEnc = RSAUtils.encrypt(aes, clentKey.replaceAll("\n",""));
         } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+            log.error(ex.getMessage());
             return APIResult.builder()
                     .code(StateCode.Error)
                     .message("服务器内部错误，使用RSA客户端公钥加密失败")

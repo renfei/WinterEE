@@ -1,6 +1,7 @@
 package com.winteree.core.service;
 
 import com.winteree.api.entity.LogDTO;
+import com.winteree.api.entity.LogSubTypeEnum;
 import com.winteree.api.entity.LogTypeEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,11 @@ public class LogServiceTest {
         logDTO.setId(UUID.randomUUID().toString());
         logDTO.setDateTime(new Date());
         logDTO.setLogType(LogTypeEnum.ACCESS);
+        Assertions.assertEquals(logService.log(logDTO).getCode(), 200);
+        logDTO.setId(UUID.randomUUID().toString());
+        logDTO.setDateTime(new Date());
+        logDTO.setLogType(LogTypeEnum.ACCESS);
+        logDTO.setLogSubType(LogSubTypeEnum.DEBUG);
         Assertions.assertEquals(logService.log(logDTO).getCode(), 200);
     }
 }
