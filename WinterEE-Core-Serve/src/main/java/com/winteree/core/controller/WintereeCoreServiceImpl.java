@@ -4,8 +4,8 @@ import com.winteree.api.entity.AccountDTO;
 import com.winteree.api.entity.LogDTO;
 import com.winteree.api.entity.ReportPublicKeyVO;
 import com.winteree.api.service.WintereeCoreService;
-import com.winteree.core.service.AccountService;
 import com.winteree.core.config.WintereeCoreConfig;
+import com.winteree.core.service.AccountService;
 import com.winteree.core.service.I18nMessageService;
 import com.winteree.core.service.LogService;
 import com.winteree.core.service.SecretKeyService;
@@ -14,7 +14,6 @@ import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.GoogleAuthenticator;
 import net.renfei.sdk.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 

@@ -41,6 +41,14 @@ public enum LogSubTypeEnum {
      */
     INFO("INFO"),
     /**
+     * 邮件记录
+     */
+    EMAIL("EMAIL"),
+    /**
+     * 短信记录
+     */
+    SMS("SMS"),
+    /**
      * 警告
      */
     WARN("WARN"),

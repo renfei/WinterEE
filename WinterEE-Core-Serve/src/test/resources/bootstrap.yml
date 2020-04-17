@@ -21,6 +21,12 @@ spring:
   sleuth:
     sampler:
       rate: 100
+  mail:
+    host: smtp.163.com
+    username: t_e_s_t_e_r@163.com
+    password: OHTLBKEQFTJIYXOC
+    properties:
+      from: t_e_s_t_e_r@163.com
 mybatis:
   typeAliasesPackage: com.winteree.core.dao.entity
   mapperLocations: classpath*:mapper/*.xml
@@ -34,8 +40,14 @@ pagehelper:
   params: count=countSql
 winteree:
   core:
+    enableEmail: true
+    enableSMS: true
     systemname: WinterEE
     totpseed: FycVPCjKmVLfMup4aV8Q7VHgsmkxLaTt
+    aliyun:
+      regionId: regionId
+      accessKeyId: accessKeyId
+      secret: secret
     oauth2:
       # openssl genrsa -out jwt.pem 2048
       # openssl rsa -in jwt.pem
