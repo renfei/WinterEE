@@ -1,12 +1,15 @@
-package com.winteree.uaa.service;
+package com.winteree.uaa.service.impl;
 
 import com.winteree.api.entity.LogSubTypeEnum;
 import com.winteree.uaa.dao.entity.AccountDO;
+import com.winteree.uaa.service.AccountService;
+import com.winteree.uaa.service.I18nService;
+import com.winteree.uaa.service.LogService;
+import com.winteree.uaa.service.SecretKeyService;
 import net.renfei.sdk.utils.AESUtil;
 import net.renfei.sdk.utils.PasswordUtils;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,9 +24,9 @@ import java.util.Date;
  * @author RenFei
  */
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsServiceImpl implements UserDetailsService {
     private final AccountService accountService;
-    private final I18nService i18nService;
+    private final I18nService i18NService;
     private final SecretKeyService secretKeyService;
     private final LogService logService;
     /**
@@ -31,12 +34,12 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     public static final int PASSWORD_ERROR_TIMES_LOCKED = 3;
 
-    public CustomUserDetailsService(AccountService accountService,
-                                    I18nService i18nService,
-                                    SecretKeyService secretKeyService,
-                                    LogService logService) {
+    public CustomUserDetailsServiceImpl(AccountService accountService,
+                                        I18nService i18NService,
+                                        SecretKeyService secretKeyService,
+                                        LogService logService) {
         this.accountService = accountService;
-        this.i18nService = i18nService;
+        this.i18NService = i18NService;
         this.secretKeyService = secretKeyService;
         this.logService = logService;
     }
@@ -52,12 +55,12 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     public User loadUserByUsernameAndPassword(String userName, String password, String language, String keyid) {
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
-            throw new InvalidGrantException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
+            throw new InvalidGrantException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
         }
         // 判断成功后返回用户细节
         AccountDO accountDO = getAccountByName(userName);
         if (accountDO == null) {
-            throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
+            throw new UsernameNotFoundException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
         }
         // 检查账户的状态
         checkAccountState(accountDO, language);
@@ -67,7 +70,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             // 错误计数
             accountPasswordErrorCont(accountDO);
             logService.log(accountDO.getUuid(), LogSubTypeEnum.FAIL, "密码错误，拒绝登陆");
-            throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
+            throw new UsernameNotFoundException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的用户名或密码"));
         }
         //TODO TOTP两步验证
         return getUser(accountDO);
@@ -84,12 +87,12 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     public User loadUserByVerificationCode(String userName, String code, String language, String keyid) {
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(code)) {
-            throw new InvalidGrantException(i18nService.getMessage(language, "uaa.invalidphonenumberorverificationcode", "无效的手机号或验证码"));
+            throw new InvalidGrantException(i18NService.getMessage(language, "uaa.invalidphonenumberorverificationcode", "无效的手机号或验证码"));
         }
         // 判断成功后返回用户细节
         AccountDO accountDO = getAccountByName(userName);
         if (accountDO == null) {
-            throw new UsernameNotFoundException(i18nService.getMessage(language, "uaa.invalidphonenumberorverificationcode", "无效的手机号或验证码"));
+            throw new UsernameNotFoundException(i18NService.getMessage(language, "uaa.invalidphonenumberorverificationcode", "无效的手机号或验证码"));
         }
         // 检查账户的状态
         checkAccountState(accountDO, language);
@@ -131,11 +134,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 new Date().before(accountDO.getLockTime())) {
             long min = (accountDO.getLockTime().getTime() - System.currentTimeMillis()) / 1000;
             logService.log(accountDO.getUuid(), LogSubTypeEnum.FAIL, "账户被锁定，请稍后再试");
-            throw new LockedException(i18nService.getMessage(language, "uaa.accountlocked", "账户被锁定，请稍后再试"));
+            throw new LockedException(i18NService.getMessage(language, "uaa.accountlocked", "账户被锁定，请稍后再试"));
         }
         if (accountDO.getUserStatus() <= 0) {
             logService.log(accountDO.getUuid(), LogSubTypeEnum.FAIL, "账户未激活或被禁用");
-            throw new DisabledException(i18nService.getMessage(language, "uaa.Accountnotactivatedordisabled", "账户未激活或被禁用"));
+            throw new DisabledException(i18NService.getMessage(language, "uaa.Accountnotactivatedordisabled", "账户未激活或被禁用"));
         }
     }
 
@@ -146,9 +149,8 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @return Spring Security 的对象
      */
     private User getUser(AccountDO accountDO) {
-        //TODO 用户角色
-        logService.log(accountDO.getUuid(), LogSubTypeEnum.SUCCESS, "登陆成功，授予用户角色：" + "signed");
-        return new User(accountDO.getUuid(), accountDO.getPasswd(), AuthorityUtils.commaSeparatedStringToAuthorityList("signed"));
+        logService.log(accountDO.getUuid(), LogSubTypeEnum.SUCCESS, "登陆成功");
+        return new User(accountDO.getUuid(), accountDO.getPasswd(), accountService.getGrantedAuthority(accountDO));
     }
 
     private AccountDO getAccountByName(String name) {
@@ -174,12 +176,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     private String decryptPassword(String password, String language, String keyId) {
         String aesKey = secretKeyService.getSecretKeyStringById(keyId);
         if (aesKey == null) {
-            throw new InvalidGrantException(i18nService.getMessage(language, "uaa.aeskeyiddoesnotexist", "AESKeyId不存在"));
+            throw new InvalidGrantException(i18NService.getMessage(language, "uaa.aeskeyiddoesnotexist", "AESKeyId不存在"));
         }
         try {
             password = AESUtil.decrypt(password, aesKey);
         } catch (Exception ex) {
-            throw new InvalidGrantException(i18nService.getMessage(language, "uaa.passworddecryptionfailed", "密码解密失败"));
+            throw new InvalidGrantException(i18NService.getMessage(language, "uaa.passworddecryptionfailed", "密码解密失败"));
         }
         return password;
     }

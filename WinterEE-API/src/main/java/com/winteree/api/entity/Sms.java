@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 @ApiModel(value = "短信")
 public class Sms {
-    private String tenantId;
+    private String tenantUuid;
     /**
      * 接收短信的手机号码。
      * 格式：

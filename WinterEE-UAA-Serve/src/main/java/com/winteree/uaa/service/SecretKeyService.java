@@ -1,35 +1,12 @@
 package com.winteree.uaa.service;
 
-import com.winteree.uaa.dao.SecretKeyDOMapper;
-import com.winteree.uaa.dao.entity.SecretKeyDO;
-import com.winteree.uaa.dao.entity.SecretKeyDOExample;
-import net.renfei.sdk.utils.BeanUtils;
-import net.renfei.sdk.utils.ListUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 /**
- * 秘钥服务
+ * <p>Title: SecretKeyService</p>
+ * <p>Description: 秘钥服务</p>
  *
  * @author RenFei
+ * @date : 2020-04-18 21:33
  */
-@Service
-public class SecretKeyService {
-    private final SecretKeyDOMapper secretKeyDOMapper;
-
-    public SecretKeyService(SecretKeyDOMapper secretKeyDOMapper) {
-        this.secretKeyDOMapper = secretKeyDOMapper;
-    }
-
-    public String getSecretKeyStringById(String id) {
-        SecretKeyDOExample secretKeyDOExample = new SecretKeyDOExample();
-        secretKeyDOExample.createCriteria()
-                .andIdEqualTo(id);
-        SecretKeyDO secretKeyDO = ListUtils.getOne(secretKeyDOMapper.selectByExampleWithBLOBs(secretKeyDOExample));
-        if (BeanUtils.isEmpty(secretKeyDO)) {
-            return null;
-        } else {
-            return secretKeyDO.getPrivateKey();
-        }
-    }
+public interface SecretKeyService {
+    String getSecretKeyStringById(String id);
 }

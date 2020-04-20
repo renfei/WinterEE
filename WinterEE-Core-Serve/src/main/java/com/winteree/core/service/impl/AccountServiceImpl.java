@@ -1,6 +1,7 @@
 package com.winteree.core.service.impl;
 
 import com.winteree.api.entity.AccountDTO;
+import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.AccountDOMapper;
 import com.winteree.core.dao.entity.AccountDO;
 import com.winteree.core.dao.entity.AccountDOExample;
@@ -21,9 +22,12 @@ import java.util.List;
 public class AccountServiceImpl extends BaseService implements AccountService {
     private final AccountDOMapper accountDOMapper;
 
-    public AccountServiceImpl(AccountDOMapper accountDOMapper) {
+    protected AccountServiceImpl(WintereeCoreConfig wintereeCoreConfig,
+                                 AccountDOMapper accountDOMapper) {
+        super(null, wintereeCoreConfig);
         this.accountDOMapper = accountDOMapper;
     }
+
 
     @Override
     public AccountDTO getAccountById(String uuid) {

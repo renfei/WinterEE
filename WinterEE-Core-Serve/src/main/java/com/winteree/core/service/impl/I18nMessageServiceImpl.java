@@ -1,6 +1,8 @@
 package com.winteree.core.service.impl;
 
 import com.winteree.api.utils.I18nMessageUtil;
+import com.winteree.core.config.WintereeCoreConfig;
+import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.I18nMessageService;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,12 @@ import java.io.IOException;
  */
 @Service
 public class I18nMessageServiceImpl extends BaseService implements I18nMessageService {
+
+    protected I18nMessageServiceImpl(WintereeCoreConfig wintereeCoreConfig,
+                                     AccountService accountService) {
+        super(accountService, wintereeCoreConfig);
+    }
+
     @Override
     public String getMessage(String language, String message, String defaultMessage) {
         if (StringUtils.isEmpty(language)) {

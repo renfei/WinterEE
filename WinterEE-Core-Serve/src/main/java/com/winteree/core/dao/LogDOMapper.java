@@ -11,7 +11,7 @@ public interface LogDOMapper {
 
     int deleteByExample(LogDOExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(LogDOWithBLOBs record);
 
@@ -21,7 +21,7 @@ public interface LogDOMapper {
 
     List<LogDO> selectByExample(LogDOExample example);
 
-    LogDOWithBLOBs selectByPrimaryKey(String id);
+    LogDOWithBLOBs selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") LogDOWithBLOBs record, @Param("example") LogDOExample example);
 

@@ -3,9 +3,11 @@ package com.winteree.core.dao.entity;
 import java.util.Date;
 
 public class AccountDO {
+    private Long id;
+
     private String uuid;
 
-    private String tenantId;
+    private String tenantUuid;
 
     private Date createTime;
 
@@ -27,6 +29,16 @@ public class AccountDO {
 
     private String firstName;
 
+    private Date updateTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getUuid() {
         return uuid;
     }
@@ -35,12 +47,12 @@ public class AccountDO {
         this.uuid = uuid == null ? null : uuid.trim();
     }
 
-    public String getTenantId() {
-        return tenantId;
+    public String getTenantUuid() {
+        return tenantUuid;
     }
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId == null ? null : tenantId.trim();
+    public void setTenantUuid(String tenantUuid) {
+        this.tenantUuid = tenantUuid == null ? null : tenantUuid.trim();
     }
 
     public Date getCreateTime() {
@@ -121,5 +133,13 @@ public class AccountDO {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName == null ? null : firstName.trim();
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

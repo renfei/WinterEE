@@ -10,7 +10,7 @@ public interface AccountDOMapper {
 
     int deleteByExample(AccountDOExample example);
 
-    int deleteByPrimaryKey(String uuid);
+    int deleteByPrimaryKey(Long id);
 
     int insert(AccountDO record);
 
@@ -18,7 +18,7 @@ public interface AccountDOMapper {
 
     List<AccountDO> selectByExample(AccountDOExample example);
 
-    AccountDO selectByPrimaryKey(String uuid);
+    AccountDO selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") AccountDO record, @Param("example") AccountDOExample example);
 

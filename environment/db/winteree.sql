@@ -49,19 +49,22 @@ CREATE TABLE `oauth_code` (
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_ tenant`;
 CREATE TABLE `winteree_core_ tenant` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` varchar(36) NOT NULL COMMENT '租户ID',
   `name` varchar(255) NOT NULL COMMENT '租户名称',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `expiry_date` datetime NOT NULL COMMENT '到期时间',
   `status` int(11) NOT NULL DEFAULT '1' COMMENT '状态',
-  PRIMARY KEY (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='租户表';
 
 -- ----------------------------
 -- Records of winteree_core_ tenant
 -- ----------------------------
 BEGIN;
-INSERT INTO `winteree_core_ tenant` VALUES ('BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', '系统租户', '2020-04-07 10:02:23', '2099-12-31 12:59:59', 1);
+INSERT INTO `winteree_core_ tenant` VALUES (1, 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', '系统租户', '2020-04-07 10:02:23', '2099-12-31 12:59:59', 1, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -69,8 +72,9 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_account`;
 CREATE TABLE `winteree_core_account` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `uuid` varchar(36) NOT NULL,
-  `tenant_id` varchar(36) NOT NULL COMMENT '租户ID',
+  `tenant_uuid` varchar(36) NOT NULL COMMENT '租户ID',
   `create_time` datetime NOT NULL COMMENT '注册时间',
   `user_name` varchar(255) DEFAULT NULL COMMENT '用户名',
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
@@ -81,19 +85,19 @@ CREATE TABLE `winteree_core_account` (
   `error_count` int(11) NOT NULL DEFAULT '0' COMMENT '密码错误次数',
   `last_name` varchar(255) DEFAULT NULL COMMENT '姓氏',
   `first_name` varchar(255) DEFAULT NULL COMMENT '名字',
-  PRIMARY KEY (`uuid`),
-  UNIQUE KEY `username` (`user_name`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `phone` (`phone`),
-  KEY `fk_tenant_account` (`tenant_id`),
-  CONSTRAINT `fk_tenant_account` FOREIGN KEY (`tenant_id`) REFERENCES `winteree_core_ tenant` (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='账户服务';
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH,
+  UNIQUE KEY `uk_username` (`user_name`),
+  UNIQUE KEY `uk_email` (`email`),
+  UNIQUE KEY `uk_phone` (`phone`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='账户服务';
 
 -- ----------------------------
 -- Records of winteree_core_account
 -- ----------------------------
 BEGIN;
-INSERT INTO `winteree_core_account` VALUES ('9369919A-F95E-44CF-AB0A-6BCD1D933403', 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', '2020-03-31 13:10:11', 'admin', NULL, NULL, 'sha1:64000:18:5eIrOGu492SUG8VVd0qsRJv+eQgt1E1I:ePI6MBezyKgMUP9rzNCG4SP0', 1, NULL, 0, NULL, NULL);
+INSERT INTO `winteree_core_account` VALUES (1, '9369919A-F95E-44CF-AB0A-6BCD1D933403', 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', '2020-03-31 13:10:11', 'admin', 'i@renfei.net', '13001000000', 'sha1:64000:18:5eIrOGu492SUG8VVd0qsRJv+eQgt1E1I:ePI6MBezyKgMUP9rzNCG4SP0', 1, NULL, 0, NULL, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -101,14 +105,15 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_log`;
 CREATE TABLE `winteree_core_log` (
-  `id` varchar(36) NOT NULL COMMENT 'ID',
-  `date_time` datetime NOT NULL COMMENT '时间',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `uuid` varchar(36) NOT NULL,
+  `create_time` datetime NOT NULL COMMENT '时间',
   `log_type` varchar(255) NOT NULL COMMENT '日志类别',
   `log_sub_type` varchar(255) DEFAULT NULL COMMENT '日志二级类别',
   `logValue` longtext COMMENT '日志内容',
-  `tenant_id` varchar(36) DEFAULT NULL COMMENT '租户ID',
-  `account_id` varchar(36) DEFAULT NULL COMMENT '账户ID',
-  `client_id` varchar(36) DEFAULT NULL COMMENT '客户端编号',
+  `tenant_uuid` varchar(36) DEFAULT NULL COMMENT '租户ID',
+  `account_uuid` varchar(36) DEFAULT NULL COMMENT '账户ID',
+  `client_uuid` varchar(36) DEFAULT NULL COMMENT '客户端编号',
   `client_ip` varchar(255) DEFAULT NULL COMMENT '客户端IP',
   `request_url` text COMMENT '请求URL',
   `request_method` varchar(255) DEFAULT NULL COMMENT '请求方式',
@@ -117,7 +122,9 @@ CREATE TABLE `winteree_core_log` (
   `status_code` varchar(255) DEFAULT NULL COMMENT '响应状态码',
   `response_head` text COMMENT '响应头信息',
   `response_body` longtext COMMENT '响应体',
-  PRIMARY KEY (`id`)
+  `update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日志表';
 
 -- ----------------------------
@@ -125,34 +132,38 @@ CREATE TABLE `winteree_core_log` (
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_menu`;
 CREATE TABLE `winteree_core_menu` (
-  `id` varchar(36) NOT NULL COMMENT '编号',
-  `parent_id` varchar(36) NOT NULL COMMENT '父级编号',
-  `parent_ids` varchar(2000) NOT NULL COMMENT '所有父级编号',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_uuid` varchar(36) NOT NULL COMMENT '父级编号',
+  `uuid` varchar(36) NOT NULL COMMENT '编号',
   `name` varchar(100) NOT NULL COMMENT '名称',
   `sort` decimal(10,0) NOT NULL COMMENT '排序',
   `href` varchar(2000) DEFAULT NULL COMMENT '链接',
   `target` varchar(20) DEFAULT NULL COMMENT '目标',
   `icon` varchar(100) DEFAULT NULL COMMENT '图标',
-  `is_show` char(1) NOT NULL COMMENT '是否在菜单中显示',
-  `is_menu` varchar(255) DEFAULT NULL COMMENT '是菜单还是权限',
+  `is_show` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否在菜单中显示',
+  `is_menu` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是菜单还是权限',
   `permission` varchar(200) DEFAULT NULL COMMENT '权限标识',
   `create_by` varchar(64) NOT NULL COMMENT '创建者',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
-  `update_by` varchar(64) NOT NULL COMMENT '更新者',
-  `update_date` datetime NOT NULL COMMENT '更新时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   `remarks` varchar(255) DEFAULT NULL COMMENT '备注信息',
-  `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
+  `is_delete` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '删除标记',
   `weight` int(11) NOT NULL DEFAULT '0' COMMENT '菜单权重',
+  `i18n` varchar(255) DEFAULT NULL COMMENT '国际化语言标注',
   PRIMARY KEY (`id`),
-  KEY `winteree_core_menu_parent_id` (`parent_id`),
-  KEY `winteree_core_menu_del_flag` (`del_flag`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜单表';
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH,
+  KEY `idx_parent_id` (`parent_uuid`),
+  KEY `idx_del_flag` (`is_delete`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='菜单表';
 
 -- ----------------------------
 -- Records of winteree_core_menu
 -- ----------------------------
 BEGIN;
-INSERT INTO `winteree_core_menu` VALUES ('19E712FB-808C-446C-8557-184103BB1B64', 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', '平台管理', 1, NULL, NULL, NULL, '1', NULL, NULL, '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-04-07 14:17:48', '', '2020-04-07 14:18:19', NULL, '0', 0);
+INSERT INTO `winteree_core_menu` VALUES (1, 'root', '99406120-183c-4029-a992-1c707aba5ba2', '平台管理', 0, NULL, NULL, 'mdi-chevron-up', 1, 1, NULL, '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-04-20 20:30:41', NULL, NULL, NULL, 0, 0, 'core.platformsettings');
+INSERT INTO `winteree_core_menu` VALUES (2, '99406120-183c-4029-a992-1c707aba5ba2', 'bfd720bd-b923-483f-9a4d-a5c43c177bfd', '菜单管理', 2, NULL, NULL, 'mdi-clipboard-list', 1, 1, NULL, '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-04-20 20:32:49', NULL, NULL, NULL, 0, 0, 'core.menusettings');
+INSERT INTO `winteree_core_menu` VALUES (3, '99406120-183c-4029-a992-1c707aba5ba2', '31380c03-eee8-4e85-ad3e-a919d86b96aa', '租户管理', 1, NULL, NULL, 'mdi-account-group-outline', 1, 1, NULL, '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-04-20 20:35:11', NULL, NULL, NULL, 0, 0, 'core.tenantsettings');
 COMMIT;
 
 -- ----------------------------
@@ -160,10 +171,10 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_office`;
 CREATE TABLE `winteree_core_office` (
-  `id` varchar(36) NOT NULL COMMENT '编号',
-  `tenant_id` varchar(36) NOT NULL COMMENT '租户编号',
-  `parent_id` varchar(36) NOT NULL COMMENT '父级编号',
-  `parent_ids` varchar(2000) NOT NULL COMMENT '所有父级编号',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `uuid` varchar(36) NOT NULL,
+  `tenant_uuid` varchar(36) NOT NULL COMMENT '租户编号',
+  `parent_uuid` varchar(36) NOT NULL COMMENT '父级编号',
   `name` varchar(100) NOT NULL COMMENT '名称',
   `address` varchar(255) DEFAULT NULL COMMENT '联系地址',
   `zip_code` varchar(100) DEFAULT NULL COMMENT '邮政编码',
@@ -174,14 +185,15 @@ CREATE TABLE `winteree_core_office` (
   `PRIMARY_PERSON` varchar(64) DEFAULT NULL COMMENT '主负责人',
   `DEPUTY_PERSON` varchar(64) DEFAULT NULL COMMENT '副负责人',
   `create_by` varchar(64) NOT NULL COMMENT '创建者',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_by` varchar(64) NOT NULL COMMENT '更新者',
-  `update_date` datetime NOT NULL COMMENT '更新时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
   `remarks` varchar(255) DEFAULT NULL COMMENT '备注信息',
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   PRIMARY KEY (`id`),
-  KEY `winteree_core_office_parent_id` (`parent_id`),
-  KEY `winteree_core_office_del_flag` (`del_flag`)
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH,
+  KEY `idx_parent_id` (`parent_uuid`),
+  KEY `idex_del_flag` (`del_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='机构表';
 
 -- ----------------------------
@@ -189,32 +201,50 @@ CREATE TABLE `winteree_core_office` (
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_role`;
 CREATE TABLE `winteree_core_role` (
-  `id` varchar(36) NOT NULL COMMENT '编号',
-  `office_id` varchar(36) DEFAULT NULL COMMENT '归属机构',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `uuid` varchar(36) NOT NULL,
+  `office_uuid` varchar(36) DEFAULT NULL COMMENT '归属机构',
   `name` varchar(100) NOT NULL COMMENT '角色名称',
   `enname` varchar(255) DEFAULT NULL COMMENT '英文名称',
   `role_type` varchar(255) DEFAULT NULL COMMENT '角色类型',
-  `data_scope` char(1) DEFAULT NULL COMMENT '数据范围',
-  `is_sys` varchar(64) DEFAULT NULL COMMENT '是否系统数据',
-  `useable` varchar(64) DEFAULT NULL COMMENT '是否可用',
+  `data_scope` int(11) DEFAULT '1' COMMENT '数据范围,1:全部组织2:本部门及以下3:仅限本部门',
+  `useable` tinyint(1) DEFAULT '1' COMMENT '是否可用',
   `create_by` varchar(64) NOT NULL COMMENT '创建者',
-  `create_date` datetime NOT NULL COMMENT '创建时间',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_by` varchar(64) NOT NULL COMMENT '更新者',
-  `update_date` datetime NOT NULL COMMENT '更新时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
   `remarks` varchar(255) DEFAULT NULL COMMENT '备注信息',
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
+
+-- ----------------------------
+-- Table structure for winteree_core_role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_role_menu`;
+CREATE TABLE `winteree_core_role_menu` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `role_uuid` varchar(36) NOT NULL COMMENT '角色UUID',
+  `menu_uuid` varchar(36) NOT NULL COMMENT '菜单UUID',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色与菜单关联表';
 
 -- ----------------------------
 -- Table structure for winteree_core_secret_key
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_secret_key`;
 CREATE TABLE `winteree_core_secret_key` (
-  `id` varchar(36) NOT NULL,
-  `public_key` text,
-  `private_key` text,
-  PRIMARY KEY (`id`)
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `public_key` text COMMENT '公钥',
+  `private_key` text COMMENT '私钥',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL,
+  `uuid` varchar(36) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='秘钥表';
 
 -- ----------------------------
@@ -222,19 +252,37 @@ CREATE TABLE `winteree_core_secret_key` (
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_setting`;
 CREATE TABLE `winteree_core_setting` (
-  `id` varchar(36) NOT NULL,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
   `keys` varchar(255) NOT NULL COMMENT 'key',
   `values` varchar(255) NOT NULL COMMENT '值',
-  PRIMARY KEY (`id`)
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='自定义设置';
+
+-- ----------------------------
+-- Table structure for winteree_core_user_role
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_user_role`;
+CREATE TABLE `winteree_core_user_role` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL,
+  `account_uuid` varchar(36) NOT NULL,
+  `role_uuid` varchar(36) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户与角色关联表';
 
 -- ----------------------------
 -- Table structure for winteree_core_verification_code
 -- ----------------------------
 DROP TABLE IF EXISTS `winteree_core_verification_code`;
 CREATE TABLE `winteree_core_verification_code` (
-  `id` varchar(36) NOT NULL,
-  `account_id` varchar(36) NOT NULL COMMENT '账号ID',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL COMMENT 'UUID',
+  `account_uuid` varchar(36) NOT NULL COMMENT '账号ID',
   `phone` varchar(255) DEFAULT NULL COMMENT '手机号',
   `email` varchar(255) DEFAULT NULL COMMENT '邮箱',
   `verification_code` varchar(255) NOT NULL COMMENT '验证码',
@@ -243,8 +291,10 @@ CREATE TABLE `winteree_core_verification_code` (
   `sended` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已发送',
   `content_text` varchar(255) NOT NULL COMMENT '发送内容',
   `validation_type` varchar(255) DEFAULT NULL COMMENT '验证类型，登陆？注册？',
-  `creat_time` datetime NOT NULL COMMENT '创建时间',
-  PRIMARY KEY (`id`)
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='验证码';
 
 SET FOREIGN_KEY_CHECKS = 1;

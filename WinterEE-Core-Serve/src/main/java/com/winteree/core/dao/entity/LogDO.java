@@ -3,19 +3,21 @@ package com.winteree.core.dao.entity;
 import java.util.Date;
 
 public class LogDO {
-    private String id;
+    private Long id;
 
-    private Date dateTime;
+    private String uuid;
+
+    private Date createTime;
 
     private String logType;
 
     private String logSubType;
 
-    private String tenantId;
+    private String tenantUuid;
 
-    private String accountId;
+    private String accountUuid;
 
-    private String clientId;
+    private String clientUuid;
 
     private String clientIp;
 
@@ -23,20 +25,30 @@ public class LogDO {
 
     private String statusCode;
 
-    public String getId() {
+    private Date updateTime;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Date getDateTime() {
-        return dateTime;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setDateTime(Date dateTime) {
-        this.dateTime = dateTime;
+    public void setUuid(String uuid) {
+        this.uuid = uuid == null ? null : uuid.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public String getLogType() {
@@ -55,28 +67,28 @@ public class LogDO {
         this.logSubType = logSubType == null ? null : logSubType.trim();
     }
 
-    public String getTenantId() {
-        return tenantId;
+    public String getTenantUuid() {
+        return tenantUuid;
     }
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId == null ? null : tenantId.trim();
+    public void setTenantUuid(String tenantUuid) {
+        this.tenantUuid = tenantUuid == null ? null : tenantUuid.trim();
     }
 
-    public String getAccountId() {
-        return accountId;
+    public String getAccountUuid() {
+        return accountUuid;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId == null ? null : accountId.trim();
+    public void setAccountUuid(String accountUuid) {
+        this.accountUuid = accountUuid == null ? null : accountUuid.trim();
     }
 
-    public String getClientId() {
-        return clientId;
+    public String getClientUuid() {
+        return clientUuid;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId == null ? null : clientId.trim();
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid == null ? null : clientUuid.trim();
     }
 
     public String getClientIp() {
@@ -101,5 +113,13 @@ public class LogDO {
 
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode == null ? null : statusCode.trim();
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

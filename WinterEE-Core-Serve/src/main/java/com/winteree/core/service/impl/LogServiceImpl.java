@@ -1,8 +1,10 @@
 package com.winteree.core.service.impl;
 
 import com.winteree.api.entity.LogDTO;
+import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.LogDOMapper;
 import com.winteree.core.dao.entity.LogDOWithBLOBs;
+import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.LogService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +27,13 @@ import java.util.UUID;
 public class LogServiceImpl extends BaseService implements LogService {
     private final LogDOMapper logDOMapper;
 
-    public LogServiceImpl(LogDOMapper logDOMapper) {
+    protected LogServiceImpl(WintereeCoreConfig wintereeCoreConfig,
+                             AccountService accountService,
+                             LogDOMapper logDOMapper) {
+        super(accountService, wintereeCoreConfig);
         this.logDOMapper = logDOMapper;
     }
+
 
     @Override
     public APIResult log(LogDTO logDTO) {
@@ -54,13 +60,13 @@ public class LogServiceImpl extends BaseService implements LogService {
     private LogDOWithBLOBs convert(LogDTO logDTO) {
         if (logDTO != null) {
             return Builder.of(LogDOWithBLOBs::new)
-                    .with(LogDOWithBLOBs::setId, UUID.randomUUID().toString())
-                    .with(LogDOWithBLOBs::setDateTime, logDTO.getDateTime())
+                    .with(LogDOWithBLOBs::setUuid, UUID.randomUUID().toString())
+                    .with(LogDOWithBLOBs::setCreateTime, logDTO.getCreateTime())
                     .with(LogDOWithBLOBs::setLogType, logDTO.getLogType() == null ? null : logDTO.getLogType().getType())
                     .with(LogDOWithBLOBs::setLogSubType, logDTO.getLogSubType() == null ? null : logDTO.getLogSubType().getType())
-                    .with(LogDOWithBLOBs::setTenantId, logDTO.getTenantId())
-                    .with(LogDOWithBLOBs::setAccountId, logDTO.getAccountId())
-                    .with(LogDOWithBLOBs::setClientId, logDTO.getClientId())
+                    .with(LogDOWithBLOBs::setTenantUuid, logDTO.getTenantUuid())
+                    .with(LogDOWithBLOBs::setAccountUuid, logDTO.getAccountUuid())
+                    .with(LogDOWithBLOBs::setClientUuid, logDTO.getClientUuid())
                     .with(LogDOWithBLOBs::setClientIp, logDTO.getClientIp())
                     .with(LogDOWithBLOBs::setRequestUrl, logDTO.getRequestUrl())
                     .with(LogDOWithBLOBs::setRequestMethod, logDTO.getRequestMethod())

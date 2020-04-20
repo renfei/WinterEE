@@ -22,7 +22,7 @@ public class Email {
     private String text;
     @JsonIgnore
     private MultipartFile[] multipartFiles;
-    private String tenantId;
+    private String tenantUuid;
 
     public void checkMail() {
         if (StringUtils.isEmpty(this.to)) {

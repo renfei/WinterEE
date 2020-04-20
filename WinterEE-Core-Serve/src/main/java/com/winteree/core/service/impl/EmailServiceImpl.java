@@ -2,6 +2,7 @@ package com.winteree.core.service.impl;
 
 import com.winteree.api.entity.*;
 import com.winteree.core.config.WintereeCoreConfig;
+import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.EmailService;
 import com.winteree.core.service.LogService;
@@ -28,15 +29,18 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class EmailServiceImpl extends BaseService implements EmailService {
-    private final WintereeCoreConfig wintereeCoreConfig;
     private final LogService logService;
     private final JavaMailSenderImpl mailSender;
 
-    public EmailServiceImpl(WintereeCoreConfig wintereeCoreConfig, LogService logService, JavaMailSenderImpl javaMailSenderImpl) {
-        this.wintereeCoreConfig = wintereeCoreConfig;
+    protected EmailServiceImpl(AccountService accountService,
+                               WintereeCoreConfig wintereeCoreConfig,
+                               LogService logService,
+                               JavaMailSenderImpl mailSender) {
+        super(accountService, wintereeCoreConfig);
         this.logService = logService;
-        this.mailSender = javaMailSenderImpl;
+        this.mailSender = mailSender;
     }
+
 
     private JavaMailSenderImpl initJavaMailSender(EmailConfiguration emailConfiguration) {
         JavaMailSenderImpl javaMailSender = Builder.of(JavaMailSenderImpl::new)
@@ -67,13 +71,12 @@ public class EmailServiceImpl extends BaseService implements EmailService {
             log.error("Send Email {}->{} Fail,EnableEmail is false! Subject:{}",
                     email.getFrom(), email.getTo(), email.getSubject());
             LogDTO logDTO = Builder.of(LogDTO::new)
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
-                    .with(LogDTO::setDateTime, new Date())
-                    .with(LogDTO::setTenantId, email.getTenantId())
+                    .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                    .with(LogDTO::setCreateTime, new Date())
+                    .with(LogDTO::setTenantUuid, email.getTenantUuid())
                     .with(LogDTO::setLogType, LogTypeEnum.SYSTEM)
                     .with(LogDTO::setLogSubType, LogSubTypeEnum.ERROR)
                     .with(LogDTO::setLogValue, String.format("Send Email %s->%s Fail,EnableEmail is false! Subject:%s", email.getFrom(), email.getTo(), email.getSubject()))
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
                     .build();
             logService.log(logDTO);
         }
@@ -87,13 +90,12 @@ public class EmailServiceImpl extends BaseService implements EmailService {
             log.error("Send Email {}->{} Fail,EnableEmail is false! Subject:{}",
                     email.getFrom(), email.getTo(), email.getSubject());
             LogDTO logDTO = Builder.of(LogDTO::new)
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
-                    .with(LogDTO::setDateTime, new Date())
-                    .with(LogDTO::setTenantId, email.getTenantId())
+                    .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                    .with(LogDTO::setCreateTime, new Date())
+                    .with(LogDTO::setTenantUuid, email.getTenantUuid())
                     .with(LogDTO::setLogType, LogTypeEnum.SYSTEM)
                     .with(LogDTO::setLogSubType, LogSubTypeEnum.ERROR)
                     .with(LogDTO::setLogValue, String.format("Send Email %s->%s Fail,EnableEmail is false! Subject:%s", email.getFrom(), email.getTo(), email.getSubject()))
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
                     .build();
             logService.log(logDTO);
         }
@@ -125,28 +127,26 @@ public class EmailServiceImpl extends BaseService implements EmailService {
             log.info("Send Email {}->{} Fail, Subject:{}, Content:{}",
                     email.getFrom(), email.getTo(), email.getSubject(), email.getText());
             LogDTO logDTO = Builder.of(LogDTO::new)
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
-                    .with(LogDTO::setDateTime, new Date())
+                    .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                    .with(LogDTO::setCreateTime, new Date())
                     .with(LogDTO::setLogType, LogTypeEnum.SYSTEM)
                     .with(LogDTO::setLogSubType, LogSubTypeEnum.EMAIL)
-                    .with(LogDTO::setTenantId, email.getTenantId())
+                    .with(LogDTO::setTenantUuid, email.getTenantUuid())
                     .with(LogDTO::setLogValue, String.format("Send Email %s->%s Success, Subject:%s, Content:%s",
                             email.getFrom(), email.getTo(), email.getSubject(), email.getText()))
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
                     .build();
             logService.log(logDTO);
         } catch (Exception e) {
             log.error("Send Email {}->{} Fail, Subject:{}, Content:{} | Exception:{}",
                     email.getFrom(), email.getTo(), email.getSubject(), email.getText(), e.getMessage());
             LogDTO logDTO = Builder.of(LogDTO::new)
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
-                    .with(LogDTO::setDateTime, new Date())
+                    .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                    .with(LogDTO::setCreateTime, new Date())
                     .with(LogDTO::setLogType, LogTypeEnum.SYSTEM)
                     .with(LogDTO::setLogSubType, LogSubTypeEnum.ERROR)
-                    .with(LogDTO::setTenantId, email.getTenantId())
+                    .with(LogDTO::setTenantUuid, email.getTenantUuid())
                     .with(LogDTO::setLogValue, String.format("Send Email %s->%s Fail, Subject:%s, Content:%s | Exception:%s",
                             email.getFrom(), email.getTo(), email.getSubject(), email.getText(), e.getMessage()))
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
                     .build();
             logService.log(logDTO);
             throw new RuntimeException(e);

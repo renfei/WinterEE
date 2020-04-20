@@ -2,13 +2,11 @@ package com.winteree.core.controller;
 
 import com.winteree.api.entity.AccountDTO;
 import com.winteree.api.entity.LogDTO;
+import com.winteree.api.entity.MenuVO;
 import com.winteree.api.entity.ReportPublicKeyVO;
 import com.winteree.api.service.WintereeCoreService;
 import com.winteree.core.config.WintereeCoreConfig;
-import com.winteree.core.service.AccountService;
-import com.winteree.core.service.I18nMessageService;
-import com.winteree.core.service.LogService;
-import com.winteree.core.service.SecretKeyService;
+import com.winteree.core.service.*;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
@@ -17,6 +15,7 @@ import net.renfei.sdk.utils.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,17 +31,20 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     private final AccountService accountService;
     private final SecretKeyService secretKeyService;
     private final LogService logService;
+    private final MenuService menuService;
 
     public WintereeCoreServiceImpl(I18nMessageService i18nMessageService,
                                    WintereeCoreConfig wintereeCoreConfig,
                                    AccountService accountService,
                                    SecretKeyService secretKeyService,
-                                   LogService logService) {
+                                   LogService logService,
+                                   MenuService menuService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
         this.secretKeyService = secretKeyService;
         this.logService = logService;
+        this.menuService = menuService;
     }
 
     @Override
@@ -92,7 +94,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
 
     @Override
     @PreAuthorize("hasAnyAuthority('signed')")
-    public APIResult createTotp(String username) {
+    public APIResult<String> createTotp(String username) {
         String secret = GoogleAuthenticator.generateSecretKey(wintereeCoreConfig.getTotpseed());
         return APIResult.builder()
                 .code(StateCode.OK)
@@ -101,7 +103,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     }
 
     @Override
-    public APIResult checkAccount(String account, String language) {
+    public APIResult<String> checkAccount(String account, String language) {
         language = language == null ? "zh-CN" : language;
         String type;
         AccountDTO accountDTO;
@@ -109,6 +111,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
             return APIResult.builder()
                     .code(StateCode.Failure)
                     .message(i18nMessageService.getMessage(language, "core.cantfindyouraccount", "找不到您的账户"))
+                    .data(i18nMessageService.getMessage(language, "core.cantfindyouraccount", "找不到您的账户"))
                     .build();
         }
         if (StringUtils.isEmail(account)) {
@@ -125,11 +128,24 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
             return APIResult.builder()
                     .code(StateCode.Failure)
                     .message(i18nMessageService.getMessage(language, "core.cantfindyouraccount", "找不到您的账户"))
+                    .data(i18nMessageService.getMessage(language, "core.cantfindyouraccount", "找不到您的账户"))
                     .build();
         }
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message(type)
+                .data(type)
                 .build();
+    }
+
+    /**
+     * 获取菜单列表，注意不是菜单管理中的查询菜单列表
+     *
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
+    public APIResult<List<MenuVO>> getMenuTree(String language) {
+        return menuService.getMenuListBySignedUser(language);
     }
 }

@@ -39,12 +39,12 @@ public class LogServiceTest {
         Assertions.assertEquals(logService.log(null).getCode(), 100);
         LogDTO logDTO = new LogDTO();
         Assertions.assertEquals(logService.log(logDTO).getCode(), 100);
-        logDTO.setId(UUID.randomUUID().toString());
-        logDTO.setDateTime(new Date());
+        logDTO.setUuid(UUID.randomUUID().toString());
+        logDTO.setCreateTime(new Date());
         logDTO.setLogType(LogTypeEnum.ACCESS);
         Assertions.assertEquals(logService.log(logDTO).getCode(), 200);
-        logDTO.setId(UUID.randomUUID().toString());
-        logDTO.setDateTime(new Date());
+        logDTO.setUuid(UUID.randomUUID().toString());
+        logDTO.setCreateTime(new Date());
         logDTO.setLogType(LogTypeEnum.ACCESS);
         logDTO.setLogSubType(LogSubTypeEnum.DEBUG);
         Assertions.assertEquals(logService.log(logDTO).getCode(), 200);

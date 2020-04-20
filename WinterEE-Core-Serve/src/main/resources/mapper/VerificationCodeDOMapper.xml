@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.winteree.core.dao.VerificationCodeDOMapper">
   <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.VerificationCodeDO">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="account_uuid" jdbcType="VARCHAR" property="accountUuid" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="verification_code" jdbcType="VARCHAR" property="verificationCode" />
@@ -12,7 +13,8 @@
     <result column="sended" jdbcType="TINYINT" property="sended" />
     <result column="content_text" jdbcType="VARCHAR" property="contentText" />
     <result column="validation_type" jdbcType="VARCHAR" property="validationType" />
-    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -73,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, account_id, phone, email, verification_code, dead_date, usable, sended, content_text, 
-    validation_type, creat_time
+    id, uuid, account_uuid, phone, email, verification_code, dead_date, usable, sended, 
+    content_text, validation_type, create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="com.winteree.core.dao.entity.VerificationCodeDOExample" resultMap="BaseResultMap">
     select
@@ -90,15 +92,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from winteree_core_verification_code
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from winteree_core_verification_code
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.VerificationCodeDOExample">
     delete from winteree_core_verification_code
@@ -107,14 +109,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
-    insert into winteree_core_verification_code (id, account_id, phone, 
-      email, verification_code, dead_date, 
-      usable, sended, content_text, 
-      validation_type, creat_time)
-    values (#{id,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, #{deadDate,jdbcType=TIMESTAMP}, 
-      #{usable,jdbcType=TINYINT}, #{sended,jdbcType=TINYINT}, #{contentText,jdbcType=VARCHAR}, 
-      #{validationType,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP})
+    insert into winteree_core_verification_code (id, uuid, account_uuid, 
+      phone, email, verification_code, 
+      dead_date, usable, sended, 
+      content_text, validation_type, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{accountUuid,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, 
+      #{deadDate,jdbcType=TIMESTAMP}, #{usable,jdbcType=TINYINT}, #{sended,jdbcType=TINYINT}, 
+      #{contentText,jdbcType=VARCHAR}, #{validationType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
     insert into winteree_core_verification_code
@@ -122,8 +126,11 @@
       <if test="id != null">
         id,
       </if>
-      <if test="accountId != null">
-        account_id,
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="accountUuid != null">
+        account_uuid,
       </if>
       <if test="phone != null">
         phone,
@@ -149,16 +156,22 @@
       <if test="validationType != null">
         validation_type,
       </if>
-      <if test="creatTime != null">
-        creat_time,
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=VARCHAR},
+        #{id,jdbcType=BIGINT},
       </if>
-      <if test="accountId != null">
-        #{accountId,jdbcType=VARCHAR},
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="accountUuid != null">
+        #{accountUuid,jdbcType=VARCHAR},
       </if>
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
@@ -184,8 +197,11 @@
       <if test="validationType != null">
         #{validationType,jdbcType=VARCHAR},
       </if>
-      <if test="creatTime != null">
-        #{creatTime,jdbcType=TIMESTAMP},
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -199,10 +215,13 @@
     update winteree_core_verification_code
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=VARCHAR},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.accountId != null">
-        account_id = #{record.accountId,jdbcType=VARCHAR},
+      <if test="record.uuid != null">
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountUuid != null">
+        account_uuid = #{record.accountUuid,jdbcType=VARCHAR},
       </if>
       <if test="record.phone != null">
         phone = #{record.phone,jdbcType=VARCHAR},
@@ -228,8 +247,11 @@
       <if test="record.validationType != null">
         validation_type = #{record.validationType,jdbcType=VARCHAR},
       </if>
-      <if test="record.creatTime != null">
-        creat_time = #{record.creatTime,jdbcType=TIMESTAMP},
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -238,8 +260,9 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update winteree_core_verification_code
-    set id = #{record.id,jdbcType=VARCHAR},
-      account_id = #{record.accountId,jdbcType=VARCHAR},
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      account_uuid = #{record.accountUuid,jdbcType=VARCHAR},
       phone = #{record.phone,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
       verification_code = #{record.verificationCode,jdbcType=VARCHAR},
@@ -248,7 +271,8 @@
       sended = #{record.sended,jdbcType=TINYINT},
       content_text = #{record.contentText,jdbcType=VARCHAR},
       validation_type = #{record.validationType,jdbcType=VARCHAR},
-      creat_time = #{record.creatTime,jdbcType=TIMESTAMP}
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -256,8 +280,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
     update winteree_core_verification_code
     <set>
-      <if test="accountId != null">
-        account_id = #{accountId,jdbcType=VARCHAR},
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="accountUuid != null">
+        account_uuid = #{accountUuid,jdbcType=VARCHAR},
       </if>
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},
@@ -283,15 +310,19 @@
       <if test="validationType != null">
         validation_type = #{validationType,jdbcType=VARCHAR},
       </if>
-      <if test="creatTime != null">
-        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.VerificationCodeDO">
     update winteree_core_verification_code
-    set account_id = #{accountId,jdbcType=VARCHAR},
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      account_uuid = #{accountUuid,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       verification_code = #{verificationCode,jdbcType=VARCHAR},
@@ -300,7 +331,8 @@
       sended = #{sended,jdbcType=TINYINT},
       content_text = #{contentText,jdbcType=VARCHAR},
       validation_type = #{validationType,jdbcType=VARCHAR},
-      creat_time = #{creatTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=VARCHAR}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

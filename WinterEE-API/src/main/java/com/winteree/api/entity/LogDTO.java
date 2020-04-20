@@ -13,13 +13,13 @@ import java.util.Date;
  */
 @Data
 public class LogDTO {
-    private String id;
-    private Date dateTime;
+    private String uuid;
+    private Date createTime;
     private LogTypeEnum logType;
     private LogSubTypeEnum logSubType;
-    private String tenantId;
-    private String accountId;
-    private String clientId;
+    private String tenantUuid;
+    private String accountUuid;
+    private String clientUuid;
     private String clientIp;
     private String requestUrl;
     private String requestMethod;

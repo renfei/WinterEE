@@ -10,7 +10,7 @@ public interface VerificationCodeDOMapper {
 
     int deleteByExample(VerificationCodeDOExample example);
 
-    int deleteByPrimaryKey(String id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(VerificationCodeDO record);
 
@@ -18,7 +18,7 @@ public interface VerificationCodeDOMapper {
 
     List<VerificationCodeDO> selectByExample(VerificationCodeDOExample example);
 
-    VerificationCodeDO selectByPrimaryKey(String id);
+    VerificationCodeDO selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") VerificationCodeDO record, @Param("example") VerificationCodeDOExample example);
 

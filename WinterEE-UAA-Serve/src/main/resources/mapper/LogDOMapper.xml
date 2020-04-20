@@ -2,16 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.winteree.uaa.dao.LogDOMapper">
   <resultMap id="BaseResultMap" type="com.winteree.uaa.dao.entity.LogDO">
-    <id column="id" jdbcType="VARCHAR" property="id" />
-    <result column="date_time" jdbcType="TIMESTAMP" property="dateTime" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="log_type" jdbcType="VARCHAR" property="logType" />
     <result column="log_sub_type" jdbcType="VARCHAR" property="logSubType" />
-    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
-    <result column="account_id" jdbcType="VARCHAR" property="accountId" />
-    <result column="client_id" jdbcType="VARCHAR" property="clientId" />
+    <result column="tenant_uuid" jdbcType="VARCHAR" property="tenantUuid" />
+    <result column="account_uuid" jdbcType="VARCHAR" property="accountUuid" />
+    <result column="client_uuid" jdbcType="VARCHAR" property="clientUuid" />
     <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
     <result column="request_method" jdbcType="VARCHAR" property="requestMethod" />
     <result column="status_code" jdbcType="VARCHAR" property="statusCode" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
     <result column="logValue" jdbcType="LONGVARCHAR" property="logvalue" />
@@ -80,8 +82,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, date_time, log_type, log_sub_type, tenant_id, account_id, client_id, client_ip, 
-    request_method, status_code
+    id, uuid, create_time, log_type, log_sub_type, tenant_uuid, account_uuid, client_uuid, 
+    client_ip, request_method, status_code, update_time
   </sql>
   <sql id="Blob_Column_List">
     logValue, request_url, request_head, request_body, response_head, response_body
@@ -116,17 +118,17 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from winteree_core_log
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from winteree_core_log
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.winteree.uaa.dao.entity.LogDOExample">
     delete from winteree_core_log
@@ -135,18 +137,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
-    insert into winteree_core_log (id, date_time, log_type, 
-      log_sub_type, tenant_id, account_id, 
-      client_id, client_ip, request_method, 
-      status_code, logValue, request_url, 
-      request_head, request_body, response_head, 
-      response_body)
-    values (#{id,jdbcType=VARCHAR}, #{dateTime,jdbcType=TIMESTAMP}, #{logType,jdbcType=VARCHAR}, 
-      #{logSubType,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR}, #{accountId,jdbcType=VARCHAR}, 
-      #{clientId,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, #{requestMethod,jdbcType=VARCHAR}, 
-      #{statusCode,jdbcType=VARCHAR}, #{logvalue,jdbcType=LONGVARCHAR}, #{requestUrl,jdbcType=LONGVARCHAR}, 
-      #{requestHead,jdbcType=LONGVARCHAR}, #{requestBody,jdbcType=LONGVARCHAR}, #{responseHead,jdbcType=LONGVARCHAR}, 
-      #{responseBody,jdbcType=LONGVARCHAR})
+    insert into winteree_core_log (id, uuid, create_time, 
+      log_type, log_sub_type, tenant_uuid, 
+      account_uuid, client_uuid, client_ip, 
+      request_method, status_code, update_time, 
+      logValue, request_url, request_head, 
+      request_body, response_head, response_body
+      )
+    values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{logType,jdbcType=VARCHAR}, #{logSubType,jdbcType=VARCHAR}, #{tenantUuid,jdbcType=VARCHAR}, 
+      #{accountUuid,jdbcType=VARCHAR}, #{clientUuid,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, 
+      #{requestMethod,jdbcType=VARCHAR}, #{statusCode,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{logvalue,jdbcType=LONGVARCHAR}, #{requestUrl,jdbcType=LONGVARCHAR}, #{requestHead,jdbcType=LONGVARCHAR}, 
+      #{requestBody,jdbcType=LONGVARCHAR}, #{responseHead,jdbcType=LONGVARCHAR}, #{responseBody,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
     insert into winteree_core_log
@@ -154,8 +158,11 @@
       <if test="id != null">
         id,
       </if>
-      <if test="dateTime != null">
-        date_time,
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="createTime != null">
+        create_time,
       </if>
       <if test="logType != null">
         log_type,
@@ -163,14 +170,14 @@
       <if test="logSubType != null">
         log_sub_type,
       </if>
-      <if test="tenantId != null">
-        tenant_id,
+      <if test="tenantUuid != null">
+        tenant_uuid,
       </if>
-      <if test="accountId != null">
-        account_id,
+      <if test="accountUuid != null">
+        account_uuid,
       </if>
-      <if test="clientId != null">
-        client_id,
+      <if test="clientUuid != null">
+        client_uuid,
       </if>
       <if test="clientIp != null">
         client_ip,
@@ -180,6 +187,9 @@
       </if>
       <if test="statusCode != null">
         status_code,
+      </if>
+      <if test="updateTime != null">
+        update_time,
       </if>
       <if test="logvalue != null">
         logValue,
@@ -202,10 +212,13 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=VARCHAR},
+        #{id,jdbcType=BIGINT},
       </if>
-      <if test="dateTime != null">
-        #{dateTime,jdbcType=TIMESTAMP},
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="logType != null">
         #{logType,jdbcType=VARCHAR},
@@ -213,14 +226,14 @@
       <if test="logSubType != null">
         #{logSubType,jdbcType=VARCHAR},
       </if>
-      <if test="tenantId != null">
-        #{tenantId,jdbcType=VARCHAR},
+      <if test="tenantUuid != null">
+        #{tenantUuid,jdbcType=VARCHAR},
       </if>
-      <if test="accountId != null">
-        #{accountId,jdbcType=VARCHAR},
+      <if test="accountUuid != null">
+        #{accountUuid,jdbcType=VARCHAR},
       </if>
-      <if test="clientId != null">
-        #{clientId,jdbcType=VARCHAR},
+      <if test="clientUuid != null">
+        #{clientUuid,jdbcType=VARCHAR},
       </if>
       <if test="clientIp != null">
         #{clientIp,jdbcType=VARCHAR},
@@ -230,6 +243,9 @@
       </if>
       <if test="statusCode != null">
         #{statusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="logvalue != null">
         #{logvalue,jdbcType=LONGVARCHAR},
@@ -261,10 +277,13 @@
     update winteree_core_log
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=VARCHAR},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.dateTime != null">
-        date_time = #{record.dateTime,jdbcType=TIMESTAMP},
+      <if test="record.uuid != null">
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.logType != null">
         log_type = #{record.logType,jdbcType=VARCHAR},
@@ -272,14 +291,14 @@
       <if test="record.logSubType != null">
         log_sub_type = #{record.logSubType,jdbcType=VARCHAR},
       </if>
-      <if test="record.tenantId != null">
-        tenant_id = #{record.tenantId,jdbcType=VARCHAR},
+      <if test="record.tenantUuid != null">
+        tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
       </if>
-      <if test="record.accountId != null">
-        account_id = #{record.accountId,jdbcType=VARCHAR},
+      <if test="record.accountUuid != null">
+        account_uuid = #{record.accountUuid,jdbcType=VARCHAR},
       </if>
-      <if test="record.clientId != null">
-        client_id = #{record.clientId,jdbcType=VARCHAR},
+      <if test="record.clientUuid != null">
+        client_uuid = #{record.clientUuid,jdbcType=VARCHAR},
       </if>
       <if test="record.clientIp != null">
         client_ip = #{record.clientIp,jdbcType=VARCHAR},
@@ -289,6 +308,9 @@
       </if>
       <if test="record.statusCode != null">
         status_code = #{record.statusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.logvalue != null">
         logValue = #{record.logvalue,jdbcType=LONGVARCHAR},
@@ -315,16 +337,18 @@
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update winteree_core_log
-    set id = #{record.id,jdbcType=VARCHAR},
-      date_time = #{record.dateTime,jdbcType=TIMESTAMP},
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
       log_type = #{record.logType,jdbcType=VARCHAR},
       log_sub_type = #{record.logSubType,jdbcType=VARCHAR},
-      tenant_id = #{record.tenantId,jdbcType=VARCHAR},
-      account_id = #{record.accountId,jdbcType=VARCHAR},
-      client_id = #{record.clientId,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      account_uuid = #{record.accountUuid,jdbcType=VARCHAR},
+      client_uuid = #{record.clientUuid,jdbcType=VARCHAR},
       client_ip = #{record.clientIp,jdbcType=VARCHAR},
       request_method = #{record.requestMethod,jdbcType=VARCHAR},
       status_code = #{record.statusCode,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       logValue = #{record.logvalue,jdbcType=LONGVARCHAR},
       request_url = #{record.requestUrl,jdbcType=LONGVARCHAR},
       request_head = #{record.requestHead,jdbcType=LONGVARCHAR},
@@ -337,16 +361,18 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update winteree_core_log
-    set id = #{record.id,jdbcType=VARCHAR},
-      date_time = #{record.dateTime,jdbcType=TIMESTAMP},
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
       log_type = #{record.logType,jdbcType=VARCHAR},
       log_sub_type = #{record.logSubType,jdbcType=VARCHAR},
-      tenant_id = #{record.tenantId,jdbcType=VARCHAR},
-      account_id = #{record.accountId,jdbcType=VARCHAR},
-      client_id = #{record.clientId,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      account_uuid = #{record.accountUuid,jdbcType=VARCHAR},
+      client_uuid = #{record.clientUuid,jdbcType=VARCHAR},
       client_ip = #{record.clientIp,jdbcType=VARCHAR},
       request_method = #{record.requestMethod,jdbcType=VARCHAR},
-      status_code = #{record.statusCode,jdbcType=VARCHAR}
+      status_code = #{record.statusCode,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -354,8 +380,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
     update winteree_core_log
     <set>
-      <if test="dateTime != null">
-        date_time = #{dateTime,jdbcType=TIMESTAMP},
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="logType != null">
         log_type = #{logType,jdbcType=VARCHAR},
@@ -363,14 +392,14 @@
       <if test="logSubType != null">
         log_sub_type = #{logSubType,jdbcType=VARCHAR},
       </if>
-      <if test="tenantId != null">
-        tenant_id = #{tenantId,jdbcType=VARCHAR},
+      <if test="tenantUuid != null">
+        tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
       </if>
-      <if test="accountId != null">
-        account_id = #{accountId,jdbcType=VARCHAR},
+      <if test="accountUuid != null">
+        account_uuid = #{accountUuid,jdbcType=VARCHAR},
       </if>
-      <if test="clientId != null">
-        client_id = #{clientId,jdbcType=VARCHAR},
+      <if test="clientUuid != null">
+        client_uuid = #{clientUuid,jdbcType=VARCHAR},
       </if>
       <if test="clientIp != null">
         client_ip = #{clientIp,jdbcType=VARCHAR},
@@ -380,6 +409,9 @@
       </if>
       <if test="statusCode != null">
         status_code = #{statusCode,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="logvalue != null">
         logValue = #{logvalue,jdbcType=LONGVARCHAR},
@@ -400,38 +432,42 @@
         response_body = #{responseBody,jdbcType=LONGVARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.winteree.uaa.dao.entity.LogDOWithBLOBs">
     update winteree_core_log
-    set date_time = #{dateTime,jdbcType=TIMESTAMP},
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
       log_type = #{logType,jdbcType=VARCHAR},
       log_sub_type = #{logSubType,jdbcType=VARCHAR},
-      tenant_id = #{tenantId,jdbcType=VARCHAR},
-      account_id = #{accountId,jdbcType=VARCHAR},
-      client_id = #{clientId,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      account_uuid = #{accountUuid,jdbcType=VARCHAR},
+      client_uuid = #{clientUuid,jdbcType=VARCHAR},
       client_ip = #{clientIp,jdbcType=VARCHAR},
       request_method = #{requestMethod,jdbcType=VARCHAR},
       status_code = #{statusCode,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
       logValue = #{logvalue,jdbcType=LONGVARCHAR},
       request_url = #{requestUrl,jdbcType=LONGVARCHAR},
       request_head = #{requestHead,jdbcType=LONGVARCHAR},
       request_body = #{requestBody,jdbcType=LONGVARCHAR},
       response_head = #{responseHead,jdbcType=LONGVARCHAR},
       response_body = #{responseBody,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.winteree.uaa.dao.entity.LogDO">
     update winteree_core_log
-    set date_time = #{dateTime,jdbcType=TIMESTAMP},
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
       log_type = #{logType,jdbcType=VARCHAR},
       log_sub_type = #{logSubType,jdbcType=VARCHAR},
-      tenant_id = #{tenantId,jdbcType=VARCHAR},
-      account_id = #{accountId,jdbcType=VARCHAR},
-      client_id = #{clientId,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      account_uuid = #{accountUuid,jdbcType=VARCHAR},
+      client_uuid = #{clientUuid,jdbcType=VARCHAR},
       client_ip = #{clientIp,jdbcType=VARCHAR},
       request_method = #{requestMethod,jdbcType=VARCHAR},
-      status_code = #{statusCode,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+      status_code = #{statusCode,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

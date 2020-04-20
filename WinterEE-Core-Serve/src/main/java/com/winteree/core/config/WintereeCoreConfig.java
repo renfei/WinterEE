@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @ConfigurationProperties(prefix = "winteree.core")
 public class WintereeCoreConfig {
+    private String rootAccount;
     private Boolean enableEmail;
     private Boolean enableSMS;
     private Oauth2 oauth2;

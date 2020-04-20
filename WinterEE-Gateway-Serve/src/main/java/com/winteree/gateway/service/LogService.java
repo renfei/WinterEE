@@ -9,7 +9,6 @@ import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.IpUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -53,11 +52,11 @@ public class LogService {
         }
 
         LogDTO logDTO = Builder.of(LogDTO::new)
-                .with(LogDTO::setId, UUID.randomUUID().toString())
-                .with(LogDTO::setDateTime, new Date())
+                .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                .with(LogDTO::setCreateTime, new Date())
                 .with(LogDTO::setLogType, LogTypeEnum.ACCESS)
-                .with(LogDTO::setAccountId, userAuthentication == null ? null : userAuthentication.getName())
-                .with(LogDTO::setClientId, oAuth2Request == null ? null : oAuth2Request.getClientId())
+                .with(LogDTO::setAccountUuid, userAuthentication == null ? null : userAuthentication.getName())
+                .with(LogDTO::setClientUuid, oAuth2Request == null ? null : oAuth2Request.getClientId())
                 .with(LogDTO::setClientIp, IpUtils.getIpAddress(request))
                 .with(LogDTO::setRequestUrl, reqUri)
                 .with(LogDTO::setRequestMethod, request.getMethod())

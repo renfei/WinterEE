@@ -1,7 +1,6 @@
 package com.winteree.uaa.service;
 
 import com.winteree.uaa.config.AuthorizationServerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.HttpStatus;
@@ -59,7 +58,7 @@ public class AuthTokenAspect {
                             .data(body)
                             .build(), responseEntity.getHeaders(), HttpStatus.OK);
                 }
-            }else {
+            } else {
                 return responseEntity;
             }
         }

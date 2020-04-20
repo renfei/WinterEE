@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @ConfigurationProperties(prefix = "winteree.uaa")
 public class WintereeUaaConfig {
+    private String rootAccountId;
     private Oauth2 oauth2;
     private Integer accessTokenValiditySeconds;
     private Integer refreshTokenValiditySeconds;

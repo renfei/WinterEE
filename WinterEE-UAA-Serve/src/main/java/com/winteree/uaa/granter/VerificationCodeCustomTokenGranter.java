@@ -1,7 +1,6 @@
 package com.winteree.uaa.granter;
 
-import com.winteree.uaa.granter.AbstractCustomTokenGranter;
-import com.winteree.uaa.service.CustomUserDetailsService;
+import com.winteree.uaa.service.impl.CustomUserDetailsServiceImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
@@ -15,9 +14,9 @@ import java.util.Map;
  * @author RenFei
  */
 public class VerificationCodeCustomTokenGranter extends AbstractCustomTokenGranter {
-    private final CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsServiceImpl userDetailsService;
 
-    public VerificationCodeCustomTokenGranter(CustomUserDetailsService userDetailsService, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
+    public VerificationCodeCustomTokenGranter(CustomUserDetailsServiceImpl userDetailsService, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(tokenServices, clientDetailsService, requestFactory, "verification_code");
         this.userDetailsService = userDetailsService;
     }

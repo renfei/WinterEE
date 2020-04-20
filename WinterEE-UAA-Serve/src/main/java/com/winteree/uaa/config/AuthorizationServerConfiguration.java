@@ -3,8 +3,8 @@ package com.winteree.uaa.config;
 import com.winteree.uaa.granter.CustomRefreshTokenGranter;
 import com.winteree.uaa.granter.PasswordCustomTokenGranter;
 import com.winteree.uaa.granter.VerificationCodeCustomTokenGranter;
-import com.winteree.uaa.service.CustomUserDetailsService;
-import com.winteree.uaa.service.WebResponseExceptionTranslatorImpl;
+import com.winteree.uaa.service.impl.CustomUserDetailsServiceImpl;
+import com.winteree.uaa.service.impl.WebResponseExceptionTranslatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,18 +52,18 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     private final WintereeUaaConfig wintereeUaaConfig;
     private final JwtAccessTokenConverter accessTokenConverter;
     private final PasswordEncoder passwordEncoder;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsServiceImpl customUserDetailsServiceImpl;
 
     public AuthorizationServerConfiguration(TokenStore tokenStore,
                                             WintereeUaaConfig wintereeUaaConfig,
                                             JwtAccessTokenConverter accessTokenConverter,
                                             PasswordEncoder passwordEncoder,
-                                            CustomUserDetailsService customUserDetailsService) {
+                                            CustomUserDetailsServiceImpl customUserDetailsServiceImpl) {
         this.tokenStore = tokenStore;
         this.wintereeUaaConfig = wintereeUaaConfig;
         this.accessTokenConverter = accessTokenConverter;
         this.passwordEncoder = passwordEncoder;
-        this.customUserDetailsService = customUserDetailsService;
+        this.customUserDetailsServiceImpl = customUserDetailsServiceImpl;
     }
 
     /**
@@ -112,9 +112,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                 // 刷新Token
                 new CustomRefreshTokenGranter(false, tokenStore, tokenServices, clientDetailsService, requestFactory),
                 // 密码模式（自定义）
-                new PasswordCustomTokenGranter(customUserDetailsService, tokenServices, clientDetailsService, requestFactory),
+                new PasswordCustomTokenGranter(customUserDetailsServiceImpl, tokenServices, clientDetailsService, requestFactory),
                 // 验证码模式（自定义）
-                new VerificationCodeCustomTokenGranter(customUserDetailsService, tokenServices, clientDetailsService, requestFactory)
+                new VerificationCodeCustomTokenGranter(customUserDetailsServiceImpl, tokenServices, clientDetailsService, requestFactory)
         ));
     }
 

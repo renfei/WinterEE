@@ -12,6 +12,7 @@ import com.winteree.api.entity.LogSubTypeEnum;
 import com.winteree.api.entity.LogTypeEnum;
 import com.winteree.api.entity.Sms;
 import com.winteree.core.config.WintereeCoreConfig;
+import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.LogService;
 import com.winteree.core.service.SmsService;
@@ -32,13 +33,15 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class AliyunSmsServiceImpl extends BaseService implements SmsService {
-    private final WintereeCoreConfig wintereeCoreConfig;
     private final LogService logService;
 
-    public AliyunSmsServiceImpl(WintereeCoreConfig wintereeCoreConfig, LogService logService) {
-        this.wintereeCoreConfig = wintereeCoreConfig;
+    protected AliyunSmsServiceImpl(AccountService accountService,
+                                   WintereeCoreConfig wintereeCoreConfig,
+                                   LogService logService) {
+        super(accountService, wintereeCoreConfig);
         this.logService = logService;
     }
+
 
     @Override
     public String sendSms(Sms sms) {
@@ -59,27 +62,25 @@ public class AliyunSmsServiceImpl extends BaseService implements SmsService {
             try {
                 response = client.getCommonResponse(request);
                 LogDTO logDTO = Builder.of(LogDTO::new)
-                        .with(LogDTO::setId, UUID.randomUUID().toString())
-                        .with(LogDTO::setDateTime, new Date())
+                        .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                        .with(LogDTO::setCreateTime, new Date())
                         .with(LogDTO::setLogType, LogTypeEnum.SYSTEM)
                         .with(LogDTO::setLogSubType, LogSubTypeEnum.SMS)
-                        .with(LogDTO::setTenantId, sms.getTenantId())
+                        .with(LogDTO::setTenantUuid, sms.getTenantUuid())
                         .with(LogDTO::setLogValue, String.format("Send SMS ->%s Success, Content:%s",
                                 sms.getPhoneNumbers(), sms.getTemplateParam()))
-                        .with(LogDTO::setId, UUID.randomUUID().toString())
                         .build();
                 logService.log(logDTO);
                 return response.getData();
             } catch (ClientException e) {
                 log.error(e.getMessage());
                 LogDTO logDTO = Builder.of(LogDTO::new)
-                        .with(LogDTO::setId, UUID.randomUUID().toString())
-                        .with(LogDTO::setDateTime, new Date())
+                        .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                        .with(LogDTO::setCreateTime, new Date())
                         .with(LogDTO::setLogType, LogTypeEnum.SYSTEM)
                         .with(LogDTO::setLogSubType, LogSubTypeEnum.ERROR)
-                        .with(LogDTO::setTenantId, sms.getTenantId())
+                        .with(LogDTO::setTenantUuid, sms.getTenantUuid())
                         .with(LogDTO::setLogValue, e.getMessage())
-                        .with(LogDTO::setId, UUID.randomUUID().toString())
                         .build();
                 logService.log(logDTO);
                 return null;
@@ -88,14 +89,13 @@ public class AliyunSmsServiceImpl extends BaseService implements SmsService {
             log.error("Send SMS ->{} Fail, SMS System Not Enable. Content:{}",
                     sms.getPhoneNumbers(), sms.getTemplateParam());
             LogDTO logDTO = Builder.of(LogDTO::new)
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
-                    .with(LogDTO::setDateTime, new Date())
+                    .with(LogDTO::setUuid, UUID.randomUUID().toString())
+                    .with(LogDTO::setCreateTime, new Date())
                     .with(LogDTO::setLogType, LogTypeEnum.SYSTEM)
                     .with(LogDTO::setLogSubType, LogSubTypeEnum.ERROR)
-                    .with(LogDTO::setTenantId, sms.getTenantId())
+                    .with(LogDTO::setTenantUuid, sms.getTenantUuid())
                     .with(LogDTO::setLogValue, String.format("Send SMS ->%s Fail, SMS System Not Enable. Content:%s",
                             sms.getPhoneNumbers(), sms.getTemplateParam()))
-                    .with(LogDTO::setId, UUID.randomUUID().toString())
                     .build();
             logService.log(logDTO);
             return null;

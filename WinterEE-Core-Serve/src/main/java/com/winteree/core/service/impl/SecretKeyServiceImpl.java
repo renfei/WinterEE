@@ -1,9 +1,11 @@
 package com.winteree.core.service.impl;
 
 import com.winteree.api.entity.ReportPublicKeyVO;
+import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.SecretKeyDOMapper;
-import com.winteree.core.dao.entity.SecretKeyDO;
 import com.winteree.core.dao.entity.SecretKeyDOExample;
+import com.winteree.core.dao.entity.SecretKeyDOWithBLOBs;
+import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.SecretKeyService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,7 +29,10 @@ import java.util.UUID;
 public class SecretKeyServiceImpl extends BaseService implements SecretKeyService {
     private final SecretKeyDOMapper secretKeyDOMapper;
 
-    public SecretKeyServiceImpl(SecretKeyDOMapper secretKeyDOMapper) {
+    protected SecretKeyServiceImpl(WintereeCoreConfig wintereeCoreConfig,
+                                   AccountService accountService,
+                                   SecretKeyDOMapper secretKeyDOMapper) {
+        super(accountService, wintereeCoreConfig);
         this.secretKeyDOMapper = secretKeyDOMapper;
     }
 
@@ -38,10 +44,11 @@ public class SecretKeyServiceImpl extends BaseService implements SecretKeyServic
         }
         //保存
         String uuid = UUID.randomUUID().toString();
-        SecretKeyDO secretKeyDO = Builder.of(SecretKeyDO::new)
-                .with(SecretKeyDO::setId, uuid)
-                .with(SecretKeyDO::setPrivateKey, map.get(1))
-                .with(SecretKeyDO::setPublicKey, map.get(0))
+        SecretKeyDOWithBLOBs secretKeyDO = Builder.of(SecretKeyDOWithBLOBs::new)
+                .with(SecretKeyDOWithBLOBs::setUuid, uuid)
+                .with(SecretKeyDOWithBLOBs::setCreateTime, new Date())
+                .with(SecretKeyDOWithBLOBs::setPrivateKey, map.get(1))
+                .with(SecretKeyDOWithBLOBs::setPublicKey, map.get(0))
                 .build();
         secretKeyDOMapper.insertSelective(secretKeyDO);
         map.put(1, uuid);
@@ -52,8 +59,8 @@ public class SecretKeyServiceImpl extends BaseService implements SecretKeyServic
     public APIResult setSecretKey(ReportPublicKeyVO reportPublicKeyVO) {
         SecretKeyDOExample secretKeyDOExample = new SecretKeyDOExample();
         secretKeyDOExample.createCriteria()
-                .andIdEqualTo(reportPublicKeyVO.getSecretKeyId());
-        SecretKeyDO secretKeyDO = ListUtils.getOne(secretKeyDOMapper.selectByExample(secretKeyDOExample));
+                .andUuidEqualTo(reportPublicKeyVO.getSecretKeyId());
+        SecretKeyDOWithBLOBs secretKeyDO = ListUtils.getOne(secretKeyDOMapper.selectByExampleWithBLOBs(secretKeyDOExample));
         if (BeanUtils.isEmpty(secretKeyDO)) {
             return APIResult.builder()
                     .code(StateCode.BadRequest)
@@ -83,9 +90,10 @@ public class SecretKeyServiceImpl extends BaseService implements SecretKeyServic
         }
         //保存AES
         String uuid = UUID.randomUUID().toString();
-        SecretKeyDO secretKeyDTO = Builder.of(SecretKeyDO::new)
-                .with(SecretKeyDO::setId, uuid)
-                .with(SecretKeyDO::setPrivateKey, aes)
+        SecretKeyDOWithBLOBs secretKeyDTO = Builder.of(SecretKeyDOWithBLOBs::new)
+                .with(SecretKeyDOWithBLOBs::setUuid, uuid)
+                .with(SecretKeyDOWithBLOBs::setCreateTime, new Date())
+                .with(SecretKeyDOWithBLOBs::setPrivateKey, aes)
                 .build();
         secretKeyDOMapper.insertSelective(secretKeyDTO);
         Map<String, String> map = new HashMap<>();

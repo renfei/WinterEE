@@ -2,9 +2,12 @@ package com.winteree.api.service;
 
 import com.winteree.api.entity.AccountDTO;
 import com.winteree.api.entity.LogDTO;
+import com.winteree.api.entity.MenuVO;
 import com.winteree.api.entity.ReportPublicKeyVO;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * WinterEE-Core-Serve提供的服务接口
@@ -81,7 +84,7 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/account/totp")
-    APIResult createTotp(String username);
+    APIResult<String> createTotp(String username);
 
     /**
      * 检查一个用户名是否存在以及类型
@@ -91,6 +94,14 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/account/check")
-    APIResult checkAccount(@RequestParam("account") String account, @RequestParam("language") String language);
+    APIResult<String> checkAccount(@RequestParam("account") String account, @RequestParam("language") String language);
     //</editor-fold>
+
+    /**
+     * 获取菜单列表，注意不是菜单管理中的查询菜单列表
+     *
+     * @return
+     */
+    @GetMapping("/menu/tree")
+    APIResult<List<MenuVO>> getMenuTree(@RequestParam(name = "language", required = false) String language);
 }

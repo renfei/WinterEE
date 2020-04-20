@@ -1,33 +1,45 @@
 package com.winteree.uaa.dao.entity;
 
+import java.util.Date;
+
 public class SecretKeyDO {
-    private String id;
+    private Long id;
 
-    private String publicKey;
+    private Date createTime;
 
-    private String privateKey;
+    private Date updateTime;
 
-    public String getId() {
+    private String uuid;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getPublicKey() {
-        return publicKey;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey == null ? null : publicKey.trim();
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public String getPrivateKey() {
-        return privateKey;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey == null ? null : privateKey.trim();
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid == null ? null : uuid.trim();
     }
 }

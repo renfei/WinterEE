@@ -3,9 +3,11 @@ package com.winteree.uaa.dao.entity;
 import java.util.Date;
 
 public class VerificationCodeDO {
-    private String id;
+    private Long id;
 
-    private String accountId;
+    private String uuid;
+
+    private String accountUuid;
 
     private String phone;
 
@@ -23,22 +25,32 @@ public class VerificationCodeDO {
 
     private String validationType;
 
-    private Date creatTime;
+    private Date createTime;
 
-    public String getId() {
+    private Date updateTime;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getAccountId() {
-        return accountId;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId == null ? null : accountId.trim();
+    public void setUuid(String uuid) {
+        this.uuid = uuid == null ? null : uuid.trim();
+    }
+
+    public String getAccountUuid() {
+        return accountUuid;
+    }
+
+    public void setAccountUuid(String accountUuid) {
+        this.accountUuid = accountUuid == null ? null : accountUuid.trim();
     }
 
     public String getPhone() {
@@ -105,11 +117,19 @@ public class VerificationCodeDO {
         this.validationType = validationType == null ? null : validationType.trim();
     }
 
-    public Date getCreatTime() {
-        return creatTime;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreatTime(Date creatTime) {
-        this.creatTime = creatTime;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

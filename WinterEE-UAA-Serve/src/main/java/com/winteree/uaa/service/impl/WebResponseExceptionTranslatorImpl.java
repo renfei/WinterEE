@@ -1,4 +1,4 @@
-package com.winteree.uaa.service;
+package com.winteree.uaa.service.impl;
 
 import com.winteree.api.exception.*;
 import lombok.SneakyThrows;
