@@ -2,13 +2,10 @@ package com.winteree.core.config;
 
 import feign.RequestInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.security.oauth2.client.feign.OAuth2FeignRequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +16,6 @@ import org.springframework.security.oauth2.client.token.grant.client.ClientCrede
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
@@ -66,18 +62,28 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         return new OAuth2RestTemplate(clientCredentialsResourceDetails(), oauth2ClientContext);
     }
 
+    @Bean
+    public CustomAccessDeniedHandlerImpl customAccessDeniedHandler() {
+        return new CustomAccessDeniedHandlerImpl();
+    }
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/v2/api-docs/**").permitAll()
                 .antMatchers("/system/i18n/**").permitAll()
                 .antMatchers("/secretkey/**").permitAll()
                 .antMatchers("/account/check/**").permitAll()
                 .and()
                 .authorizeRequests()
+                // 内部服务只能通过 client_id / client_secret 访问
+                .antMatchers("/inside/**").access("#oauth2.isClient()")
                 .antMatchers("/**").access("#oauth2.hasScope('WinterEE-Core-Serve')")
                 .and()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
     }
 }

@@ -26,7 +26,7 @@ public interface WintereeCoreService {
     @GetMapping("/i18n/{language}/{message}/{defaultMessage}")
     String getMessage(@PathVariable("language") String language, @PathVariable("message") String message, @PathVariable("defaultMessage") String defaultMessage);
 
-    @PostMapping("/core/log")
+    @PostMapping("/inside/log")
     APIResult log(@RequestBody LogDTO logDTO);
 
     //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
@@ -37,7 +37,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/secretkey")
-    APIResult secretKey();
+    APIResult<String> secretKey();
 
     /**
      * 上报一个非对称秘钥公钥
@@ -56,7 +56,7 @@ public interface WintereeCoreService {
      * @param username 用户名
      * @return AccountDTO
      */
-    @GetMapping("/account/username")
+    @GetMapping("/inside/account/username")
     AccountDTO findAccountByUsername(String username);
 
     /**
@@ -65,7 +65,7 @@ public interface WintereeCoreService {
      * @param email 电子邮件
      * @return AccountDTO
      */
-    @GetMapping("/account/email")
+    @GetMapping("/inside/account/email")
     AccountDTO findAccountByEmail(String email);
 
     /**
@@ -74,7 +74,7 @@ public interface WintereeCoreService {
      * @param phone 手机号
      * @return AccountDTO
      */
-    @GetMapping("/account/phone")
+    @GetMapping("/inside/account/phone")
     AccountDTO findAccountByPhoneNumber(String phone);
 
     /**
@@ -104,4 +104,12 @@ public interface WintereeCoreService {
      */
     @GetMapping("/menu/tree")
     APIResult<List<MenuVO>> getMenuTree(@RequestParam(name = "language", required = false) String language);
+
+    /**
+     * 后台菜单管理中的查询菜单列表，注意这个不是登陆以后获取菜单列表
+     *
+     * @return
+     */
+    @GetMapping("/setting/menu/tree")
+    APIResult<List<MenuVO>> getSettingMenuTree();
 }

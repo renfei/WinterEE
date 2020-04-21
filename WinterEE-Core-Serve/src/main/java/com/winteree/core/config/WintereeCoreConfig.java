@@ -16,6 +16,7 @@ public class WintereeCoreConfig {
     private String rootAccount;
     private Boolean enableEmail;
     private Boolean enableSMS;
+    private Boolean enableSwagger;
     private Oauth2 oauth2;
     private Aliyun aliyun;
     private String systemname;

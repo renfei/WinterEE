@@ -78,6 +78,20 @@ public class MenuServiceImpl extends BaseService implements MenuService {
         }
     }
 
+    /**
+     * 获取所有菜单
+     *
+     * @return
+     */
+    @Override
+    public APIResult<List<MenuVO>> getAllMenuList() {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("")
+                .data(generateAllMenuTree())
+                .build();
+    }
+
     @Override
     public List<String> getMenuUuidByRoleUuid(List<String> roleUuid) {
         if (BeanUtils.isEmpty(roleUuid)) {
@@ -137,6 +151,20 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     }
 
     /**
+     * 获取菜单树
+     *
+     * @return 菜单树
+     */
+    private List<MenuVO> generateAllMenuTree() {
+        MenuDOExample menuDOExample = new MenuDOExample();
+        menuDOExample.setOrderByClause("sort DESC");
+        menuDOExample.createCriteria()
+                .andParentUuidEqualTo("root");
+        List<MenuDO> menuDOS = menuDOMapper.selectByExample(menuDOExample);
+        return getAllMenuVOS(menuDOS);
+    }
+
+    /**
      * 递归获取子菜单
      *
      * @param parent  父级ID
@@ -160,13 +188,44 @@ public class MenuServiceImpl extends BaseService implements MenuService {
         }
     }
 
+    /**
+     * 递归获取子菜单
+     *
+     * @param parent  父级ID
+     * @return 子级菜单
+     */
+    private List<MenuVO> generateAllMenuChildrenTree(String parent) {
+        MenuDOExample menuDOExample = new MenuDOExample();
+        menuDOExample.setOrderByClause("sort DESC");
+        menuDOExample.createCriteria()
+                .andParentUuidEqualTo(parent);
+        List<MenuDO> menuDOS = menuDOMapper.selectByExample(menuDOExample);
+        if (BeanUtils.isEmpty(menuDOS)) {
+            return null;
+        } else {
+            return getAllMenuVOS(menuDOS);
+        }
+    }
+
+    private List<MenuVO> getAllMenuVOS(List<MenuDO> menuDOS) {
+        List<MenuVO> menuVOS = new ArrayList<>();
+        for (MenuDO menuDO : menuDOS
+        ) {
+            MenuVO menuVO = convert(menuDO);
+            List<MenuVO> menuVOSChildren = generateAllMenuChildrenTree(menuDO.getUuid());
+            menuVO.setChildren(menuVOSChildren);
+            menuVOS.add(menuVO);
+        }
+        return menuVOS;
+    }
+
     private List<MenuVO> getMenuVOS(String language, List<String> menuIds, List<MenuDO> menuDOS) {
         List<MenuVO> menuVOS = new ArrayList<>();
         for (MenuDO menuDO : menuDOS
         ) {
             MenuVO menuVO = convert(language, menuDO);
             List<MenuVO> menuVOSChildren = generateMenuChildrenTree(language, menuDO.getUuid(), menuIds);
-            if(!BeanUtils.isEmpty(menuVOSChildren)){
+            if (!BeanUtils.isEmpty(menuVOSChildren)) {
                 menuVO.setIcon("mdi-chevron-up");
                 menuVO.setIcondown("mdi-chevron-down");
             }
@@ -181,6 +240,16 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                 .with(MenuVO::setIcon, menuDO.getIcon())
                 .with(MenuVO::setHref, menuDO.getHref())
                 .with(MenuVO::setText, getText(language, menuDO))
+                .build();
+    }
+
+    private MenuVO convert(MenuDO menuDO) {
+        return Builder.of(MenuVO::new)
+                .with(MenuVO::setId, menuDO.getId())
+                .with(MenuVO::setUuid, menuDO.getUuid())
+                .with(MenuVO::setIcon, menuDO.getIcon())
+                .with(MenuVO::setHref, menuDO.getHref())
+                .with(MenuVO::setText, menuDO.getName())
                 .build();
     }
 

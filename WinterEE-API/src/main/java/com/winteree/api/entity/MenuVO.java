@@ -13,6 +13,8 @@ import java.util.List;
  */
 @Data
 public class MenuVO {
+    private Long id;
+    private String uuid;
     private String icon;
     private String icondown;
     private String text;
