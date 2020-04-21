@@ -97,6 +97,7 @@ public interface WintereeCoreService {
     APIResult<String> checkAccount(@RequestParam("account") String account, @RequestParam("language") String language);
     //</editor-fold>
 
+    //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
     /**
      * 获取菜单列表，注意不是菜单管理中的查询菜单列表
      *
@@ -112,4 +113,29 @@ public interface WintereeCoreService {
      */
     @GetMapping("/setting/menu/tree")
     APIResult<List<MenuVO>> getSettingMenuTree();
+
+    /**
+     *
+     * @param uuid
+     * @return
+     */
+    @DeleteMapping("/setting/menu")
+    APIResult deleteSettingMenuByUuid(String uuid);
+
+    /**
+     *
+     * @param menuVO
+     * @return
+     */
+    @PutMapping("/setting/menu")
+    APIResult updateSettingMenu(MenuVO menuVO);
+
+    /**
+     *
+     * @param menuVO
+     * @return
+     */
+    @PostMapping("/setting/menu")
+    APIResult addSettingMenu(MenuVO menuVO);
+    //</editor-fold>
 }

@@ -1,10 +1,8 @@
 package com.winteree.core.controller;
 
-import com.winteree.api.entity.AccountDTO;
-import com.winteree.api.entity.LogDTO;
-import com.winteree.api.entity.MenuVO;
-import com.winteree.api.entity.ReportPublicKeyVO;
+import com.winteree.api.entity.*;
 import com.winteree.api.service.WintereeCoreService;
+import com.winteree.core.aop.OperationLog;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.service.*;
 import io.swagger.annotations.ApiImplicitParam;
@@ -184,8 +182,33 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:menu:view')")
+    @OperationLog(description = "获取系统菜单列表", type = LogSubTypeEnum.SELECT)
     @ApiOperation(value = "获取后台设置菜单接口", notes = "获取后台设置菜单接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
     public APIResult<List<MenuVO>> getSettingMenuTree() {
         return menuService.getAllMenuList();
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:menu:delete')")
+    @OperationLog(description = "删除系统菜单", type = LogSubTypeEnum.DELETE)
+    @ApiOperation(value = "删除系统菜单", notes = "物理删除系统菜单，不可恢复！！", tags = "菜单接口", response = APIResult.class)
+    public APIResult deleteSettingMenuByUuid(String uuid) {
+        return menuService.deleteMenuByUuid(uuid);
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:menu:update')")
+    @OperationLog(description = "修改系统菜单", type = LogSubTypeEnum.UPDATE)
+    @ApiOperation(value = "修改系统菜单", notes = "修改更新系统菜单", tags = "菜单接口", response = APIResult.class)
+    public APIResult updateSettingMenu(MenuVO menuVO) {
+        return menuService.updateMenu(menuVO);
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:menu:add')")
+    @OperationLog(description = "添加系统菜单", type = LogSubTypeEnum.INSERT)
+    @ApiOperation(value = "添加系统菜单", notes = "添加系统菜单", tags = "菜单接口", response = APIResult.class)
+    public APIResult addSettingMenu(MenuVO menuVO) {
+        return menuService.addMenu(menuVO);
     }
 }

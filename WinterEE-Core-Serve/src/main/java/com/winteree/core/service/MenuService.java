@@ -15,6 +15,9 @@ import java.util.List;
 public interface MenuService {
     APIResult<List<MenuVO>> getMenuListBySignedUser(String language);
     APIResult<List<MenuVO>> getAllMenuList();
+    APIResult deleteMenuByUuid(String uuid);
+    APIResult updateMenu(MenuVO menuVO);
+    APIResult addMenu(MenuVO menuVO);
     /**
      * 根据角色ID列表获取菜单UUID列表
      *

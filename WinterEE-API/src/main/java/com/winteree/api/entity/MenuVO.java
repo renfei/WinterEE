@@ -15,10 +15,19 @@ import java.util.List;
 public class MenuVO {
     private Long id;
     private String uuid;
+    private String parentUuid;
     private String icon;
     private String icondown;
     private String text;
+    private Long sort;
     private String href;
+    private String target;
+    private Boolean isShow;
+    private Boolean isMenu;
+    private String permission;
+    private String remarks;
+    private Boolean isDelete;
+    private String i18n;
     private Boolean model = false;
     private List<MenuVO> children;
 }
