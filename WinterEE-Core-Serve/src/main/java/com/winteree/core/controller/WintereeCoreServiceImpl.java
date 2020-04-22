@@ -189,6 +189,14 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('platf:menu:view')")
+    @OperationLog(description = "获取系统菜单详情", type = LogSubTypeEnum.SELECT)
+    @ApiOperation(value = "获取后台设置菜单详情接口", notes = "获取后台设置菜单详情接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
+    public APIResult<MenuVO> getSettingMenu(String uuid) {
+        return null;
+    }
+
+    @Override
     @PreAuthorize("hasAnyAuthority('platf:menu:delete')")
     @OperationLog(description = "删除系统菜单", type = LogSubTypeEnum.DELETE)
     @ApiOperation(value = "删除系统菜单", notes = "物理删除系统菜单，不可恢复！！", tags = "菜单接口", response = APIResult.class)

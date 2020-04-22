@@ -101,6 +101,7 @@ public class AccountServiceImpl implements AccountService {
             for (String permission : menuService.getAllMenuPermission()
             ) {
                 stringBuilder.append(permission);
+                stringBuilder.append(AUTHORITY_DELIMITERS);
             }
         } else {
             // 根据用户获得角色列表
@@ -110,6 +111,7 @@ public class AccountServiceImpl implements AccountService {
             for (String permission : menuService.getMenuPermissionByMenuUuid(menuIds)
             ) {
                 stringBuilder.append(permission);
+                stringBuilder.append(AUTHORITY_DELIMITERS);
             }
         }
         String authority = stringBuilder.toString();

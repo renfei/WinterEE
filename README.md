@@ -7,7 +7,8 @@
 WinterEE是基于SpringCloud的开发脚手架，它名字的由来就要先了解Spring名字的由来，Spring的名字是代表了传统J2EE的“冬天”之后新的开始成为春天；WinterEE只是一个半成品，还需要开发者去进一步二次开发，所以我们希望把冬天留给WinterEE来完成，所以取冬天“Winter”，同时使用四季的名称是对Spring的致敬；而 EE 是指“Enterprise Edition”，为企业环境开发，同时也是是对 J2EE 的致敬。
 
 ### 项目简介
-WinterEE是基于SpringCloud的开发脚手架
+WinterEE是基于SpringCloud的开发脚手架，我的习惯是每年折腾一个事，之前每年大更新我的个人网站，随着学习的深入和理解，开始尝试使用微服务架构，从而
+诞生了这个项目，这个项目也代表了我目前2020年的最高技术水平，目前我知道的，我能用的最先进的技术都使用到了。
 ##### 技术关键词
 Spring Cloud / Spring Boot / Spring Security / OAuth2 / JwtToken / Feign / Spring Cloud Config / Spring Cloud Eureka / 
 Spring Cloud Zuul / Zipkin / Redis / RabbitMQ / Spring Cloud Bus / ribbon / hystrix
@@ -126,6 +127,10 @@ WinterEE
 * feature/: 功能分支，新增的功能开发在这个分支下开发，完成后合并到 develop 分支
 * release: 发布分支，新版本在这个分支进行发布
 * hotfix: 补丁分支，重大漏洞快速修复将在这个分支上进行修复
+
+### 启动项目
+由于项目有依赖关系，启动的时候有顺序要求，否则会报错，我建议的顺序是：基础运行环境->WinterEE-Config-Serve->WinterEE-Eureka-Serve
+->WinterEE-Core-Serve->WinterEE-UAA-Serve->你自己建立的模块->WinterEE-Gateway-Serve，这样的顺序启动。
 
 ### 代码结构约定
 ##### Controller
