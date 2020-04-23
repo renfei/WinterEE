@@ -14,6 +14,7 @@ import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.GoogleAuthenticator;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -185,6 +186,11 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     @OperationLog(description = "获取系统菜单列表", type = LogSubTypeEnum.SELECT)
     @ApiOperation(value = "获取后台设置菜单接口", notes = "获取后台设置菜单接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
     public APIResult<List<MenuVO>> getSettingMenuTree() {
+        return menuService.getAllMenuTree();
+    }
+
+    @Override
+    public APIResult<List<MenuVO>> getSettingMenuList() {
         return menuService.getAllMenuList();
     }
 
@@ -193,7 +199,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     @OperationLog(description = "获取系统菜单详情", type = LogSubTypeEnum.SELECT)
     @ApiOperation(value = "获取后台设置菜单详情接口", notes = "获取后台设置菜单详情接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
     public APIResult<MenuVO> getSettingMenu(String uuid) {
-        return null;
+        return menuService.getMenuByUuid(uuid);
     }
 
     @Override
@@ -208,7 +214,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     @PreAuthorize("hasAnyAuthority('platf:menu:update')")
     @OperationLog(description = "修改系统菜单", type = LogSubTypeEnum.UPDATE)
     @ApiOperation(value = "修改系统菜单", notes = "修改更新系统菜单", tags = "菜单接口", response = APIResult.class)
-    public APIResult updateSettingMenu(MenuVO menuVO) {
+    public APIResult updateSettingMenu(@RequestBody MenuVO menuVO) {
         return menuService.updateMenu(menuVO);
     }
 
@@ -216,7 +222,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     @PreAuthorize("hasAnyAuthority('platf:menu:add')")
     @OperationLog(description = "添加系统菜单", type = LogSubTypeEnum.INSERT)
     @ApiOperation(value = "添加系统菜单", notes = "添加系统菜单", tags = "菜单接口", response = APIResult.class)
-    public APIResult addSettingMenu(MenuVO menuVO) {
+    public APIResult addSettingMenu(@RequestBody MenuVO menuVO) {
         return menuService.addMenu(menuVO);
     }
 }

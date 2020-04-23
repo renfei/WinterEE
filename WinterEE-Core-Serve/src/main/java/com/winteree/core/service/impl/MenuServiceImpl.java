@@ -15,11 +15,13 @@ import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.Builder;
+import net.renfei.sdk.utils.ListUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * <p>Title: MenuServiceImpl</p>
@@ -87,11 +89,35 @@ public class MenuServiceImpl extends BaseService implements MenuService {
      * @return
      */
     @Override
-    public APIResult<List<MenuVO>> getAllMenuList() {
+    public APIResult<List<MenuVO>> getAllMenuTree() {
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message("")
                 .data(generateAllMenuTree())
+                .build();
+    }
+
+    @Override
+    public APIResult<List<MenuVO>> getAllMenuList() {
+        MenuDOExample menuDOExample = new MenuDOExample();
+        menuDOExample.createCriteria()
+        .andIsMenuEqualTo(true);
+        List<MenuDO> menuDOS = menuDOMapper.selectByExample(menuDOExample);
+        List<MenuVO> menuVOS = new ArrayList<>();
+        menuVOS.add(Builder.of(MenuVO::new)
+                .with(MenuVO::setUuid,"root")
+                .with(MenuVO::setText,"System Root")
+                .build());
+        if (menuDOS != null) {
+            for (MenuDO menuDO : menuDOS
+            ) {
+                menuVOS.add(convert(menuDO));
+            }
+        }
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("")
+                .data(menuVOS)
                 .build();
     }
 
@@ -113,6 +139,33 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                 .code(StateCode.OK)
                 .message("OK")
                 .build();
+    }
+
+    @Override
+    public APIResult<MenuVO> getMenuByUuid(String uuid) {
+        try {
+            MenuDOExample menuDOExample = new MenuDOExample();
+            menuDOExample.createCriteria()
+                    .andUuidEqualTo(uuid);
+            MenuDO menuDO = ListUtils.getOne(menuDOMapper.selectByExample(menuDOExample));
+            if (menuDO == null) {
+                return APIResult.builder()
+                        .code(StateCode.Failure)
+                        .message("No Data")
+                        .build();
+            }
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(convert(menuDO))
+                    .build();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message("Failure")
+                    .build();
+        }
     }
 
     @Override
@@ -140,8 +193,15 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     public APIResult addMenu(MenuVO menuVO) {
         MenuDO menuDO = convert(menuVO);
         try {
+            menuDO.setUuid(UUID.randomUUID().toString());
+            menuDO.setCreateTime(new Date());
+            menuDO.setCreateBy(getSignedUser().getUuid());
+            if(menuDO.getSort()==null){
+                menuDO.setSort(0L);
+            }
             menuDOMapper.insertSelective(menuDO);
         } catch (Exception ex) {
+            log.error(ex.getMessage());
             return APIResult.builder()
                     .code(StateCode.Failure)
                     .message("Failure")
@@ -311,6 +371,15 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                 .with(MenuVO::setIcon, menuDO.getIcon())
                 .with(MenuVO::setHref, menuDO.getHref())
                 .with(MenuVO::setText, menuDO.getName())
+                .with(MenuVO::setI18n, menuDO.getI18n())
+                .with(MenuVO::setIsDelete, menuDO.getIsDelete())
+                .with(MenuVO::setIsMenu, menuDO.getIsMenu())
+                .with(MenuVO::setIsShow, menuDO.getIsShow())
+                .with(MenuVO::setParentUuid, menuDO.getParentUuid())
+                .with(MenuVO::setPermission, menuDO.getPermission())
+                .with(MenuVO::setRemarks, menuDO.getRemarks())
+                .with(MenuVO::setSort, menuDO.getSort())
+                .with(MenuVO::setTarget, menuDO.getTarget())
                 .build();
     }
 

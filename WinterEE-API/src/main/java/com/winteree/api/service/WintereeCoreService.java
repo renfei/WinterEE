@@ -114,6 +114,9 @@ public interface WintereeCoreService {
     @GetMapping("/setting/menu/tree")
     APIResult<List<MenuVO>> getSettingMenuTree();
 
+    @GetMapping("/setting/menu/list")
+    APIResult<List<MenuVO>> getSettingMenuList();
+
     @GetMapping("/setting/menu")
     APIResult<MenuVO> getSettingMenu(String uuid);
 
