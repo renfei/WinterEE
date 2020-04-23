@@ -38,6 +38,19 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
+security:
+  oauth2:
+    client:
+      clientId: WinterEE-Core-Serve
+      clientSecret: w4nHQGH8oBsj4HMrgcYVyZRFPFbMUuLK
+      accessTokenUri: http://localhost:8114/oauth/token
+      scope: WinterEE-Core-Serve
+    resource:
+      user-info-uri: http://localhost:8114/oauth2/userinfo
+      token-info-uri: http://localhost:8114/oauth/check_token
+feign:
+  hystrix:
+    enabled: true
 winteree:
   core:
     rootAccount: 9369919A-F95E-44CF-AB0A-6BCD1D933403
