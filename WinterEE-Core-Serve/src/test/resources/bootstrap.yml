@@ -43,6 +43,7 @@ winteree:
     rootAccount: 9369919A-F95E-44CF-AB0A-6BCD1D933403
     enableEmail: true
     enableSMS: true
+    enableSwagger: true
     systemname: WinterEE
     totpseed: FycVPCjKmVLfMup4aV8Q7VHgsmkxLaTt
     aliyun:
