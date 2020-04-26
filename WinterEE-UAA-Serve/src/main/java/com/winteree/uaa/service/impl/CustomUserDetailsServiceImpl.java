@@ -1,6 +1,8 @@
 package com.winteree.uaa.service.impl;
 
 import com.winteree.api.entity.LogSubTypeEnum;
+import com.winteree.api.entity.RunModeEnum;
+import com.winteree.uaa.config.WintereeUaaConfig;
 import com.winteree.uaa.dao.entity.AccountDO;
 import com.winteree.uaa.service.AccountService;
 import com.winteree.uaa.service.I18nService;
@@ -29,6 +31,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
     private final I18nService i18NService;
     private final SecretKeyService secretKeyService;
     private final LogService logService;
+    private final WintereeUaaConfig wintereeUaaConfig;
     /**
      * 密码错误次数锁定
      */
@@ -37,11 +40,13 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
     public CustomUserDetailsServiceImpl(AccountService accountService,
                                         I18nService i18NService,
                                         SecretKeyService secretKeyService,
-                                        LogService logService) {
+                                        LogService logService,
+                                        WintereeUaaConfig wintereeUaaConfig) {
         this.accountService = accountService;
         this.i18NService = i18NService;
         this.secretKeyService = secretKeyService;
         this.logService = logService;
+        this.wintereeUaaConfig = wintereeUaaConfig;
     }
 
     /**
@@ -108,18 +113,22 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
      * @param accountDO 账户对象
      */
     private void accountPasswordErrorCont(AccountDO accountDO) {
-        if (accountDO != null) {
-            if (accountDO.getErrorCount() == null) {
-                accountDO.setErrorCount(1);
-            } else {
-                accountDO.setErrorCount(accountDO.getErrorCount() + 1);
-                if (accountDO.getErrorCount() > PASSWORD_ERROR_TIMES_LOCKED) {
-                    // 锁定时间，每错误一次增加10秒锁定时间
-                    int lockMin = (accountDO.getErrorCount() - 1) * 10;
-                    accountDO.setLockTime(new Date(System.currentTimeMillis() + lockMin * 1000));
+        if (RunModeEnum.DEMO.getMode().equals(wintereeUaaConfig.getRunMode())) {
+            // 演示模式不记录错误数
+        } else {
+            if (accountDO != null) {
+                if (accountDO.getErrorCount() == null) {
+                    accountDO.setErrorCount(1);
+                } else {
+                    accountDO.setErrorCount(accountDO.getErrorCount() + 1);
+                    if (accountDO.getErrorCount() > PASSWORD_ERROR_TIMES_LOCKED) {
+                        // 锁定时间，每错误一次增加10秒锁定时间
+                        int lockMin = (accountDO.getErrorCount() - 1) * 10;
+                        accountDO.setLockTime(new Date(System.currentTimeMillis() + lockMin * 1000));
+                    }
                 }
+                accountService.updateByPrimaryKeySelective(accountDO);
             }
-            accountService.updateByPrimaryKeySelective(accountDO);
         }
     }
 

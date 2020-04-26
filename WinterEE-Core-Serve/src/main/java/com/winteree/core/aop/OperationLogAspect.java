@@ -11,8 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.IpUtils;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -22,7 +24,9 @@ import java.util.Date;
 import java.util.UUID;
 
 @Slf4j
-public abstract aspect OperationLogAspect extends BaseService {
+@Aspect
+@Component
+public class OperationLogAspect extends BaseService {
     private final LogService logService;
 
     protected OperationLogAspect(AccountService accountService,
@@ -33,14 +37,14 @@ public abstract aspect OperationLogAspect extends BaseService {
     }
 
     @Pointcut("@annotation(com.winteree.core.aop.OperationLog)")
-    public void operationLogAspect() {
+    public void operationLog() {
     }
 
     /**
      * 前置通知  用于拦截Controller层记录用户的操作
      * @param joinPoint
      */
-    @Before("operationLogAspect()")
+    @Before("operationLog()")
     public void doBefore(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         AccountDTO accountDTO = getSignedUser();

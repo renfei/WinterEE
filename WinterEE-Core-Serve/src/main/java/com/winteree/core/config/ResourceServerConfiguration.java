@@ -7,7 +7,6 @@ import org.springframework.cloud.security.oauth2.client.feign.OAuth2FeignRequest
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestOperations;
@@ -75,6 +74,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/system/i18n/**").permitAll()
                 .antMatchers("/secretkey/**").permitAll()
                 .antMatchers("/account/check/**").permitAll()
+                .antMatchers("/setting/logs/type").permitAll()
+                .antMatchers("/setting/logs/subtype").permitAll()
                 .and()
                 .authorizeRequests()
                 // 内部服务只能通过 client_id / client_secret 访问
@@ -82,8 +83,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/**").access("#oauth2.hasScope('WinterEE-Core-Serve')")
                 .and()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .sessionManagement().disable()
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());
     }
 }

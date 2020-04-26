@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @RefreshScope
 @ConfigurationProperties(prefix = "winteree.core")
 public class WintereeCoreConfig {
+    private String runMode;
     private String rootAccount;
     private Boolean enableEmail;
     private Boolean enableSMS;
@@ -23,13 +24,13 @@ public class WintereeCoreConfig {
     private String totpseed;
 
     @Data
-    public static class Oauth2{
+    public static class Oauth2 {
         private String privateKey;
         private String publicKey;
     }
 
     @Data
-    public static class Aliyun{
+    public static class Aliyun {
         private String regionId;
         private String accessKeyId;
         private String secret;

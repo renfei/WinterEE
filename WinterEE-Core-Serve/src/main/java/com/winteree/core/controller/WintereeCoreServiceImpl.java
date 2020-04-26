@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * WinterEE-Core-Serve 提供的服务实现
@@ -27,14 +26,15 @@ import java.util.Map;
  * @author RenFei
  */
 @RestController
-public class WintereeCoreServiceImpl implements WintereeCoreService {
-
+public class WintereeCoreServiceImpl extends BaseController implements WintereeCoreService {
+    //<editor-fold desc="依赖服务" defaultstate="collapsed">
     private final I18nMessageService i18nMessageService;
     private final WintereeCoreConfig wintereeCoreConfig;
     private final AccountService accountService;
     private final SecretKeyService secretKeyService;
     private final LogService logService;
     private final MenuService menuService;
+    //</editor-fold>
 
     public WintereeCoreServiceImpl(I18nMessageService i18nMessageService,
                                    WintereeCoreConfig wintereeCoreConfig,
@@ -61,6 +61,7 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
         return i18nMessageService.getMessage(language, message, defaultMessage);
     }
 
+    //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
     @Override
     @ApiIgnore
     public APIResult log(LogDTO logDTO) {
@@ -92,7 +93,9 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     public APIResult setSecretKey(ReportPublicKeyVO reportPublicKeyVO) {
         return secretKeyService.setSecretKey(reportPublicKeyVO);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="账户类的接口" defaultstate="collapsed">
     @Override
     @ApiIgnore
     public AccountDTO findAccountByUsername(String username) {
@@ -165,6 +168,9 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
                 .data(type)
                 .build();
     }
+    //</editor-fold>
+
+    //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
 
     /**
      * 获取菜单列表，注意不是菜单管理中的查询菜单列表
@@ -225,4 +231,66 @@ public class WintereeCoreServiceImpl implements WintereeCoreService {
     public APIResult addSettingMenu(@RequestBody MenuVO menuVO) {
         return menuService.addMenu(menuVO);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="日志类的接口" defaultstate="collapsed">
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:log:view')")
+    @OperationLog(description = "获取系统日志", type = LogSubTypeEnum.SELECT)
+    @ApiOperation(value = "获取系统日志", notes = "获取系统日志", tags = "日志接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = true, paramType = "query", dataType = "Int"),
+            @ApiImplicitParam(name = "rows", value = "每页行数", required = true, paramType = "query", dataType = "Int"),
+            @ApiImplicitParam(name = "logType", value = "日志类型", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "subType", value = "日志子类型", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "startDate", value = "开始时间", required = false, paramType = "query", dataType = "Date"),
+            @ApiImplicitParam(name = "endDate", value = "结束时间", required = false, paramType = "query", dataType = "Date")
+    })
+    public APIResult<List<LogDTO>> getLogList(int page, int rows, String logType, String subType, String startDate, String endDate) {
+        return logService.getLogList(page, rows, logType, subType, startDate, endDate);
+    }
+
+    @Override
+    public APIResult<List<Map<String, String>>> getAllLogType(String lang) {
+        List<Map<String, String>> logTypes = new ArrayList<>();
+        Map<String, String> map = getLogTypeMap(lang);
+        logTypes.add(map);
+        for (LogTypeEnum logType : LogTypeEnum.values()
+        ) {
+            map = new HashMap<>();
+            map.put("text", i18nMessageService.getMessage(lang, "core." + logType.getType(), logType.getType()));
+            map.put("value", logType.getType());
+            logTypes.add(map);
+        }
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .data(logTypes)
+                .build();
+    }
+
+    @Override
+    public APIResult<List<Map<String, String>>> getAllLogSubType(String lang) {
+        List<Map<String, String>> logTypes = new ArrayList<>();
+        Map<String, String> map = getLogTypeMap(lang);
+        logTypes.add(map);
+        for (LogSubTypeEnum logType : LogSubTypeEnum.values()
+        ) {
+            map = new HashMap<>();
+            map.put("text", i18nMessageService.getMessage(lang, "core." + logType.getType(), logType.getType()));
+            map.put("value", logType.getType());
+            logTypes.add(map);
+        }
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .data(logTypes)
+                .build();
+    }
+
+    private Map<String, String> getLogTypeMap(String lang) {
+        Map<String, String> map = new HashMap<>();
+        map.put("text", i18nMessageService.getMessage(lang, "core.ALL", "ALL"));
+        map.put("value", "ALL");
+        return map;
+    }
+    //</editor-fold>
 }

@@ -1,5 +1,6 @@
 package com.winteree.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.Date;
 @Data
 public class LogDTO {
     private String uuid;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     private LogTypeEnum logType;
     private LogSubTypeEnum logSubType;
@@ -29,4 +31,5 @@ public class LogDTO {
     private String responseBody;
     private String statusCode;
     private String logValue;
+    private Long total;
 }

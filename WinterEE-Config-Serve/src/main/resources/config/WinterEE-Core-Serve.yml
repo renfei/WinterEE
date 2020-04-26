@@ -38,6 +38,7 @@ feign:
     enabled: true
 winteree:
   core:
+    runMode: dev
     rootAccount: 9369919A-F95E-44CF-AB0A-6BCD1D933403
     enableEmail: true
     enableSMS: true

@@ -1,6 +1,7 @@
 package com.winteree.core.service.impl;
 
 import com.winteree.api.entity.MenuVO;
+import com.winteree.api.entity.RunModeEnum;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.MenuDOMapper;
 import com.winteree.core.dao.RoleMenuDOMapper;
@@ -123,6 +124,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
 
     @Override
     public APIResult deleteMenuByUuid(String uuid) {
+        if(RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())){
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message("演示模式，禁止修改数据，只允许查看")
+                    .build();
+        }
         try {
             MenuDOExample menuDOExample = new MenuDOExample();
             menuDOExample.createCriteria()
@@ -170,6 +177,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
 
     @Override
     public APIResult updateMenu(MenuVO menuVO) {
+        if(RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())){
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message("演示模式，禁止修改数据，只允许查看")
+                    .build();
+        }
         MenuDO menuDO = convert(menuVO);
         MenuDOExample menuDOExample = new MenuDOExample();
         menuDOExample.createCriteria()
@@ -191,6 +204,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
 
     @Override
     public APIResult addMenu(MenuVO menuVO) {
+        if(RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())){
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message("演示模式，禁止修改数据，只允许查看")
+                    .build();
+        }
         MenuDO menuDO = convert(menuVO);
         try {
             menuDO.setUuid(UUID.randomUUID().toString());

@@ -8,6 +8,7 @@ import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * WinterEE-Core-Serve提供的服务接口
@@ -25,9 +26,6 @@ public interface WintereeCoreService {
      */
     @GetMapping("/i18n/{language}/{message}/{defaultMessage}")
     String getMessage(@PathVariable("language") String language, @PathVariable("message") String message, @PathVariable("defaultMessage") String defaultMessage);
-
-    @PostMapping("/inside/log")
-    APIResult log(@RequestBody LogDTO logDTO);
 
     //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
 
@@ -98,6 +96,7 @@ public interface WintereeCoreService {
     //</editor-fold>
 
     //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
+
     /**
      * 获取菜单列表，注意不是菜单管理中的查询菜单列表
      *
@@ -121,7 +120,6 @@ public interface WintereeCoreService {
     APIResult<MenuVO> getSettingMenu(String uuid);
 
     /**
-     *
      * @param uuid
      * @return
      */
@@ -129,7 +127,6 @@ public interface WintereeCoreService {
     APIResult deleteSettingMenuByUuid(String uuid);
 
     /**
-     *
      * @param menuVO
      * @return
      */
@@ -137,11 +134,60 @@ public interface WintereeCoreService {
     APIResult updateSettingMenu(MenuVO menuVO);
 
     /**
-     *
      * @param menuVO
      * @return
      */
     @PostMapping("/setting/menu")
     APIResult addSettingMenu(MenuVO menuVO);
+    //</editor-fold>
+
+    //<editor-fold desc="日志类的接口" defaultstate="collapsed">
+
+    /**
+     * 日志记录（服务内部）
+     *
+     * @param logDTO 日志实体
+     * @return
+     */
+    @PostMapping("/inside/log")
+    APIResult log(@RequestBody LogDTO logDTO);
+
+    /**
+     * 获取系统日志
+     *
+     * @param page      页数
+     * @param rows      每页行数
+     * @param logType   每页行数
+     * @param subType   每页行数
+     * @param startDate 开始时间
+     * @param endDate   结束时间
+     * @return
+     */
+    @GetMapping("/setting/logs")
+    APIResult<List<LogDTO>> getLogList(@RequestParam("page") int page,
+                                       @RequestParam("rows") int rows,
+                                       @RequestParam(name = "logType", required = false) String logType,
+                                       @RequestParam(name = "subType", required = false) String subType,
+                                       @RequestParam(name = "startDate", required = false) String startDate,
+                                       @RequestParam(name = "endDate", required = false) String endDate);
+
+    /**
+     * 获取日志类型
+     *
+     * @return
+     */
+    @GetMapping("/setting/logs/type")
+    APIResult<List<Map<String, String>>> getAllLogType(@RequestParam(name = "lang", required = false) String lang);
+
+    /**
+     * 获取日志子类型
+     *
+     * @return
+     */
+    @GetMapping("/setting/logs/subtype")
+    APIResult<List<Map<String, String>>> getAllLogSubType(@RequestParam(name = "lang", required = false) String lang);
+    //</editor-fold>
+
+    //<editor-fold desc="租户类的接口" defaultstate="collapsed">
     //</editor-fold>
 }
