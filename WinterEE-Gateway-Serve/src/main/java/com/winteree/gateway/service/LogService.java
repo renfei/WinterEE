@@ -73,7 +73,7 @@ public class LogService {
             logDTO.setLogSubType(LogSubTypeEnum.FAIL);
         }
         APIResult apiResult = wintereeCoreServiceClient.log(logDTO);
-        if (StateCode.OK.getCode().equals(apiResult.getCode())) {
+        if (apiResult != null && StateCode.OK.getCode().equals(apiResult.getCode())) {
         } else {
             log.error("Access日志插入失败");
         }

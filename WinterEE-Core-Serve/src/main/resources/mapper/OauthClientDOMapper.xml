@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.winteree.core.dao.OauthClientDOMapper">
-  <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.OauthClientDO">
+<mapper namespace="com.winteree.core.dao.OAuthClientDOMapper">
+  <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.OAuthClientDO">
     <id column="client_id" jdbcType="VARCHAR" property="clientId" />
     <result column="resource_ids" jdbcType="VARCHAR" property="resourceIds" />
     <result column="client_secret" jdbcType="VARCHAR" property="clientSecret" />
@@ -16,7 +16,7 @@
     <result column="trusted" jdbcType="TINYINT" property="trusted" />
     <result column="autoapprove" jdbcType="VARCHAR" property="autoapprove" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.winteree.core.dao.entity.OauthClientDO">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.winteree.core.dao.entity.OAuthClientDO">
     <result column="additional_information" jdbcType="LONGVARCHAR" property="additionalInformation" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -85,7 +85,7 @@
   <sql id="Blob_Column_List">
     additional_information
   </sql>
-  <select id="selectByExampleWithBLOBs" parameterType="com.winteree.core.dao.entity.OauthClientDOExample" resultMap="ResultMapWithBLOBs">
+  <select id="selectByExampleWithBLOBs" parameterType="com.winteree.core.dao.entity.OAuthClientDOExample" resultMap="ResultMapWithBLOBs">
     select
     <if test="distinct">
       distinct
@@ -101,7 +101,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" parameterType="com.winteree.core.dao.entity.OauthClientDOExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.winteree.core.dao.entity.OAuthClientDOExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -127,13 +127,13 @@
     delete from oauth_client_details
     where client_id = #{clientId,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.OauthClientDOExample">
+  <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.OAuthClientDOExample">
     delete from oauth_client_details
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.winteree.core.dao.entity.OauthClientDO">
+  <insert id="insert" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
     insert into oauth_client_details (client_id, resource_ids, client_secret, 
       scope, authorized_grant_types, web_server_redirect_uri, 
       authorities, access_token_validity, refresh_token_validity, 
@@ -145,7 +145,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{archived,jdbcType=TINYINT}, #{trusted,jdbcType=TINYINT}, 
       #{autoapprove,jdbcType=VARCHAR}, #{additionalInformation,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.OauthClientDO">
+  <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
     insert into oauth_client_details
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="clientId != null">
@@ -236,7 +236,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.winteree.core.dao.entity.OauthClientDOExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.winteree.core.dao.entity.OAuthClientDOExample" resultType="java.lang.Long">
     select count(*) from oauth_client_details
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -331,7 +331,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.OauthClientDO">
+  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
     update oauth_client_details
     <set>
       <if test="resourceIds != null">
@@ -376,7 +376,7 @@
     </set>
     where client_id = #{clientId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.winteree.core.dao.entity.OauthClientDO">
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
     update oauth_client_details
     set resource_ids = #{resourceIds,jdbcType=VARCHAR},
       client_secret = #{clientSecret,jdbcType=VARCHAR},
@@ -393,7 +393,7 @@
       additional_information = #{additionalInformation,jdbcType=LONGVARCHAR}
     where client_id = #{clientId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.OauthClientDO">
+  <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
     update oauth_client_details
     set resource_ids = #{resourceIds,jdbcType=VARCHAR},
       client_secret = #{clientSecret,jdbcType=VARCHAR},

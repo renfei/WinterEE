@@ -2,7 +2,7 @@ package com.winteree.core.dao.entity;
 
 import java.util.Date;
 
-public class OauthClientDO {
+public class OAuthClientDO {
     private String clientId;
 
     private String resourceIds;

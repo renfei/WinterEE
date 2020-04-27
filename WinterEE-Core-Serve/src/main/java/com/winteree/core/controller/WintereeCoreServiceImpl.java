@@ -34,22 +34,31 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final SecretKeyService secretKeyService;
     private final LogService logService;
     private final MenuService menuService;
+    private final TenantService tenantService;
+    private final OAuthClientService oAuthClientService;
     //</editor-fold>
 
+    //<editor-fold desc="构造函数" defaultstate="collapsed">
     public WintereeCoreServiceImpl(I18nMessageService i18nMessageService,
                                    WintereeCoreConfig wintereeCoreConfig,
                                    AccountService accountService,
                                    SecretKeyService secretKeyService,
                                    LogService logService,
-                                   MenuService menuService) {
+                                   MenuService menuService,
+                                   TenantService tenantService,
+                                   OAuthClientService oAuthClientService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
         this.secretKeyService = secretKeyService;
         this.logService = logService;
         this.menuService = menuService;
+        this.tenantService = tenantService;
+        this.oAuthClientService = oAuthClientService;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="i18n国际化接口" defaultstate="collapsed">
     @Override
     @ApiOperation(value = "i18n国际化接口", notes = "将国际化标签翻译为指定的语言", tags = "国际化（i18n）", response = String.class)
     @ApiImplicitParams({
@@ -60,6 +69,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     public String getMessage(String language, String message, String defaultMessage) {
         return i18nMessageService.getMessage(language, message, defaultMessage);
     }
+    //</editor-fold>
 
     //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
     @Override
@@ -291,6 +301,81 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         map.put("text", i18nMessageService.getMessage(lang, "core.ALL", "ALL"));
         map.put("value", "ALL");
         return map;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="租户类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取所有租户列表
+     *
+     * @param page 页数
+     * @param rows 每页行数
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:tenant:view')")
+    @ApiOperation(value = "获取所有租户接口", notes = "获取所有租户的列表", tags = "租户接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页数", required = false, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "rows", value = "每页行数", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<ListData<TenantDTO>> getAllTenant(int page, int rows) {
+        return tenantService.getAllTenant(page, rows);
+    }
+
+    /**
+     * 添加租户
+     *
+     * @param tenantDTO 租户实体
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:tenant:add')")
+    @ApiOperation(value = "添加租户接口", notes = "添加一个租户", tags = "租户接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantDTO", value = "租户对象", required = false, paramType = "query", dataType = "TenantDTO")
+    })
+    public APIResult addTenant(@RequestBody TenantDTO tenantDTO) {
+        return tenantService.addTenant(tenantDTO);
+    }
+
+    /**
+     * 修改租户
+     *
+     * @param tenantDTO 租户实体
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:tenant:update')")
+    @ApiOperation(value = "修改租户接口", notes = "修改租户数据", tags = "租户接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantDTO", value = "租户对象", required = false, paramType = "query", dataType = "TenantDTO")
+    })
+    public APIResult updateTenant(@RequestBody TenantDTO tenantDTO) {
+        return tenantService.updateTenant(tenantDTO);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="OAtuh类的接口" defaultstate="collapsed">
+    @Override
+    public APIResult<ListData<OAuthClientDTO>> getOAuthClientAllList(int page, int rows) {
+        return oAuthClientService.getOAuthClientAllList(page, rows);
+    }
+
+    @Override
+    public APIResult addOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO) {
+        return oAuthClientService.addOAuthClient(oAuthClientDTO);
+    }
+
+    @Override
+    public APIResult updateOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO) {
+        return oAuthClientService.updateOAuthClient(oAuthClientDTO);
+    }
+
+    @Override
+    public APIResult deleteOAuthClient(String clientId) {
+        return oAuthClientService.deleteOAuthClient(clientId);
     }
     //</editor-fold>
 }

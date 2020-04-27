@@ -1,9 +1,6 @@
 package com.winteree.api.service;
 
-import com.winteree.api.entity.AccountDTO;
-import com.winteree.api.entity.LogDTO;
-import com.winteree.api.entity.MenuVO;
-import com.winteree.api.entity.ReportPublicKeyVO;
+import com.winteree.api.entity.*;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -189,5 +186,72 @@ public interface WintereeCoreService {
     //</editor-fold>
 
     //<editor-fold desc="租户类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取所有租户列表
+     *
+     * @param page 页数
+     * @param rows 每页行数
+     * @return
+     */
+    @GetMapping("/setting/tenant")
+    APIResult<ListData<TenantDTO>> getAllTenant(@RequestParam("page") int page, @RequestParam("rows") int rows);
+
+    /**
+     * 新增租户
+     *
+     * @param tenantDTO 租户实体
+     * @return
+     */
+    @PostMapping("/setting/tenant")
+    APIResult addTenant(TenantDTO tenantDTO);
+
+    /**
+     * 修改租户
+     *
+     * @param tenantDTO
+     * @return
+     */
+    @PutMapping("/setting/tenant")
+    APIResult updateTenant(TenantDTO tenantDTO);
+    //</editor-fold>
+
+    //<editor-fold desc="OAtuh类的接口" defaultstate="collapsed">
+    /**
+     * 获取所有OAtuh客户端列表
+     *
+     * @param page 页数
+     * @param rows 容量
+     * @return
+     */
+    @GetMapping("/setting/oauthclient")
+    APIResult<ListData<OAuthClientDTO>> getOAuthClientAllList(@RequestParam("page") int page, @RequestParam("rows") int rows);
+
+    /**
+     * 添加OAtuh客户端
+     *
+     * @param oAuthClientDTO OAtuh客户端
+     * @return
+     */
+    @PostMapping("/setting/oauthclient")
+    APIResult addOAuthClient(OAuthClientDTO oAuthClientDTO);
+
+    /**
+     * 修改OAtuh客户端
+     *
+     * @param oAuthClientDTO OAtuh客户端
+     * @return
+     */
+    @PutMapping("/setting/oauthclient")
+    APIResult updateOAuthClient(OAuthClientDTO oAuthClientDTO);
+
+    /**
+     * 删除OAtuh客户端
+     *
+     * @param clientId clientId
+     * @return
+     */
+    @DeleteMapping("/setting/oauthclient")
+    APIResult deleteOAuthClient(String clientId);
     //</editor-fold>
 }
