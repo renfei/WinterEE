@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winteree.core.dao.GeospatialDOMapper">
+    <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.GeospatialDO">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="fk_id" jdbcType="VARCHAR" property="fkId"/>
+        <result column="fk_type" jdbcType="INTEGER" property="fkType"/>
+        <result column="longitude" jdbcType="DECIMAL" property="longitude"/>
+        <result column="latitude" jdbcType="DECIMAL" property="latitude"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, fk_id, fk_type, longitude, latitude
+  </sql>
+    <select id="selectByExample" parameterType="com.winteree.core.dao.entity.GeospatialDOExample"
+            resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from winteree_core_geospatial
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from winteree_core_geospatial
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from winteree_core_geospatial
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.GeospatialDOExample">
+        delete from winteree_core_geospatial
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.winteree.core.dao.entity.GeospatialDO">
+    insert into winteree_core_geospatial (id, fk_id, fk_type, 
+      longitude, latitude)
+    values (#{id,jdbcType=VARCHAR}, #{fkId,jdbcType=VARCHAR}, #{fkType,jdbcType=INTEGER}, 
+      #{longitude,jdbcType=DECIMAL}, #{latitude,jdbcType=DECIMAL})
+  </insert>
+    <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.GeospatialDO">
+        insert into winteree_core_geospatial
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="fkId != null">
+                fk_id,
+            </if>
+            <if test="fkType != null">
+                fk_type,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="fkId != null">
+                #{fkId,jdbcType=VARCHAR},
+            </if>
+            <if test="fkType != null">
+                #{fkType,jdbcType=INTEGER},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=DECIMAL},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.winteree.core.dao.entity.GeospatialDOExample"
+            resultType="java.lang.Long">
+        select count(*) from winteree_core_geospatial
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update winteree_core_geospatial
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.fkId != null">
+                fk_id = #{record.fkId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.fkType != null">
+                fk_type = #{record.fkType,jdbcType=INTEGER},
+            </if>
+            <if test="record.longitude != null">
+                longitude = #{record.longitude,jdbcType=DECIMAL},
+            </if>
+            <if test="record.latitude != null">
+                latitude = #{record.latitude,jdbcType=DECIMAL},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update winteree_core_geospatial
+        set id = #{record.id,jdbcType=VARCHAR},
+        fk_id = #{record.fkId,jdbcType=VARCHAR},
+        fk_type = #{record.fkType,jdbcType=INTEGER},
+        longitude = #{record.longitude,jdbcType=DECIMAL},
+        latitude = #{record.latitude,jdbcType=DECIMAL}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.GeospatialDO">
+        update winteree_core_geospatial
+        <set>
+            <if test="fkId != null">
+                fk_id = #{fkId,jdbcType=VARCHAR},
+            </if>
+            <if test="fkType != null">
+                fk_type = #{fkType,jdbcType=INTEGER},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=DECIMAL},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.GeospatialDO">
+    update winteree_core_geospatial
+    set fk_id = #{fkId,jdbcType=VARCHAR},
+      fk_type = #{fkType,jdbcType=INTEGER},
+      longitude = #{longitude,jdbcType=DECIMAL},
+      latitude = #{latitude,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+    <!--手动添加的空间计算逻辑-->
+    <select id="selectGeospatialByDistance" parameterType="com.winteree.core.dao.entity.GeospatialDOExample"
+            resultType="com.winteree.core.dao.entity.GeospatialDOEx">
+        select
+        <include refid="Base_Column_List"/>
+        from (
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        round(
+        6378.138 * 2 * asin(
+        sqrt(
+        pow( sin( ( latitude * pi()/ 180-#{latitude,jdbcType=DECIMAL} * pi()/ 180 )/ 2 ), 2 )+ cos( latitude * pi()/ 180
+        )* cos( #{latitude,jdbcType=DECIMAL} * pi()/ 180 )* pow( sin( ( longitude * pi()/
+        180-#{longitude,jdbcType=DECIMAL} * pi()/ 180 )/ 2 ), 2 )))* 1000
+        ) AS distance
+        from winteree_core_geospatial
+        HAVING
+        distance <![CDATA[<]]> #{distance,jdbcType=INTEGER}
+        ORDER BY distance DESC
+        ) AS T1
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+</mapper>

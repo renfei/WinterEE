@@ -19,12 +19,9 @@ import java.util.List;
  * @date : 2020-04-17 13:12
  */
 public abstract class BaseService {
-    private final AccountService accountService;
     protected final WintereeCoreConfig wintereeCoreConfig;
 
-    protected BaseService(AccountService accountService,
-                          WintereeCoreConfig wintereeCoreConfig) {
-        this.accountService = accountService;
+    protected BaseService(WintereeCoreConfig wintereeCoreConfig) {
         this.wintereeCoreConfig = wintereeCoreConfig;
     }
 
@@ -33,7 +30,7 @@ public abstract class BaseService {
      *
      * @return 当前登录的账户
      */
-    protected AccountDTO getSignedUser() {
+    protected AccountDTO getSignedUser(AccountService accountService) {
         if (accountService != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String accountId = (String) authentication.getPrincipal();

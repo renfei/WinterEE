@@ -4,7 +4,6 @@ import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.UserRoleDOMapper;
 import com.winteree.core.dao.entity.UserRoleDO;
 import com.winteree.core.dao.entity.UserRoleDOExample;
-import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.RoleService;
 import net.renfei.sdk.utils.BeanUtils;
@@ -23,10 +22,9 @@ import java.util.List;
 @Service
 public class RoleServiceImpl extends BaseService implements RoleService {
     private final UserRoleDOMapper userRoleDOMapper;
-    protected RoleServiceImpl(AccountService accountService,
-                              WintereeCoreConfig wintereeCoreConfig,
+    protected RoleServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                               UserRoleDOMapper userRoleDOMapper) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
         this.userRoleDOMapper = userRoleDOMapper;
     }
 

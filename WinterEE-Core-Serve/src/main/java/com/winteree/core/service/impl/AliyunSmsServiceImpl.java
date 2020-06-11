@@ -12,7 +12,6 @@ import com.winteree.api.entity.LogSubTypeEnum;
 import com.winteree.api.entity.LogTypeEnum;
 import com.winteree.api.entity.Sms;
 import com.winteree.core.config.WintereeCoreConfig;
-import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.LogService;
 import com.winteree.core.service.SmsService;
@@ -35,10 +34,9 @@ import java.util.UUID;
 public class AliyunSmsServiceImpl extends BaseService implements SmsService {
     private final LogService logService;
 
-    protected AliyunSmsServiceImpl(AccountService accountService,
-                                   WintereeCoreConfig wintereeCoreConfig,
+    protected AliyunSmsServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                                    LogService logService) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
         this.logService = logService;
     }
 

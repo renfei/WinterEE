@@ -13,13 +13,31 @@ import java.util.List;
  * @date : 2020-04-18 16:15
  */
 public interface MenuService {
+    /**
+     * 获取登录用户的菜单列表，注意不是菜单管理中的查询菜单列表
+     *
+     * @param language 语言
+     * @return
+     */
     APIResult<List<MenuVO>> getMenuListBySignedUser(String language);
+
+    /**
+     * 获取所有菜单
+     *
+     * @return
+     */
     APIResult<List<MenuVO>> getAllMenuTree();
+
     APIResult<List<MenuVO>> getAllMenuList();
+
     APIResult deleteMenuByUuid(String uuid);
+
     APIResult<MenuVO> getMenuByUuid(String uuid);
+
     APIResult updateMenu(MenuVO menuVO);
+
     APIResult addMenu(MenuVO menuVO);
+
     /**
      * 根据角色ID列表获取菜单UUID列表
      *

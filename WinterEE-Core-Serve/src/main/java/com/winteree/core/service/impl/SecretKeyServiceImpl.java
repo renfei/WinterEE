@@ -5,7 +5,6 @@ import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.SecretKeyDOMapper;
 import com.winteree.core.dao.entity.SecretKeyDOExample;
 import com.winteree.core.dao.entity.SecretKeyDOWithBLOBs;
-import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.SecretKeyService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +29,8 @@ public class SecretKeyServiceImpl extends BaseService implements SecretKeyServic
     private final SecretKeyDOMapper secretKeyDOMapper;
 
     protected SecretKeyServiceImpl(WintereeCoreConfig wintereeCoreConfig,
-                                   AccountService accountService,
                                    SecretKeyDOMapper secretKeyDOMapper) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
         this.secretKeyDOMapper = secretKeyDOMapper;
     }
 

@@ -27,12 +27,14 @@ import java.util.UUID;
 @Aspect
 @Component
 public class OperationLogAspect extends BaseService {
+    private final AccountService accountService;
     private final LogService logService;
 
     protected OperationLogAspect(AccountService accountService,
                                  WintereeCoreConfig wintereeCoreConfig,
                                  LogService logService) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
+        this.accountService = accountService;
         this.logService = logService;
     }
 
@@ -42,12 +44,13 @@ public class OperationLogAspect extends BaseService {
 
     /**
      * 前置通知  用于拦截Controller层记录用户的操作
+     *
      * @param joinPoint
      */
     @Before("operationLog()")
     public void doBefore(JoinPoint joinPoint) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        AccountDTO accountDTO = getSignedUser();
+        AccountDTO accountDTO = getSignedUser(accountService);
         String ip = IpUtils.getIpAddress(request);
         try {
             OperationLog operationLog = getControllerMethodDescription(joinPoint);
@@ -69,6 +72,7 @@ public class OperationLogAspect extends BaseService {
 
     /**
      * 获取注解
+     *
      * @param joinPoint
      * @return
      * @throws Exception

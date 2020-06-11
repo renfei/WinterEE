@@ -38,6 +38,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     private final RoleMenuDOMapper roleMenuDOMapper;
     private final MenuDOMapper menuDOMapper;
     private final I18nMessageService i18nMessageService;
+    private final AccountService accountService;
 
     protected MenuServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                               AccountService accountService,
@@ -45,11 +46,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                               RoleMenuDOMapper roleMenuDOMapper,
                               MenuDOMapper menuDOMapper,
                               I18nMessageService i18nMessageService) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
         this.roleService = roleService;
         this.roleMenuDOMapper = roleMenuDOMapper;
         this.menuDOMapper = menuDOMapper;
         this.i18nMessageService = i18nMessageService;
+        this.accountService = accountService;
     }
 
     /**
@@ -62,7 +64,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
         if (BeanUtils.isEmpty(language)) {
             language = "zh-CN";
         }
-        AccountDTO accountDTO = getSignedUser();
+        AccountDTO accountDTO = getSignedUser(accountService);
         if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
             // 平台超级管理员，直接加载全部菜单
             List<String> menuIds = getAllMenuId();
@@ -102,12 +104,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     public APIResult<List<MenuVO>> getAllMenuList() {
         MenuDOExample menuDOExample = new MenuDOExample();
         menuDOExample.createCriteria()
-        .andIsMenuEqualTo(true);
+                .andIsMenuEqualTo(true);
         List<MenuDO> menuDOS = menuDOMapper.selectByExample(menuDOExample);
         List<MenuVO> menuVOS = new ArrayList<>();
         menuVOS.add(Builder.of(MenuVO::new)
-                .with(MenuVO::setUuid,"root")
-                .with(MenuVO::setText,"System Root")
+                .with(MenuVO::setUuid, "root")
+                .with(MenuVO::setText, "System Root")
                 .build());
         if (menuDOS != null) {
             for (MenuDO menuDO : menuDOS
@@ -124,7 +126,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
 
     @Override
     public APIResult deleteMenuByUuid(String uuid) {
-        if(RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())){
+        if (RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())) {
             return APIResult.builder()
                     .code(StateCode.Forbidden)
                     .message("演示模式，禁止修改数据，只允许查看")
@@ -177,7 +179,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
 
     @Override
     public APIResult updateMenu(MenuVO menuVO) {
-        if(RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())){
+        if (RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())) {
             return APIResult.builder()
                     .code(StateCode.Forbidden)
                     .message("演示模式，禁止修改数据，只允许查看")
@@ -204,7 +206,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
 
     @Override
     public APIResult addMenu(MenuVO menuVO) {
-        if(RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())){
+        if (RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())) {
             return APIResult.builder()
                     .code(StateCode.Forbidden)
                     .message("演示模式，禁止修改数据，只允许查看")
@@ -214,8 +216,8 @@ public class MenuServiceImpl extends BaseService implements MenuService {
         try {
             menuDO.setUuid(UUID.randomUUID().toString());
             menuDO.setCreateTime(new Date());
-            menuDO.setCreateBy(getSignedUser().getUuid());
-            if(menuDO.getSort()==null){
+            menuDO.setCreateBy(getSignedUser(accountService).getUuid());
+            if (menuDO.getSort() == null) {
                 menuDO.setSort(0L);
             }
             menuDOMapper.insertSelective(menuDO);
@@ -232,6 +234,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                 .build();
     }
 
+    /**
+     * 根据角色ID列表获取菜单UUID列表
+     *
+     * @param roleUuid 角色ID列表
+     * @return
+     */
     @Override
     public List<String> getMenuUuidByRoleUuid(List<String> roleUuid) {
         if (BeanUtils.isEmpty(roleUuid)) {
@@ -252,6 +260,11 @@ public class MenuServiceImpl extends BaseService implements MenuService {
         return menuUuid;
     }
 
+    /**
+     * 获取所有菜单ID
+     *
+     * @return 所有菜单ID
+     */
     @Override
     public List<String> getAllMenuId() {
         MenuDOExample menuDoExample = new MenuDOExample();
@@ -425,7 +438,7 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                 .with(MenuDO::setRemarks, menuVO.getRemarks())
                 .with(MenuDO::setSort, menuVO.getSort())
                 .with(MenuDO::setTarget, menuVO.getTarget())
-                .with(MenuDO::setUpdateBy, getSignedUser().getUuid())
+                .with(MenuDO::setUpdateBy, getSignedUser(accountService).getUuid())
                 .with(MenuDO::setUpdateTime, new Date())
                 .build();
         return menuDO;

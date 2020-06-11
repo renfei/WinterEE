@@ -178,6 +178,12 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .data(type)
                 .build();
     }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
+    public APIResult<AccountDTO> getMyInfo() {
+        return accountService.getAccountInfo();
+    }
     //</editor-fold>
 
     //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
@@ -307,6 +313,18 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //<editor-fold desc="租户类的接口" defaultstate="collapsed">
 
     /**
+     * 获取所有租户列表，需要自己管理权限
+     *
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
+    @ApiOperation(value = "获取租户列表接口", notes = "获取所有租户的列表，用于切换租户", tags = "租户接口", response = String.class)
+    public APIResult<ListData<TenantDTO>> getTenantList() {
+        return tenantService.getTenantList();
+    }
+
+    /**
      * 获取所有租户列表
      *
      * @param page 页数
@@ -355,25 +373,77 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     public APIResult updateTenant(@RequestBody TenantDTO tenantDTO) {
         return tenantService.updateTenant(tenantDTO);
     }
+
+    /**
+     * 根据租户ID获取基础信息（开放服务，无需身份校验）
+     *
+     * @param tenantUUID
+     * @return
+     */
+    @Override
+    @ApiOperation(value = "获取租户信息接口（开放服务，无需身份校验）", notes = "获取租户开放信息", tags = "租户接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUUID", value = "租户UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<TenantInfoDTO> getTenantInfo(String tenantUUID) {
+        return tenantService.getTenantInfo(tenantUUID);
+    }
+
+    /**
+     * 修改租户基础信息
+     *
+     * @param tenantInfoDTO 租户基础信息
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:tenantinfo:update')")
+    @ApiOperation(value = "修改租户基础信息接口", notes = "修改租户基础信息", tags = "租户接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantInfoDTO", value = "修改租户基础信息对象", required = false, paramType = "query", dataType = "TenantInfoDTO")
+    })
+    public APIResult updateTenantInfo(@RequestBody TenantInfoDTO tenantInfoDTO) {
+        return tenantService.updateTenantInfo(tenantInfoDTO);
+    }
     //</editor-fold>
 
     //<editor-fold desc="OAtuh类的接口" defaultstate="collapsed">
     @Override
+    @PreAuthorize("hasAnyAuthority('platf:oauth:view')")
+    @ApiOperation(value = "查看OAtuh客户端接口", notes = "查看OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = false, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "rows", value = "每页容量", required = false, paramType = "query", dataType = "int")
+    })
     public APIResult<ListData<OAuthClientDTO>> getOAuthClientAllList(int page, int rows) {
         return oAuthClientService.getOAuthClientAllList(page, rows);
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('platf:oauth:add')")
+    @ApiOperation(value = "添加OAtuh客户端接口", notes = "添加OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "oAuthClientDTO", value = "OAtuh客户端对象", required = false, paramType = "query", dataType = "OAuthClientDTO")
+    })
     public APIResult addOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO) {
         return oAuthClientService.addOAuthClient(oAuthClientDTO);
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('platf:oauth:update')")
+    @ApiOperation(value = "修改OAtuh客户端接口", notes = "修改添加OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "oAuthClientDTO", value = "OAtuh客户端对象", required = false, paramType = "query", dataType = "OAuthClientDTO")
+    })
     public APIResult updateOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO) {
         return oAuthClientService.updateOAuthClient(oAuthClientDTO);
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('platf:oauth:delete')")
+    @ApiOperation(value = "删除OAtuh客户端接口", notes = "删除OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "clientId", value = "客户端ID", required = false, paramType = "query", dataType = "String")
+    })
     public APIResult deleteOAuthClient(String clientId) {
         return oAuthClientService.deleteOAuthClient(clientId);
     }

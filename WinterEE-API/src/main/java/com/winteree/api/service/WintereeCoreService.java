@@ -90,6 +90,14 @@ public interface WintereeCoreService {
      */
     @GetMapping("/account/check")
     APIResult<String> checkAccount(@RequestParam("account") String account, @RequestParam("language") String language);
+
+    /**
+     * 获取当前登陆账号的信息
+     *
+     * @return
+     */
+    @GetMapping("/account/myinfo")
+    APIResult<AccountDTO> getMyInfo();
     //</editor-fold>
 
     //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
@@ -188,6 +196,14 @@ public interface WintereeCoreService {
     //<editor-fold desc="租户类的接口" defaultstate="collapsed">
 
     /**
+     * 获取所有租户列表，需要自己管理权限
+     *
+     * @return
+     */
+    @GetMapping("/setting/tenantlist")
+    APIResult<ListData<TenantDTO>> getTenantList();
+
+    /**
      * 获取所有租户列表
      *
      * @param page 页数
@@ -214,9 +230,28 @@ public interface WintereeCoreService {
      */
     @PutMapping("/setting/tenant")
     APIResult updateTenant(TenantDTO tenantDTO);
+
+    /**
+     * 根据租户ID获取基础信息（开放服务，无需身份校验）
+     *
+     * @param tenantUUID
+     * @return
+     */
+    @GetMapping("/tenant/info")
+    APIResult<TenantInfoDTO> getTenantInfo(String tenantUUID);
+
+    /**
+     * 修改租户基础信息
+     *
+     * @param tenantInfoDTO 租户基础信息
+     * @return
+     */
+    @PostMapping("/tenant/info")
+    APIResult updateTenantInfo(TenantInfoDTO tenantInfoDTO);
     //</editor-fold>
 
     //<editor-fold desc="OAtuh类的接口" defaultstate="collapsed">
+
     /**
      * 获取所有OAtuh客户端列表
      *

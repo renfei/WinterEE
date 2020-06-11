@@ -2,7 +2,6 @@ package com.winteree.core.service.impl;
 
 import com.winteree.api.entity.*;
 import com.winteree.core.config.WintereeCoreConfig;
-import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.EmailService;
 import com.winteree.core.service.LogService;
@@ -32,11 +31,10 @@ public class EmailServiceImpl extends BaseService implements EmailService {
     private final LogService logService;
     private final JavaMailSenderImpl mailSender;
 
-    protected EmailServiceImpl(AccountService accountService,
-                               WintereeCoreConfig wintereeCoreConfig,
+    protected EmailServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                                LogService logService,
                                JavaMailSenderImpl mailSender) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
         this.logService = logService;
         this.mailSender = mailSender;
     }

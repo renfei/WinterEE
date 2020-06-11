@@ -8,7 +8,6 @@ import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.OAuthClientDOMapper;
 import com.winteree.core.dao.entity.OAuthClientDO;
 import com.winteree.core.dao.entity.OAuthClientDOExample;
-import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.I18nMessageService;
 import com.winteree.core.service.OAuthClientService;
@@ -37,11 +36,10 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
     private final OAuthClientDOMapper oAuthClientDOMapper;
     private final I18nMessageService i18nMessageService;
 
-    protected OAuthClientServiceImpl(AccountService accountService,
-                                     WintereeCoreConfig wintereeCoreConfig,
+    protected OAuthClientServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                                      OAuthClientDOMapper oAuthClientDOMapper,
                                      I18nMessageService i18nMessageService) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
         this.oAuthClientDOMapper = oAuthClientDOMapper;
         this.i18nMessageService = i18nMessageService;
     }

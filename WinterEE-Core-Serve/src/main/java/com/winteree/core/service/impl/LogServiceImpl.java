@@ -36,12 +36,14 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class LogServiceImpl extends BaseService implements LogService {
+    private final AccountService accountService;
     private final LogDOMapper logDOMapper;
 
     protected LogServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                              AccountService accountService,
                              LogDOMapper logDOMapper) {
-        super(accountService, wintereeCoreConfig);
+        super(wintereeCoreConfig);
+        this.accountService = accountService;
         this.logDOMapper = logDOMapper;
     }
 
@@ -100,9 +102,9 @@ public class LogServiceImpl extends BaseService implements LogService {
                 criteria.andCreateTimeLessThan(endD);
             }
 
-            if (!wintereeCoreConfig.getRootAccount().equals(getSignedUser().getUuid())) {
+            if (!wintereeCoreConfig.getRootAccount().equals(getSignedUser(accountService).getUuid())) {
                 // 不是超级管理查询租户自己的日志
-                criteria.andTenantUuidEqualTo(getSignedUser().getTenantUuid());
+                criteria.andTenantUuidEqualTo(getSignedUser(accountService).getTenantUuid());
             }
             Page pages = PageHelper.startPage(page, rows);
             List<LogDOWithBLOBs> logDOWithBLOBs = logDOMapper.selectByExampleWithBLOBs(logDOExample);
