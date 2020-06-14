@@ -36,6 +36,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final MenuService menuService;
     private final TenantService tenantService;
     private final OAuthClientService oAuthClientService;
+    private final OrganizationService organizationService;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -46,7 +47,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    LogService logService,
                                    MenuService menuService,
                                    TenantService tenantService,
-                                   OAuthClientService oAuthClientService) {
+                                   OAuthClientService oAuthClientService,
+                                   OrganizationService organizationService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -55,6 +57,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.menuService = menuService;
         this.tenantService = tenantService;
         this.oAuthClientService = oAuthClientService;
+        this.organizationService = organizationService;
     }
     //</editor-fold>
 
@@ -446,6 +449,82 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     })
     public APIResult deleteOAuthClient(String clientId) {
         return oAuthClientService.deleteOAuthClient(clientId);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="组织机构类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取公司列表接口
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:company:view')")
+    @ApiOperation(value = "获取公司列表接口", notes = "获取公司列表接口", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult getCompanyList(String tenantUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(organizationService.getCompanyList(tenantUuid))
+                .build();
+    }
+
+
+    /**
+     * 添加新增公司
+     *
+     * @param organizationVO
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:company:add')")
+    @ApiOperation(value = "添加公司接口", notes = "新增公司接口", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "organizationVO", value = "公司信息对象", required = false, paramType = "query", dataType = "OrganizationVO")
+    })
+    public APIResult addCompany(@RequestBody OrganizationVO organizationVO) {
+        int status = organizationService.addCompany(organizationVO);
+        if (status > 0) {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .build();
+        }
+        return APIResult.builder()
+                .code(StateCode.Failure)
+                .message("Failure")
+                .build();
+    }
+
+    /**
+     * 更新公司信息
+     *
+     * @param organizationVO
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:company:update')")
+    @ApiOperation(value = "更新公司信息接口", notes = "更新公司信息接口", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "organizationVO", value = "公司信息对象", required = false, paramType = "query", dataType = "OrganizationVO")
+    })
+    public APIResult updateCompany(@RequestBody OrganizationVO organizationVO) {
+        int status = organizationService.updateCompany(organizationVO);
+        if (status > 0) {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .build();
+        }
+        return APIResult.builder()
+                .code(StateCode.Failure)
+                .message("Failure")
+                .build();
     }
     //</editor-fold>
 }

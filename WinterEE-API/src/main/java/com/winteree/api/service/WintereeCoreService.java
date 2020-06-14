@@ -289,4 +289,34 @@ public interface WintereeCoreService {
     @DeleteMapping("/setting/oauthclient")
     APIResult deleteOAuthClient(String clientId);
     //</editor-fold>
+
+    //<editor-fold desc="组织机构类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取公司列表
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @GetMapping("/organization/company")
+    APIResult getCompanyList(String tenantUuid);
+
+    /**
+     * 添加新增公司
+     *
+     * @param organizationVO
+     * @return
+     */
+    @PostMapping("/organization/company")
+    APIResult addCompany(OrganizationVO organizationVO);
+
+    /**
+     * 更新公司信息
+     *
+     * @param organizationVO
+     * @return
+     */
+    @PutMapping("/organization/company")
+    APIResult updateCompany(OrganizationVO organizationVO);
+    //</editor-fold>
 }
