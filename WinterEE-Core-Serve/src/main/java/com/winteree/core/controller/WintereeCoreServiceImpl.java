@@ -37,6 +37,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final TenantService tenantService;
     private final OAuthClientService oAuthClientService;
     private final OrganizationService organizationService;
+    private final RoleService roleService;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -48,7 +49,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    MenuService menuService,
                                    TenantService tenantService,
                                    OAuthClientService oAuthClientService,
-                                   OrganizationService organizationService) {
+                                   OrganizationService organizationService,
+                                   RoleService roleService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -58,6 +60,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.tenantService = tenantService;
         this.oAuthClientService = oAuthClientService;
         this.organizationService = organizationService;
+        this.roleService = roleService;
     }
     //</editor-fold>
 
@@ -204,6 +207,21 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     })
     public APIResult<List<MenuVO>> getMenuTree(String language) {
         return menuService.getMenuListBySignedUser(language);
+    }
+
+    /**
+     * 获取菜单列表，注意不是菜单管理中的查询菜单列表
+     *
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
+    @ApiOperation(value = "获取菜单和权限列表", notes = "获取菜单和权限列表，注意不是菜单管理中的查询菜单列表", tags = "菜单接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<List<MenuVO>> getMenuAndAuthorityTree(String language) {
+        return menuService.getMenuAndAuthorityListBySignedUser(language);
     }
 
     @Override
@@ -474,6 +492,26 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .build();
     }
 
+    /**
+     * 获取我的公司列表接口
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
+    @ApiOperation(value = "获取公司列表接口", notes = "获取公司列表接口", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult getMyCompanyList(String tenantUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(organizationService.getMyCompanyList(tenantUuid))
+                .build();
+    }
+
 
     /**
      * 添加新增公司
@@ -525,6 +563,77 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .code(StateCode.Failure)
                 .message("Failure")
                 .build();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="角色类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取角色列表
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:role:view')")
+    @ApiOperation(value = "获取角色列表接口", notes = "获取角色列表接口", tags = "角色类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult getRoleList(String tenantUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("")
+                .data(roleService.getRoleList(tenantUuid))
+                .build();
+    }
+
+    /**
+     * 添加角色
+     *
+     * @param roleDTO 角色传输类
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:role:add')")
+    @ApiOperation(value = "添加角色接口", notes = "添加角色接口", tags = "角色类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roleDTO", value = "角色数据传输对象", required = false, paramType = "query", dataType = "RoleDTO")
+    })
+    public APIResult addRole(@RequestBody RoleDTO roleDTO) {
+        return roleService.addRole(roleDTO);
+    }
+
+    /**
+     * 更新角色
+     *
+     * @param roleDTO 角色传输类
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:role:update')")
+    @ApiOperation(value = "修改角色接口", notes = "修改角色接口", tags = "角色类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "roleDTO", value = "角色数据传输对象", required = false, paramType = "query", dataType = "RoleDTO")
+    })
+    public APIResult updateRole(@RequestBody RoleDTO roleDTO) {
+        return roleService.updateRole(roleDTO);
+    }
+
+    /**
+     * 删除角色
+     *
+     * @param uuid 角色ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:role:delete')")
+    @ApiOperation(value = "删除角色接口", notes = "删除角色接口", tags = "角色类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "角色ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult deleteRole(String uuid) {
+        return roleService.deleteRole(uuid);
     }
     //</editor-fold>
 }

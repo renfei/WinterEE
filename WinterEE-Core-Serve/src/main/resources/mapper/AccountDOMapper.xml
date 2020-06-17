@@ -5,6 +5,8 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="uuid" jdbcType="VARCHAR" property="uuid" />
     <result column="tenant_uuid" jdbcType="VARCHAR" property="tenantUuid" />
+    <result column="office_uuid" jdbcType="VARCHAR" property="officeUuid" />
+    <result column="department_uuid" jdbcType="VARCHAR" property="departmentUuid" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="email" jdbcType="VARCHAR" property="email" />
@@ -76,8 +78,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, uuid, tenant_uuid, create_time, user_name, email, phone, passwd, user_status, 
-    lock_time, error_count, last_name, first_name, update_time
+    id, uuid, tenant_uuid, office_uuid, department_uuid, create_time, user_name, email, 
+    phone, passwd, user_status, lock_time, error_count, last_name, first_name, update_time
   </sql>
   <select id="selectByExample" parameterType="com.winteree.core.dao.entity.AccountDOExample" resultMap="BaseResultMap">
     select
@@ -111,15 +113,17 @@
   </delete>
   <insert id="insert" parameterType="com.winteree.core.dao.entity.AccountDO">
     insert into winteree_core_account (id, uuid, tenant_uuid, 
-      create_time, user_name, email, 
-      phone, passwd, user_status, 
-      lock_time, error_count, last_name, 
-      first_name, update_time)
+      office_uuid, department_uuid, create_time, 
+      user_name, email, phone, 
+      passwd, user_status, lock_time, 
+      error_count, last_name, first_name, 
+      update_time)
     values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{tenantUuid,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, #{userStatus,jdbcType=INTEGER}, 
-      #{lockTime,jdbcType=TIMESTAMP}, #{errorCount,jdbcType=INTEGER}, #{lastName,jdbcType=VARCHAR}, 
-      #{firstName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+      #{officeUuid,jdbcType=VARCHAR}, #{departmentUuid,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{userName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{passwd,jdbcType=VARCHAR}, #{userStatus,jdbcType=INTEGER}, #{lockTime,jdbcType=TIMESTAMP}, 
+      #{errorCount,jdbcType=INTEGER}, #{lastName,jdbcType=VARCHAR}, #{firstName,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.AccountDO">
     insert into winteree_core_account
@@ -132,6 +136,12 @@
       </if>
       <if test="tenantUuid != null">
         tenant_uuid,
+      </if>
+      <if test="officeUuid != null">
+        office_uuid,
+      </if>
+      <if test="departmentUuid != null">
+        department_uuid,
       </if>
       <if test="createTime != null">
         create_time,
@@ -176,6 +186,12 @@
       </if>
       <if test="tenantUuid != null">
         #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="officeUuid != null">
+        #{officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentUuid != null">
+        #{departmentUuid,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -230,6 +246,12 @@
       <if test="record.tenantUuid != null">
         tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
       </if>
+      <if test="record.officeUuid != null">
+        office_uuid = #{record.officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departmentUuid != null">
+        department_uuid = #{record.departmentUuid,jdbcType=VARCHAR},
+      </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -273,6 +295,8 @@
     set id = #{record.id,jdbcType=BIGINT},
       uuid = #{record.uuid,jdbcType=VARCHAR},
       tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      office_uuid = #{record.officeUuid,jdbcType=VARCHAR},
+      department_uuid = #{record.departmentUuid,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       user_name = #{record.userName,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
@@ -296,6 +320,12 @@
       </if>
       <if test="tenantUuid != null">
         tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="officeUuid != null">
+        office_uuid = #{officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentUuid != null">
+        department_uuid = #{departmentUuid,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -337,6 +367,8 @@
     update winteree_core_account
     set uuid = #{uuid,jdbcType=VARCHAR},
       tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      office_uuid = #{officeUuid,jdbcType=VARCHAR},
+      department_uuid = #{departmentUuid,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       user_name = #{userName,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},

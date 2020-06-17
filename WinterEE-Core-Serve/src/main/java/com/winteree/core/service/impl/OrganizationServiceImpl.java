@@ -1,5 +1,6 @@
 package com.winteree.core.service.impl;
 
+import com.winteree.api.entity.DataScopeEnum;
 import com.winteree.api.entity.GeospatialEnum;
 import com.winteree.api.entity.OrgEnum;
 import com.winteree.api.entity.OrganizationVO;
@@ -34,17 +35,20 @@ public class OrganizationServiceImpl extends BaseService implements Organization
     private final AccountService accountService;
     private final TenantService tenantService;
     private final GeospatialService geospatialService;
+    private final RoleService roleService;
     private final OrganizationDOMapper organizationDOMapper;
 
     protected OrganizationServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                                       AccountService accountService,
                                       TenantService tenantService,
                                       GeospatialService geospatialService,
+                                      RoleService roleService,
                                       OrganizationDOMapper organizationDOMapper) {
         super(wintereeCoreConfig);
         this.accountService = accountService;
         this.tenantService = tenantService;
         this.geospatialService = geospatialService;
+        this.roleService = roleService;
         this.organizationDOMapper = organizationDOMapper;
     }
 
@@ -75,12 +79,19 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         } else {
             //否则只能管理自己归属的租户
             tenantUuid = accountDTO.getTenantUuid();
-            // TODO DataRangeEnum 验证数据权限范围，是全部还是本公司
-            // TODO 由于先做的组织机构，后做角色权限，此处缺少数据范围权限校验
-            organizationDOExample.createCriteria()
+            OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+            criteria
                     .andTenantUuidEqualTo(tenantUuid)
                     .andParentUuidEqualTo(tenantUuid)
                     .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
+            // 验证数据权限范围，是全部还是本公司
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            if (dataScopeEnum.equals(DataScopeEnum.ALL)) {
+                // 加载租户下全部公司
+            } else {
+                // 只加载自己公司的
+                criteria.andUuidEqualTo(accountDTO.getOfficeUuid());
+            }
             List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
             for (OrganizationDO organizationDO : organizationDOS
             ) {
@@ -99,6 +110,63 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         organizationTenant.setChildren(organizationVOS);
         organizationListAndTenant.add(organizationTenant);
         return organizationListAndTenant;
+    }
+
+    /**
+     * 获取公司列表
+     *
+     * @param tenantUuid 租户UUID
+     */
+    @Override
+    public List<OrganizationVO> getMyCompanyList(String tenantUuid) {
+        AccountDTO accountDTO = getSignedUser(accountService);
+        List<OrganizationVO> organizationVOS = new ArrayList<>();
+        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+        OrganizationVO organizationAll = new OrganizationVO();
+        organizationAll.setName("全部 - All");
+        organizationAll.setUuid("");
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            //只有平台超管才能夸租户管理，并且获取所有公司
+            organizationDOExample.createCriteria()
+                    .andTenantUuidEqualTo(tenantUuid)
+                    .andParentUuidEqualTo(tenantUuid)
+                    .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
+            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVO.setIsTenant(false);
+                organizationVOS.add(organizationVO);
+            }
+            organizationVOS.add(0, organizationAll);
+        } else {
+            //否则只能管理自己归属的租户
+            tenantUuid = accountDTO.getTenantUuid();
+            OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+            criteria
+                    .andTenantUuidEqualTo(tenantUuid)
+                    .andParentUuidEqualTo(tenantUuid)
+                    .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
+            // 验证数据权限范围，是全部还是本公司
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            if (dataScopeEnum.equals(DataScopeEnum.ALL)) {
+                // 加载租户下全部公司
+            } else {
+                // 只加载自己公司的
+                criteria.andUuidEqualTo(accountDTO.getOfficeUuid());
+            }
+            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVO.setIsTenant(false);
+                organizationVOS.add(organizationVO);
+            }
+            if (dataScopeEnum.equals(DataScopeEnum.ALL)) {
+                organizationVOS.add(0, organizationAll);
+            }
+        }
+        return organizationVOS;
     }
 
     /**

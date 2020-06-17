@@ -4,11 +4,8 @@ import com.winteree.api.entity.MenuVO;
 import com.winteree.api.entity.RunModeEnum;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.MenuDOMapper;
-import com.winteree.core.dao.RoleMenuDOMapper;
 import com.winteree.core.dao.entity.MenuDO;
 import com.winteree.core.dao.entity.MenuDOExample;
-import com.winteree.core.dao.entity.RoleMenuDO;
-import com.winteree.core.dao.entity.RoleMenuDOExample;
 import com.winteree.core.entity.AccountDTO;
 import com.winteree.core.service.*;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +32,6 @@ import java.util.UUID;
 @Service
 public class MenuServiceImpl extends BaseService implements MenuService {
     private final RoleService roleService;
-    private final RoleMenuDOMapper roleMenuDOMapper;
     private final MenuDOMapper menuDOMapper;
     private final I18nMessageService i18nMessageService;
     private final AccountService accountService;
@@ -43,12 +39,10 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     protected MenuServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                               AccountService accountService,
                               RoleService roleService,
-                              RoleMenuDOMapper roleMenuDOMapper,
                               MenuDOMapper menuDOMapper,
                               I18nMessageService i18nMessageService) {
         super(wintereeCoreConfig);
         this.roleService = roleService;
-        this.roleMenuDOMapper = roleMenuDOMapper;
         this.menuDOMapper = menuDOMapper;
         this.i18nMessageService = i18nMessageService;
         this.accountService = accountService;
@@ -77,11 +71,44 @@ public class MenuServiceImpl extends BaseService implements MenuService {
             // 查询用户所属的角色
             List<String> roles = roleService.selectRoleUuidByUserUuid(accountDTO.getUuid());
             // 根据角色查询拥有的菜单
-            List<String> menuIds = getMenuUuidByRoleUuid(roles);
+            List<String> menuIds = roleService.getMenuUuidByRoleUuid(roles);
             return APIResult.builder()
                     .code(StateCode.OK)
                     .message("")
                     .data(generateMenuTree(language, menuIds))
+                    .build();
+        }
+    }
+
+    /**
+     * 获取登录用户的菜单和权限列表，注意不是菜单管理中的查询菜单列表
+     *
+     * @param language 语言
+     * @return
+     */
+    @Override
+    public APIResult<List<MenuVO>> getMenuAndAuthorityListBySignedUser(String language) {
+        if (BeanUtils.isEmpty(language)) {
+            language = "zh-CN";
+        }
+        AccountDTO accountDTO = getSignedUser(accountService);
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            // 平台超级管理员，直接加载全部菜单
+            List<String> menuIds = getAllMenuId();
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("")
+                    .data(generateMenuTreeAndAuthority(language, menuIds))
+                    .build();
+        } else {
+            // 查询用户所属的角色
+            List<String> roles = roleService.selectRoleUuidByUserUuid(accountDTO.getUuid());
+            // 根据角色查询拥有的菜单
+            List<String> menuIds = roleService.getMenuUuidByRoleUuid(roles);
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("")
+                    .data(generateMenuTreeAndAuthority(language, menuIds))
                     .build();
         }
     }
@@ -235,32 +262,6 @@ public class MenuServiceImpl extends BaseService implements MenuService {
     }
 
     /**
-     * 根据角色ID列表获取菜单UUID列表
-     *
-     * @param roleUuid 角色ID列表
-     * @return
-     */
-    @Override
-    public List<String> getMenuUuidByRoleUuid(List<String> roleUuid) {
-        if (BeanUtils.isEmpty(roleUuid)) {
-            return new ArrayList<>();
-        }
-        RoleMenuDOExample roleMenuDOExample = new RoleMenuDOExample();
-        roleMenuDOExample.createCriteria()
-                .andRoleUuidIn(roleUuid);
-        List<RoleMenuDO> roleMenuDOS = roleMenuDOMapper.selectByExample(roleMenuDOExample);
-        List<String> menuUuid = new ArrayList<>();
-        if (BeanUtils.isEmpty(roleMenuDOS)) {
-            return menuUuid;
-        }
-        for (RoleMenuDO roleMenuDO : roleMenuDOS
-        ) {
-            menuUuid.add(roleMenuDO.getMenuUuid());
-        }
-        return menuUuid;
-    }
-
-    /**
      * 获取所有菜单ID
      *
      * @return 所有菜单ID
@@ -300,7 +301,25 @@ public class MenuServiceImpl extends BaseService implements MenuService {
                 .andIsShowEqualTo(true)
                 .andIsDeleteEqualTo(false);
         List<MenuDO> menuDOS = menuDOMapper.selectByExample(menuDOExample);
-        return getMenuVOS(language, menuIds, menuDOS);
+        return getMenuVOS(language, menuIds, menuDOS, false);
+    }
+
+    /**
+     * 获取菜单树
+     *
+     * @param menuIds 拥有的菜单列表
+     * @return 菜单树
+     */
+    private List<MenuVO> generateMenuTreeAndAuthority(String language, List<String> menuIds) {
+        MenuDOExample menuDOExample = new MenuDOExample();
+        menuDOExample.setOrderByClause("sort DESC");
+        menuDOExample.createCriteria()
+                .andParentUuidEqualTo("root")
+                .andUuidIn(menuIds)
+                .andIsShowEqualTo(true)
+                .andIsDeleteEqualTo(false);
+        List<MenuDO> menuDOS = menuDOMapper.selectByExample(menuDOExample);
+        return getMenuVOS(language, menuIds, menuDOS, true);
     }
 
     /**
@@ -324,20 +343,23 @@ public class MenuServiceImpl extends BaseService implements MenuService {
      * @param menuIds 拥有的菜单列表
      * @return 子级菜单
      */
-    private List<MenuVO> generateMenuChildrenTree(String language, String parent, List<String> menuIds) {
+    private List<MenuVO> generateMenuChildrenTree(String language, String parent, List<String> menuIds, boolean haveAuth) {
         MenuDOExample menuDOExample = new MenuDOExample();
         menuDOExample.setOrderByClause("sort DESC");
-        menuDOExample.createCriteria()
+        MenuDOExample.Criteria criteria = menuDOExample.createCriteria();
+        if (!haveAuth) {
+            criteria.andIsMenuEqualTo(true);
+        }
+        criteria
                 .andParentUuidEqualTo(parent)
                 .andUuidIn(menuIds)
-                .andIsMenuEqualTo(true)
                 .andIsShowEqualTo(true)
                 .andIsDeleteEqualTo(false);
         List<MenuDO> menuDOS = menuDOMapper.selectByExample(menuDOExample);
         if (BeanUtils.isEmpty(menuDOS)) {
             return null;
         } else {
-            return getMenuVOS(language, menuIds, menuDOS);
+            return getMenuVOS(language, menuIds, menuDOS, haveAuth);
         }
     }
 
@@ -372,12 +394,12 @@ public class MenuServiceImpl extends BaseService implements MenuService {
         return menuVOS;
     }
 
-    private List<MenuVO> getMenuVOS(String language, List<String> menuIds, List<MenuDO> menuDOS) {
+    private List<MenuVO> getMenuVOS(String language, List<String> menuIds, List<MenuDO> menuDOS, boolean haveAuth) {
         List<MenuVO> menuVOS = new ArrayList<>();
         for (MenuDO menuDO : menuDOS
         ) {
             MenuVO menuVO = convert(language, menuDO);
-            List<MenuVO> menuVOSChildren = generateMenuChildrenTree(language, menuDO.getUuid(), menuIds);
+            List<MenuVO> menuVOSChildren = generateMenuChildrenTree(language, menuDO.getUuid(), menuIds, haveAuth);
             if (!BeanUtils.isEmpty(menuVOSChildren)) {
                 menuVO.setIcon("mdi-chevron-up");
                 menuVO.setIcondown("mdi-chevron-down");

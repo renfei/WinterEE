@@ -111,6 +111,14 @@ public interface WintereeCoreService {
     APIResult<List<MenuVO>> getMenuTree(@RequestParam(name = "language", required = false) String language);
 
     /**
+     * 获取菜单列表，注意不是菜单管理中的查询菜单列表
+     *
+     * @return
+     */
+    @GetMapping("/menu/treeAndAuthority")
+    APIResult<List<MenuVO>> getMenuAndAuthorityTree(@RequestParam(name = "language", required = false) String language);
+
+    /**
      * 后台菜单管理中的查询菜单列表，注意这个不是登陆以后获取菜单列表
      *
      * @return
@@ -302,6 +310,15 @@ public interface WintereeCoreService {
     APIResult getCompanyList(String tenantUuid);
 
     /**
+     * 获取公司列表
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @GetMapping("/organization/myCompany")
+    APIResult getMyCompanyList(String tenantUuid);
+
+    /**
      * 添加新增公司
      *
      * @param organizationVO
@@ -318,5 +335,44 @@ public interface WintereeCoreService {
      */
     @PutMapping("/organization/company")
     APIResult updateCompany(OrganizationVO organizationVO);
+    //</editor-fold>
+
+    //<editor-fold desc="角色类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取角色列表
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @GetMapping("/role/list")
+    APIResult getRoleList(String tenantUuid);
+
+    /**
+     * 添加角色
+     *
+     * @param roleDTO 角色传输类
+     * @return
+     */
+    @PostMapping("/role/data")
+    APIResult addRole(RoleDTO roleDTO);
+
+    /**
+     * 更新角色
+     *
+     * @param roleDTO 角色传输类
+     * @return
+     */
+    @PutMapping("/role/data")
+    APIResult updateRole(RoleDTO roleDTO);
+
+    /**
+     * 删除角色
+     *
+     * @param uuid 角色ID
+     * @return
+     */
+    @DeleteMapping("/role/data")
+    APIResult deleteRole(String uuid);
     //</editor-fold>
 }

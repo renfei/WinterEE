@@ -9,6 +9,10 @@ public class AccountDO {
 
     private String tenantUuid;
 
+    private String officeUuid;
+
+    private String departmentUuid;
+
     private Date createTime;
 
     private String userName;
@@ -53,6 +57,22 @@ public class AccountDO {
 
     public void setTenantUuid(String tenantUuid) {
         this.tenantUuid = tenantUuid == null ? null : tenantUuid.trim();
+    }
+
+    public String getOfficeUuid() {
+        return officeUuid;
+    }
+
+    public void setOfficeUuid(String officeUuid) {
+        this.officeUuid = officeUuid == null ? null : officeUuid.trim();
+    }
+
+    public String getDepartmentUuid() {
+        return departmentUuid;
+    }
+
+    public void setDepartmentUuid(String departmentUuid) {
+        this.departmentUuid = departmentUuid == null ? null : departmentUuid.trim();
     }
 
     public Date getCreateTime() {

@@ -20,6 +20,13 @@ public interface OrganizationService {
     List<OrganizationVO> getCompanyList(String tenantUuid);
 
     /**
+     * 获取我的公司列表
+     *
+     * @param tenantUuid 租户UUID
+     */
+    List<OrganizationVO> getMyCompanyList(String tenantUuid);
+
+    /**
      * 添加公司
      *
      * @param organizationVO

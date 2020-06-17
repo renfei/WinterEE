@@ -22,6 +22,14 @@ public interface MenuService {
     APIResult<List<MenuVO>> getMenuListBySignedUser(String language);
 
     /**
+     * 获取登录用户的菜单和权限列表，注意不是菜单管理中的查询菜单列表
+     *
+     * @param language 语言
+     * @return
+     */
+    APIResult<List<MenuVO>> getMenuAndAuthorityListBySignedUser(String language);
+
+    /**
      * 获取所有菜单
      *
      * @return
@@ -37,14 +45,6 @@ public interface MenuService {
     APIResult updateMenu(MenuVO menuVO);
 
     APIResult addMenu(MenuVO menuVO);
-
-    /**
-     * 根据角色ID列表获取菜单UUID列表
-     *
-     * @param roleUuid 角色ID列表
-     * @return 菜单UUID列表
-     */
-    List<String> getMenuUuidByRoleUuid(List<String> roleUuid);
 
     /**
      * 获取所有菜单ID

@@ -15,14 +15,15 @@ zuul:
     - /config
   sensitiveHeaders:
 ribbon:
-  ReadTimeout: 5000
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
 hystrix:
   command:
     default:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 5000
+            timeoutInMilliseconds: 60000
 feign:
   hystrix:
     enabled: false
