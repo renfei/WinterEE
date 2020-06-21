@@ -3,9 +3,12 @@ package com.winteree.core.dao;
 import com.winteree.core.dao.entity.LogDO;
 import com.winteree.core.dao.entity.LogDOExample;
 import com.winteree.core.dao.entity.LogDOWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface LogDOMapper {
     long countByExample(LogDOExample example);
 

@@ -2,9 +2,12 @@ package com.winteree.core.dao;
 
 import com.winteree.core.dao.entity.RoleMenuDO;
 import com.winteree.core.dao.entity.RoleMenuDOExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface RoleMenuDOMapper {
     long countByExample(RoleMenuDOExample example);
 

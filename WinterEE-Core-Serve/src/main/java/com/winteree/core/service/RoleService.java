@@ -2,8 +2,9 @@ package com.winteree.core.service;
 
 import com.winteree.api.entity.DataScopeEnum;
 import com.winteree.api.entity.RoleDTO;
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
 import com.winteree.core.dao.entity.RoleDO;
-import net.renfei.sdk.entity.APIResult;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public interface RoleService {
      * @param roleDTO 角色信息传输对象
      * @return 结果
      */
-    APIResult addRole(RoleDTO roleDTO);
+    int addRole(RoleDTO roleDTO) throws ForbiddenException, FailureException;
 
     /**
      * 修改角色
@@ -46,7 +47,7 @@ public interface RoleService {
      * @param roleDTO 角色传输对象
      * @return 结果
      */
-    APIResult updateRole(RoleDTO roleDTO);
+    int updateRole(RoleDTO roleDTO) throws ForbiddenException, FailureException;
 
     /**
      * 删除角色
@@ -54,7 +55,7 @@ public interface RoleService {
      * @param uuid 角色ID
      * @return 删除结果
      */
-    APIResult deleteRole(String uuid);
+    int deleteRole(String uuid) throws ForbiddenException, FailureException;
 
     /**
      * 根据角色ID列表获取菜单UUID列表

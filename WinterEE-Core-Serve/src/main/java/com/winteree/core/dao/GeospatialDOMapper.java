@@ -4,9 +4,11 @@ import com.winteree.core.dao.entity.GeospatialDO;
 import com.winteree.core.dao.entity.GeospatialDOEx;
 import com.winteree.core.dao.entity.GeospatialDOExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface GeospatialDOMapper {
     long countByExample(GeospatialDOExample example);
 

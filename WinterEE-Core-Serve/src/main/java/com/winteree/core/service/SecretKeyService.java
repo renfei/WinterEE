@@ -1,7 +1,7 @@
 package com.winteree.core.service;
 
 import com.winteree.api.entity.ReportPublicKeyVO;
-import net.renfei.sdk.entity.APIResult;
+import com.winteree.api.exception.FailureException;
 
 import java.util.Map;
 
@@ -14,5 +14,5 @@ import java.util.Map;
  */
 public interface SecretKeyService {
     Map<Integer, String> secretKey();
-    APIResult setSecretKey(ReportPublicKeyVO reportPublicKeyVO);
+    Map<String, String> setSecretKey(ReportPublicKeyVO reportPublicKeyVO) throws FailureException;
 }

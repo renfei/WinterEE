@@ -1,5 +1,6 @@
 package com.winteree.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.List;
@@ -29,5 +30,6 @@ public class MenuVO {
     private Boolean isDelete;
     private String i18n;
     private Boolean model = false;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<MenuVO> children;
 }

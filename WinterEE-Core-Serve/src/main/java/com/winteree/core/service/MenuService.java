@@ -1,7 +1,7 @@
 package com.winteree.core.service;
 
 import com.winteree.api.entity.MenuVO;
-import net.renfei.sdk.entity.APIResult;
+import com.winteree.api.exception.FailureException;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public interface MenuService {
      * @param language 语言
      * @return
      */
-    APIResult<List<MenuVO>> getMenuListBySignedUser(String language);
+    List<MenuVO> getMenuListBySignedUser(String language);
 
     /**
      * 获取登录用户的菜单和权限列表，注意不是菜单管理中的查询菜单列表
@@ -27,24 +27,24 @@ public interface MenuService {
      * @param language 语言
      * @return
      */
-    APIResult<List<MenuVO>> getMenuAndAuthorityListBySignedUser(String language);
+    List<MenuVO> getMenuAndAuthorityListBySignedUser(String language);
 
     /**
      * 获取所有菜单
      *
      * @return
      */
-    APIResult<List<MenuVO>> getAllMenuTree();
+    List<MenuVO> getAllMenuTree();
 
-    APIResult<List<MenuVO>> getAllMenuList();
+    List<MenuVO> getAllMenuList();
 
-    APIResult deleteMenuByUuid(String uuid);
+    int deleteMenuByUuid(String uuid) throws FailureException;
 
-    APIResult<MenuVO> getMenuByUuid(String uuid);
+    MenuVO getMenuByUuid(String uuid) throws FailureException;
 
-    APIResult updateMenu(MenuVO menuVO);
+    int updateMenu(MenuVO menuVO) throws FailureException;
 
-    APIResult addMenu(MenuVO menuVO);
+    int addMenu(MenuVO menuVO) throws FailureException;
 
     /**
      * 获取所有菜单ID

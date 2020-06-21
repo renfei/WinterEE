@@ -1,6 +1,8 @@
 package com.winteree.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -26,10 +28,17 @@ public class RoleDTO {
     private Integer dataScope;
     private Boolean useable;
     private String createBy;
+    private String createByName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     private String updateBy;
+    private String updateByName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date updateTime;
     private String remarks;
     private String delFlag;
     private List<String> menuUuid;
+    private List<MenuVO> menuVos;
 }

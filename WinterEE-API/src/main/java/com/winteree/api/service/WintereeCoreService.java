@@ -310,6 +310,15 @@ public interface WintereeCoreService {
     APIResult getCompanyList(String tenantUuid);
 
     /**
+     * 获取公司列表（简单列表非树状）
+     *
+     * @param tenantUuid
+     * @return
+     */
+    @GetMapping("/organization/company/simpleList")
+    APIResult getCompanySimpleList(String tenantUuid);
+
+    /**
      * 获取公司列表
      *
      * @param tenantUuid 租户ID
@@ -335,6 +344,35 @@ public interface WintereeCoreService {
      */
     @PutMapping("/organization/company")
     APIResult updateCompany(OrganizationVO organizationVO);
+
+    /**
+     * 获取部门列表（树状）
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return
+     */
+    @GetMapping("/organization/department")
+    APIResult getDepartmentList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
+                                @RequestParam(name = "companyUuid", required = false) String companyUuid);
+
+    /**
+     * 添加部门
+     *
+     * @param organizationVO 部门对象
+     * @return
+     */
+    @PostMapping("/organization/department")
+    APIResult addDepartment(OrganizationVO organizationVO);
+
+    /**
+     * 添加部门
+     *
+     * @param organizationVO 部门对象
+     * @return
+     */
+    @PutMapping("/organization/department")
+    APIResult updateDepartment(OrganizationVO organizationVO);
     //</editor-fold>
 
     //<editor-fold desc="角色类的接口" defaultstate="collapsed">

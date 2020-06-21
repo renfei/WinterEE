@@ -2,7 +2,7 @@ package com.winteree.core.service;
 
 import com.winteree.api.entity.ListData;
 import com.winteree.api.entity.OAuthClientDTO;
-import net.renfei.sdk.entity.APIResult;
+import com.winteree.api.exception.FailureException;
 
 /**
  * <p>Title: OAuthClientService</p>
@@ -19,7 +19,7 @@ public interface OAuthClientService {
      * @param rows 容量
      * @return
      */
-    APIResult<ListData<OAuthClientDTO>> getOAuthClientAllList(int page, int rows);
+    ListData<OAuthClientDTO> getOAuthClientAllList(int page, int rows) throws FailureException;
 
     /**
      * 添加OAtuh客户端
@@ -27,7 +27,7 @@ public interface OAuthClientService {
      * @param oAuthClientDTO OAtuh客户端
      * @return
      */
-    APIResult addOAuthClient(OAuthClientDTO oAuthClientDTO);
+    String addOAuthClient(OAuthClientDTO oAuthClientDTO) throws FailureException;
 
     /**
      * 修改OAtuh客户端
@@ -35,7 +35,7 @@ public interface OAuthClientService {
      * @param oAuthClientDTO OAtuh客户端
      * @return
      */
-    APIResult updateOAuthClient(OAuthClientDTO oAuthClientDTO);
+    int updateOAuthClient(OAuthClientDTO oAuthClientDTO) throws FailureException;
 
     /**
      * 删除OAtuh客户端
@@ -43,5 +43,5 @@ public interface OAuthClientService {
      * @param clientId clientId
      * @return
      */
-    APIResult deleteOAuthClient(String clientId);
+    int deleteOAuthClient(String clientId) throws FailureException;
 }

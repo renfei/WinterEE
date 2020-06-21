@@ -3,9 +3,11 @@ package com.winteree.uaa.dao;
 import com.winteree.uaa.dao.entity.MenuDO;
 import com.winteree.uaa.dao.entity.MenuDOExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface MenuDOMapper {
     long countByExample(MenuDOExample example);
 

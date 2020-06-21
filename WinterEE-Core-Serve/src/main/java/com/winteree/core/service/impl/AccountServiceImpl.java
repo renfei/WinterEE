@@ -7,8 +7,6 @@ import com.winteree.core.dao.entity.AccountDO;
 import com.winteree.core.dao.entity.AccountDOExample;
 import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
-import net.renfei.sdk.comm.StateCode;
-import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.ListUtils;
@@ -82,20 +80,16 @@ public class AccountServiceImpl extends BaseService implements AccountService {
     }
 
     @Override
-    public APIResult<AccountDTO> getAccountInfo() {
+    public AccountDTO getAccountInfo() {
         com.winteree.core.entity.AccountDTO accountDTO = getSignedUser();
-        return APIResult.builder()
-                .code(StateCode.OK)
-                .message("OK")
-                .data(Builder.of(AccountDTO::new)
-                        .with(AccountDTO::setAuthorities, accountDTO.getAuthorities())
-                        .with(AccountDTO::setUserName, accountDTO.getUserName())
-                        .with(AccountDTO::setUuid, accountDTO.getUuid())
-                        .with(AccountDTO::setTenantUuid, accountDTO.getTenantUuid())
-                        .with(AccountDTO::setEmail, accountDTO.getEmail())
-                        .with(AccountDTO::setPhone, accountDTO.getPhone())
-                        .with(AccountDTO::setCreateTime, accountDTO.getCreateTime())
-                        .build())
+        return Builder.of(AccountDTO::new)
+                .with(AccountDTO::setAuthorities, accountDTO.getAuthorities())
+                .with(AccountDTO::setUserName, accountDTO.getUserName())
+                .with(AccountDTO::setUuid, accountDTO.getUuid())
+                .with(AccountDTO::setTenantUuid, accountDTO.getTenantUuid())
+                .with(AccountDTO::setEmail, accountDTO.getEmail())
+                .with(AccountDTO::setPhone, accountDTO.getPhone())
+                .with(AccountDTO::setCreateTime, accountDTO.getCreateTime())
                 .build();
     }
 

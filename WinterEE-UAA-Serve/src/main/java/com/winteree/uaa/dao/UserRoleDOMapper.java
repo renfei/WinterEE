@@ -3,9 +3,11 @@ package com.winteree.uaa.dao;
 import com.winteree.uaa.dao.entity.UserRoleDO;
 import com.winteree.uaa.dao.entity.UserRoleDOExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface UserRoleDOMapper {
     long countByExample(UserRoleDOExample example);
 

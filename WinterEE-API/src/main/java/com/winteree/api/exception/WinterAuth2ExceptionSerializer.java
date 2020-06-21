@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.SneakyThrows;
-import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 
 /**
@@ -19,9 +18,8 @@ public class WinterAuth2ExceptionSerializer extends StdSerializer<WinterAuth2Exc
     @SneakyThrows
     public void serialize(WinterAuth2Exception value, JsonGenerator gen, SerializerProvider provider) {
         gen.writeObject(APIResult.builder()
-                .code(StateCode.Failure)
+                .code(value.getStateCode())
                 .message(value.getMessage())
-                .data(value.getErrorCode())
                 .build());
     }
 }

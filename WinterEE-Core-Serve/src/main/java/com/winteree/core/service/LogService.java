@@ -1,7 +1,7 @@
 package com.winteree.core.service;
 
 import com.winteree.api.entity.LogDTO;
-import net.renfei.sdk.entity.APIResult;
+import com.winteree.api.exception.FailureException;
 
 import java.util.List;
 
@@ -18,8 +18,9 @@ public interface LogService {
      *
      * @param logDTO 日志实体
      * @return
+     * @throws FailureException 执行失败异常
      */
-    APIResult log(LogDTO logDTO);
+    int log(LogDTO logDTO) throws FailureException;
 
     /**
      * 获取系统日志
@@ -31,6 +32,7 @@ public interface LogService {
      * @param startDate 开始时间
      * @param endDate   结束时间
      * @return
+     * @throws FailureException 执行失败异常
      */
-    APIResult<List<LogDTO>> getLogList(int page, int rows, String logType, String subType, String startDate, String endDate);
+    List<LogDTO> getLogList(int page, int rows, String logType, String subType, String startDate, String endDate) throws FailureException;
 }

@@ -3,9 +3,12 @@ package com.winteree.core.dao;
 import com.winteree.core.dao.entity.TenantInfoDO;
 import com.winteree.core.dao.entity.TenantInfoDOExample;
 import com.winteree.core.dao.entity.TenantInfoDOWithBLOBs;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface TenantInfoDOMapper {
     long countByExample(TenantInfoDOExample example);
 

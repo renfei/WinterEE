@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.winteree.api.entity.ListData;
 import com.winteree.api.entity.OAuthClientDTO;
+import com.winteree.api.exception.FailureException;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.OAuthClientDOMapper;
 import com.winteree.core.dao.entity.OAuthClientDO;
@@ -12,8 +13,6 @@ import com.winteree.core.service.BaseService;
 import com.winteree.core.service.I18nMessageService;
 import com.winteree.core.service.OAuthClientService;
 import lombok.extern.slf4j.Slf4j;
-import net.renfei.sdk.comm.StateCode;
-import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.StringUtils;
@@ -52,7 +51,7 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
      * @return
      */
     @Override
-    public APIResult<ListData<OAuthClientDTO>> getOAuthClientAllList(int page, int rows) {
+    public ListData<OAuthClientDTO> getOAuthClientAllList(int page, int rows) throws FailureException {
         OAuthClientDOExample oAuthClientDOExample = new OAuthClientDOExample();
         oAuthClientDOExample.createCriteria();
         Page page1 = PageHelper.startPage(page, rows);
@@ -63,11 +62,7 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
             oAuthClientDTOListData.setTotal(0L);
             oAuthClientDTOListData.setData(oAuthClientDTOS);
             if (BeanUtils.isEmpty(oAuthClientDOS)) {
-                return APIResult.builder()
-                        .code(StateCode.OK)
-                        .message("OK")
-                        .data(oAuthClientDTOListData)
-                        .build();
+                return oAuthClientDTOListData;
             }
             for (OAuthClientDO oaDO : oAuthClientDOS
             ) {
@@ -75,17 +70,10 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
             }
             oAuthClientDTOListData.setTotal(page1.getTotal());
             oAuthClientDTOListData.setData(oAuthClientDTOS);
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .data(oAuthClientDTOListData)
-                    .build();
+            return oAuthClientDTOListData;
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException("Failure");
         }
     }
 
@@ -96,21 +84,15 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
      * @return
      */
     @Override
-    public APIResult addOAuthClient(OAuthClientDTO oAuthClientDTO) {
+    public String addOAuthClient(OAuthClientDTO oAuthClientDTO) throws FailureException {
         if (BeanUtils.isEmpty(oAuthClientDTO.getClientId())) {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("ClientId " + i18nMessageService.getMessage(oAuthClientDTO.getLang(), "core.cannotbeempty", "不能为空"))
-                    .build();
+            throw new FailureException("ClientId " + i18nMessageService.getMessage(oAuthClientDTO.getLang(), "core.cannotbeempty", "不能为空"));
         }
         OAuthClientDOExample oAuthClientDOExample = new OAuthClientDOExample();
         oAuthClientDOExample.createCriteria().andClientIdEqualTo(oAuthClientDTO.getClientId());
         List<OAuthClientDO> oAuthClientDOS = oAuthClientDOMapper.selectByExample(oAuthClientDOExample);
         if (oAuthClientDOS != null && oAuthClientDOS.size() > 0) {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("ClientId " + i18nMessageService.getMessage(oAuthClientDTO.getLang(), "core.occupied", "已被占用"))
-                    .build();
+            throw new FailureException("ClientId " + i18nMessageService.getMessage(oAuthClientDTO.getLang(), "core.occupied", "已被占用"));
         }
         String clientSecret = StringUtils.getRandomString(32);
         oAuthClientDTO.setCreateTime(new Date());
@@ -118,17 +100,10 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
         oAuthClientDO.setClientSecret(clientSecret);
         try {
             oAuthClientDOMapper.insertSelective(oAuthClientDO);
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .data(clientSecret)
-                    .build();
+            return clientSecret;
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException("Failure");
         }
     }
 
@@ -139,12 +114,9 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
      * @return
      */
     @Override
-    public APIResult updateOAuthClient(OAuthClientDTO oAuthClientDTO) {
+    public int updateOAuthClient(OAuthClientDTO oAuthClientDTO) throws FailureException {
         if (BeanUtils.isEmpty(oAuthClientDTO.getClientId())) {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("ClientId " + i18nMessageService.getMessage(oAuthClientDTO.getLang(), "core.cannotbeempty", "不能为空"))
-                    .build();
+            throw new FailureException("ClientId " + i18nMessageService.getMessage(oAuthClientDTO.getLang(), "core.cannotbeempty", "不能为空"));
         }
         oAuthClientDTO.setCreateTime(null);
         OAuthClientDO oAuthClientDO = convert(oAuthClientDTO);
@@ -153,21 +125,12 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
         try {
             int updated = oAuthClientDOMapper.updateByExampleSelective(oAuthClientDO, oAuthClientDOExample);
             if (updated == 0) {
-                return APIResult.builder()
-                        .code(StateCode.Failure)
-                        .message("Failure")
-                        .build();
+                throw new FailureException("Failure");
             }
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .build();
+            return 1;
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException("Failure");
         }
     }
 
@@ -178,27 +141,18 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
      * @return
      */
     @Override
-    public APIResult deleteOAuthClient(String clientId) {
+    public int deleteOAuthClient(String clientId) throws FailureException {
         OAuthClientDOExample oAuthClientDOExample = new OAuthClientDOExample();
         oAuthClientDOExample.createCriteria().andClientIdEqualTo(clientId);
         try {
             int deleted = oAuthClientDOMapper.deleteByExample(oAuthClientDOExample);
             if (deleted == 0) {
-                return APIResult.builder()
-                        .code(StateCode.Failure)
-                        .message("Failure")
-                        .build();
+                throw new FailureException("Failure");
             }
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .build();
+            return deleted;
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException("Failure");
         }
     }
 

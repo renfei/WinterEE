@@ -4,9 +4,11 @@ import com.winteree.uaa.dao.entity.SecretKeyDO;
 import com.winteree.uaa.dao.entity.SecretKeyDOExample;
 import com.winteree.uaa.dao.entity.SecretKeyDOWithBLOBs;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface SecretKeyDOMapper {
     long countByExample(SecretKeyDOExample example);
 

@@ -1,6 +1,8 @@
 package com.winteree.core.controller;
 
 import com.winteree.api.entity.*;
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
 import com.winteree.api.service.WintereeCoreService;
 import com.winteree.core.aop.OperationLog;
 import com.winteree.core.config.WintereeCoreConfig;
@@ -18,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * WinterEE-Core-Serve 提供的服务实现
@@ -81,7 +86,15 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @ApiIgnore
     public APIResult log(LogDTO logDTO) {
-        return logService.log(logDTO);
+        try {
+            if (logService.log(logDTO) > 0) {
+                return APIResult.success();
+            } else {
+                return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+            }
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
 
     @Override
@@ -107,7 +120,15 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "reportPublicKeyVO", value = "ReportPublicKeyVO对象", required = false, paramType = "body", dataType = "ReportPublicKeyVO")
     })
     public APIResult setSecretKey(ReportPublicKeyVO reportPublicKeyVO) {
-        return secretKeyService.setSecretKey(reportPublicKeyVO);
+        try {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(secretKeyService.setSecretKey(reportPublicKeyVO))
+                    .build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
     //</editor-fold>
 
@@ -188,7 +209,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @PreAuthorize("hasAnyAuthority('signed')")
     public APIResult<AccountDTO> getMyInfo() {
-        return accountService.getAccountInfo();
+        return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.getAccountInfo()).build();
     }
     //</editor-fold>
 
@@ -206,7 +227,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String")
     })
     public APIResult<List<MenuVO>> getMenuTree(String language) {
-        return menuService.getMenuListBySignedUser(language);
+        return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.getMenuListBySignedUser(language)).build();
     }
 
     /**
@@ -221,7 +242,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String")
     })
     public APIResult<List<MenuVO>> getMenuAndAuthorityTree(String language) {
-        return menuService.getMenuAndAuthorityListBySignedUser(language);
+        return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.getMenuAndAuthorityListBySignedUser(language)).build();
     }
 
     @Override
@@ -229,12 +250,12 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @OperationLog(description = "获取系统菜单列表", type = LogSubTypeEnum.SELECT)
     @ApiOperation(value = "获取后台设置菜单接口", notes = "获取后台设置菜单接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
     public APIResult<List<MenuVO>> getSettingMenuTree() {
-        return menuService.getAllMenuTree();
+        return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.getAllMenuTree()).build();
     }
 
     @Override
     public APIResult<List<MenuVO>> getSettingMenuList() {
-        return menuService.getAllMenuList();
+        return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.getAllMenuList()).build();
     }
 
     @Override
@@ -242,7 +263,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @OperationLog(description = "获取系统菜单详情", type = LogSubTypeEnum.SELECT)
     @ApiOperation(value = "获取后台设置菜单详情接口", notes = "获取后台设置菜单详情接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
     public APIResult<MenuVO> getSettingMenu(String uuid) {
-        return menuService.getMenuByUuid(uuid);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.getMenuByUuid(uuid)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
 
     @Override
@@ -250,7 +275,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @OperationLog(description = "删除系统菜单", type = LogSubTypeEnum.DELETE)
     @ApiOperation(value = "删除系统菜单", notes = "物理删除系统菜单，不可恢复！！", tags = "菜单接口", response = APIResult.class)
     public APIResult deleteSettingMenuByUuid(String uuid) {
-        return menuService.deleteMenuByUuid(uuid);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.deleteMenuByUuid(uuid)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
 
     @Override
@@ -258,7 +287,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @OperationLog(description = "修改系统菜单", type = LogSubTypeEnum.UPDATE)
     @ApiOperation(value = "修改系统菜单", notes = "修改更新系统菜单", tags = "菜单接口", response = APIResult.class)
     public APIResult updateSettingMenu(@RequestBody MenuVO menuVO) {
-        return menuService.updateMenu(menuVO);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.updateMenu(menuVO)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
 
     @Override
@@ -266,7 +299,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @OperationLog(description = "添加系统菜单", type = LogSubTypeEnum.INSERT)
     @ApiOperation(value = "添加系统菜单", notes = "添加系统菜单", tags = "菜单接口", response = APIResult.class)
     public APIResult addSettingMenu(@RequestBody MenuVO menuVO) {
-        return menuService.addMenu(menuVO);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.addMenu(menuVO)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
     //</editor-fold>
 
@@ -284,7 +321,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "endDate", value = "结束时间", required = false, paramType = "query", dataType = "Date")
     })
     public APIResult<List<LogDTO>> getLogList(int page, int rows, String logType, String subType, String startDate, String endDate) {
-        return logService.getLogList(page, rows, logType, subType, startDate, endDate);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(logService.getLogList(page, rows, logType, subType, startDate, endDate)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
 
     @Override
@@ -342,7 +383,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @PreAuthorize("hasAnyAuthority('signed')")
     @ApiOperation(value = "获取租户列表接口", notes = "获取所有租户的列表，用于切换租户", tags = "租户接口", response = String.class)
     public APIResult<ListData<TenantDTO>> getTenantList() {
-        return tenantService.getTenantList();
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(tenantService.getTenantList()).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Forbidden).message(StateCode.Forbidden.getDescribe()).build();
+        }
     }
 
     /**
@@ -360,7 +405,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "rows", value = "每页行数", required = false, paramType = "query", dataType = "int")
     })
     public APIResult<ListData<TenantDTO>> getAllTenant(int page, int rows) {
-        return tenantService.getAllTenant(page, rows);
+        return APIResult.builder().code(StateCode.OK).message("OK").data(tenantService.getAllTenant(page, rows)).build();
     }
 
     /**
@@ -376,7 +421,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "tenantDTO", value = "租户对象", required = false, paramType = "query", dataType = "TenantDTO")
     })
     public APIResult addTenant(@RequestBody TenantDTO tenantDTO) {
-        return tenantService.addTenant(tenantDTO);
+        if (tenantService.addTenant(tenantDTO) > 0) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
 
     /**
@@ -392,7 +441,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "tenantDTO", value = "租户对象", required = false, paramType = "query", dataType = "TenantDTO")
     })
     public APIResult updateTenant(@RequestBody TenantDTO tenantDTO) {
-        return tenantService.updateTenant(tenantDTO);
+        if (tenantService.updateTenant(tenantDTO) > 0) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
 
     /**
@@ -407,7 +460,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "tenantUUID", value = "租户UUID", required = false, paramType = "query", dataType = "String")
     })
     public APIResult<TenantInfoDTO> getTenantInfo(String tenantUUID) {
-        return tenantService.getTenantInfo(tenantUUID);
+        return APIResult.builder().code(StateCode.OK).message(StateCode.OK.getDescribe()).data(tenantService.getTenantInfo(tenantUUID)).build();
     }
 
     /**
@@ -423,7 +476,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "tenantInfoDTO", value = "修改租户基础信息对象", required = false, paramType = "query", dataType = "TenantInfoDTO")
     })
     public APIResult updateTenantInfo(@RequestBody TenantInfoDTO tenantInfoDTO) {
-        return tenantService.updateTenantInfo(tenantInfoDTO);
+        if (tenantService.updateTenantInfo(tenantInfoDTO) > 0) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
+        }
     }
     //</editor-fold>
 
@@ -436,7 +493,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "rows", value = "每页容量", required = false, paramType = "query", dataType = "int")
     })
     public APIResult<ListData<OAuthClientDTO>> getOAuthClientAllList(int page, int rows) {
-        return oAuthClientService.getOAuthClientAllList(page, rows);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(oAuthClientService.getOAuthClientAllList(page, rows)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
+        }
     }
 
     @Override
@@ -446,7 +507,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "oAuthClientDTO", value = "OAtuh客户端对象", required = false, paramType = "query", dataType = "OAuthClientDTO")
     })
     public APIResult addOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO) {
-        return oAuthClientService.addOAuthClient(oAuthClientDTO);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(oAuthClientService.addOAuthClient(oAuthClientDTO)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
+        }
     }
 
     @Override
@@ -456,7 +521,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "oAuthClientDTO", value = "OAtuh客户端对象", required = false, paramType = "query", dataType = "OAuthClientDTO")
     })
     public APIResult updateOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO) {
-        return oAuthClientService.updateOAuthClient(oAuthClientDTO);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(oAuthClientService.updateOAuthClient(oAuthClientDTO)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
+        }
     }
 
     @Override
@@ -466,7 +535,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "clientId", value = "客户端ID", required = false, paramType = "query", dataType = "String")
     })
     public APIResult deleteOAuthClient(String clientId) {
-        return oAuthClientService.deleteOAuthClient(clientId);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(oAuthClientService.deleteOAuthClient(clientId)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
+        }
     }
     //</editor-fold>
 
@@ -489,6 +562,26 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .code(StateCode.OK)
                 .message("OK")
                 .data(organizationService.getCompanyList(tenantUuid))
+                .build();
+    }
+
+    /**
+     * 获取公司列表（简单列表非树状）
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:company:view')")
+    @ApiOperation(value = "获取公司列表（简单列表非树状）", notes = "获取公司列表（简单列表非树状）", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult getCompanySimpleList(String tenantUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(organizationService.getCompanySimpleList(tenantUuid))
                 .build();
     }
 
@@ -564,6 +657,58 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .message("Failure")
                 .build();
     }
+
+    /**
+     * 获取部门列表（树状）
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:department:view')")
+    @ApiOperation(value = "获取部门列表（树状）", notes = "获取部门列表（树状）", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "companyUuid", value = "公司ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult getDepartmentList(String tenantUuid, String companyUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(organizationService.getDepartmentList(tenantUuid, companyUuid))
+                .build();
+    }
+
+    /**
+     * 添加部门
+     *
+     * @param organizationVO 部门对象
+     * @return
+     */
+    @Override
+    public APIResult addDepartment(@RequestBody OrganizationVO organizationVO) {
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(organizationService.addDepartment(organizationVO)).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Failure).message(forbiddenException.getMessage()).build();
+        }
+    }
+
+    /**
+     * 添加部门
+     *
+     * @param organizationVO 部门对象
+     * @return
+     */
+    @Override
+    public APIResult updateDepartment(@RequestBody OrganizationVO organizationVO) {
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(organizationService.updateDepartment(organizationVO)).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Failure).message(forbiddenException.getMessage()).build();
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="角色类的接口" defaultstate="collapsed">
@@ -601,7 +746,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "roleDTO", value = "角色数据传输对象", required = false, paramType = "query", dataType = "RoleDTO")
     })
     public APIResult addRole(@RequestBody RoleDTO roleDTO) {
-        return roleService.addRole(roleDTO);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(roleService.addRole(roleDTO)).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Failure).message(forbiddenException.getMessage()).build();
+        }
     }
 
     /**
@@ -617,7 +766,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "roleDTO", value = "角色数据传输对象", required = false, paramType = "query", dataType = "RoleDTO")
     })
     public APIResult updateRole(@RequestBody RoleDTO roleDTO) {
-        return roleService.updateRole(roleDTO);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(roleService.updateRole(roleDTO)).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Failure).message(forbiddenException.getMessage()).build();
+        }
     }
 
     /**
@@ -633,7 +786,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "uuid", value = "角色ID", required = false, paramType = "query", dataType = "String")
     })
     public APIResult deleteRole(String uuid) {
-        return roleService.deleteRole(uuid);
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(roleService.deleteRole(uuid)).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Failure).message(forbiddenException.getMessage()).build();
+        }
     }
     //</editor-fold>
 }

@@ -3,9 +3,11 @@ package com.winteree.core.dao;
 import com.winteree.core.dao.entity.OAuthClientDO;
 import com.winteree.core.dao.entity.OAuthClientDOExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface OAuthClientDOMapper {
     long countByExample(OAuthClientDOExample example);
 

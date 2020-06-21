@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.winteree.api.entity.LogDTO;
 import com.winteree.api.entity.LogSubTypeEnum;
 import com.winteree.api.entity.LogTypeEnum;
+import com.winteree.api.exception.FailureException;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.LogDOMapper;
 import com.winteree.core.dao.entity.LogDOExample;
@@ -13,8 +14,6 @@ import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.LogService;
 import lombok.extern.slf4j.Slf4j;
-import net.renfei.sdk.comm.StateCode;
-import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.DateUtils;
@@ -50,24 +49,17 @@ public class LogServiceImpl extends BaseService implements LogService {
 
     @Async
     @Override
-    public APIResult log(LogDTO logDTO) {
+    public int log(LogDTO logDTO) throws FailureException {
         LogDOWithBLOBs logDOWithBLOBs = convert(logDTO);
         if (logDOWithBLOBs != null) {
             try {
-                logDOMapper.insertSelective(logDOWithBLOBs);
-                return APIResult.builder()
-                        .code(StateCode.OK)
-                        .build();
+                return logDOMapper.insertSelective(logDOWithBLOBs);
             } catch (Exception ex) {
                 log.error(ex.getMessage());
-                return APIResult.builder()
-                        .code(StateCode.Failure)
-                        .build();
+                throw new FailureException("Failure");
             }
         } else {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .build();
+            throw new FailureException("Failure");
         }
     }
 
@@ -81,7 +73,7 @@ public class LogServiceImpl extends BaseService implements LogService {
      * @return
      */
     @Override
-    public APIResult<List<LogDTO>> getLogList(int page, int rows, String logType, String subType, String startDate, String endDate) {
+    public List<LogDTO> getLogList(int page, int rows, String logType, String subType, String startDate, String endDate) throws FailureException {
         List<LogDTO> logDTOS = new ArrayList<>();
         LogDOExample logDOExample = new LogDOExample();
         LogDOExample.Criteria criteria = logDOExample.createCriteria();
@@ -109,10 +101,7 @@ public class LogServiceImpl extends BaseService implements LogService {
             Page pages = PageHelper.startPage(page, rows);
             List<LogDOWithBLOBs> logDOWithBLOBs = logDOMapper.selectByExampleWithBLOBs(logDOExample);
             if (BeanUtils.isEmpty(logDOExample)) {
-                return APIResult.builder()
-                        .code(StateCode.OK)
-                        .data(logDTOS)
-                        .build();
+                return logDTOS;
             }
             for (LogDOWithBLOBs log : logDOWithBLOBs
             ) {
@@ -120,16 +109,10 @@ public class LogServiceImpl extends BaseService implements LogService {
                 logDTO.setTotal(pages.getTotal());
                 logDTOS.add(logDTO);
             }
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .data(logDTOS)
-                    .build();
+            return logDTOS;
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException("Failure");
         }
     }
 

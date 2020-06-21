@@ -2,7 +2,12 @@ package com.winteree.core.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.winteree.api.entity.*;
+import com.winteree.api.entity.GeospatialEnum;
+import com.winteree.api.entity.ListData;
+import com.winteree.api.entity.TenantDTO;
+import com.winteree.api.entity.TenantInfoDTO;
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.TenantDOMapper;
 import com.winteree.core.dao.TenantInfoDOMapper;
@@ -14,7 +19,6 @@ import com.winteree.core.service.GeospatialService;
 import com.winteree.core.service.TenantService;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.comm.StateCode;
-import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.ListUtils;
@@ -63,7 +67,7 @@ public class TenantServiceImpl extends BaseService implements TenantService {
      * @return
      */
     @Override
-    public APIResult<ListData<TenantDTO>> getTenantList() {
+    public ListData<TenantDTO> getTenantList() throws ForbiddenException {
         AccountDTO accountDTO = getSignedUser(accountService);
         AtomicBoolean manage = new AtomicBoolean(false);
         accountDTO.getAuthorities().forEach(i -> {
@@ -81,11 +85,7 @@ public class TenantServiceImpl extends BaseService implements TenantService {
             if (BeanUtils.isEmpty(tenantDOList)) {
                 tenantDTOListData.setTotal(0L);
                 tenantDTOListData.setData(tenantDTOS);
-                return APIResult.builder()
-                        .code(StateCode.OK)
-                        .message("OK")
-                        .data(tenantDTOListData)
-                        .build();
+                return tenantDTOListData;
             } else {
                 tenantDTOListData.setTotal(page.getTotal());
                 for (TenantDO tenantDO : tenantDOList
@@ -94,16 +94,9 @@ public class TenantServiceImpl extends BaseService implements TenantService {
                 }
                 tenantDTOListData.setData(tenantDTOS);
             }
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .data(tenantDTOListData)
-                    .build();
+            return tenantDTOListData;
         } else {
-            return APIResult.builder()
-                    .code(StateCode.Forbidden)
-                    .message("")
-                    .build();
+            throw new ForbiddenException(StateCode.Forbidden.getDescribe());
         }
     }
 
@@ -115,7 +108,7 @@ public class TenantServiceImpl extends BaseService implements TenantService {
      * @return
      */
     @Override
-    public APIResult<ListData<TenantDTO>> getAllTenant(int page, int rows) {
+    public ListData<TenantDTO> getAllTenant(int page, int rows) {
         TenantDOExample tenantDOExample = new TenantDOExample();
         tenantDOExample.createCriteria();
         Page page1 = PageHelper.startPage(page, rows);
@@ -132,83 +125,49 @@ public class TenantServiceImpl extends BaseService implements TenantService {
             }
         }
         tenantDTOListData.setData(tenantDTOS);
-        return APIResult.builder()
-                .code(StateCode.OK)
-                .data(tenantDTOListData)
-                .build();
+        return tenantDTOListData;
     }
 
     @Override
-    public APIResult addTenant(TenantDTO tenantDTO) {
-        if (RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())) {
-            return APIResult.builder()
-                    .code(StateCode.Forbidden)
-                    .message("演示模式，禁止修改数据，只允许查看")
-                    .build();
-        }
+    public int addTenant(TenantDTO tenantDTO) throws FailureException {
         TenantDO tenantDO = convert(tenantDTO);
         tenantDO.setId(null);
         tenantDO.setCreateTime(new Date());
         tenantDO.setUpdateTime(null);
         tenantDO.setUuid(UUID.randomUUID().toString());
         try {
-            tenantDOMapper.insertSelective(tenantDO);
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .build();
+            return tenantDOMapper.insertSelective(tenantDO);
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException(StateCode.Failure.getDescribe());
         }
     }
 
     @Override
-    public APIResult updateTenant(TenantDTO tenantDTO) {
-        if (RunModeEnum.DEMO.getMode().equals(wintereeCoreConfig.getRunMode())) {
-            return APIResult.builder()
-                    .code(StateCode.Forbidden)
-                    .message("演示模式，禁止修改数据，只允许查看")
-                    .build();
-        }
+    public int updateTenant(TenantDTO tenantDTO) throws FailureException {
         TenantDO tenantDO = convert(tenantDTO);
         tenantDO.setUpdateTime(new Date());
         TenantDOExample tenantDOExample = new TenantDOExample();
         tenantDOExample.createCriteria()
                 .andUuidEqualTo(tenantDO.getUuid());
         try {
-            tenantDOMapper.updateByExampleSelective(tenantDO, tenantDOExample);
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .build();
+            return tenantDOMapper.updateByExampleSelective(tenantDO, tenantDOExample);
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException(StateCode.Failure.getDescribe());
         }
     }
 
     @Override
-    public APIResult<TenantDO> getTenantDOByUUID(String uuid) {
+    public TenantDO getTenantDOByUUID(String uuid) throws FailureException {
         TenantDOExample tenantDOExample = new TenantDOExample();
         tenantDOExample.createCriteria()
                 .andUuidEqualTo(uuid);
         TenantDO tenantDO = ListUtils.getOne(tenantDOMapper.selectByExample(tenantDOExample));
         if (tenantDO == null) {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException(StateCode.Failure.getDescribe());
         }
-        return APIResult.builder()
-                .code(StateCode.OK)
-                .message("OK")
-                .data(tenantDO)
-                .build();
+        return tenantDO;
     }
 
     /**
@@ -218,12 +177,10 @@ public class TenantServiceImpl extends BaseService implements TenantService {
      * @return
      */
     @Override
-    public APIResult<TenantInfoDTO> getTenantInfo(String tenantUUID) {
-        APIResult<TenantDO> apiResult = this.getTenantDOByUUID(tenantUUID);
-        TenantDO tenantDO = null;
-        if (StateCode.OK.getCode().equals(apiResult.getCode())) {
+    public TenantInfoDTO getTenantInfo(String tenantUUID) throws FailureException {
+        TenantDO tenantDO = this.getTenantDOByUUID(tenantUUID);
+        if (tenantDO != null) {
             TenantInfoDTO tenantInfoDTO = new TenantInfoDTO();
-            tenantDO = apiResult.getData();
             tenantInfoDTO.setTenantUuid(tenantUUID);
             tenantInfoDTO.setName(tenantDO.getName());
             TenantInfoDOExample tenantInfoDOExample = new TenantInfoDOExample();
@@ -240,16 +197,9 @@ public class TenantServiceImpl extends BaseService implements TenantService {
                 tenantInfoDTO.setLongitude(geospatialDO.getLongitude());
                 tenantInfoDTO.setLatitude(geospatialDO.getLatitude());
             }
-            return APIResult.builder()
-                    .data(tenantInfoDTO)
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .build();
+            return tenantInfoDTO;
         }
-        return APIResult.builder()
-                .code(StateCode.Failure)
-                .message("Failure")
-                .build();
+        throw new FailureException(StateCode.Failure.getDescribe());
     }
 
     /**
@@ -259,10 +209,10 @@ public class TenantServiceImpl extends BaseService implements TenantService {
      * @return
      */
     @Override
-    public APIResult updateTenantInfo(TenantInfoDTO tenantInfoDTO) {
+    public int updateTenantInfo(TenantInfoDTO tenantInfoDTO) throws FailureException {
         //先查询租户是否存在
-        APIResult<TenantDO> apiResult = this.getTenantDOByUUID(tenantInfoDTO.getTenantUuid());
-        if (StateCode.OK.getCode().equals(apiResult.getCode())) {
+        TenantDO tenantDO = this.getTenantDOByUUID(tenantInfoDTO.getTenantUuid());
+        if (tenantDO != null) {
             //查询租户信息是否存在
             TenantInfoDOExample tenantInfoDOExample = new TenantInfoDOExample();
             tenantInfoDOExample.createCriteria()
@@ -289,15 +239,9 @@ public class TenantServiceImpl extends BaseService implements TenantService {
             geospatialDO.setLongitude(tenantInfoDTO.getLongitude());
             geospatialDO.setLatitude(tenantInfoDTO.getLatitude());
             geospatialService.updateGeospatial(geospatialDO);
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .build();
+            return 1;
         }
-        return APIResult.builder()
-                .code(StateCode.Failure)
-                .message("Failure")
-                .build();
+        throw new FailureException(StateCode.Failure.getDescribe());
     }
 
     private TenantDO convert(TenantDTO tenantDTO) {

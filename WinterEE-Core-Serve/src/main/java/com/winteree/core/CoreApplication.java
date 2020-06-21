@@ -8,6 +8,7 @@ import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.stereotype.Repository;
 
 /**
  * CoreApplication
@@ -20,7 +21,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @SpringCloudApplication
 @EnableConfigurationProperties
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@MapperScan(basePackages = "com.winteree.core.dao")
+@MapperScan(basePackages = "com.winteree.core.dao", annotationClass = Repository.class)
 public class CoreApplication {
     public static void main(String[] args) {
         SpringApplication.run(CoreApplication.class, args);

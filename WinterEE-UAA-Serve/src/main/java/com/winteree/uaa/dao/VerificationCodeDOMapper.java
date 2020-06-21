@@ -2,9 +2,12 @@ package com.winteree.uaa.dao;
 
 import com.winteree.uaa.dao.entity.VerificationCodeDO;
 import com.winteree.uaa.dao.entity.VerificationCodeDOExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface VerificationCodeDOMapper {
     long countByExample(VerificationCodeDOExample example);
 

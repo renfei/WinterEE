@@ -1,7 +1,6 @@
 package com.winteree.core.service;
 
 import com.winteree.api.entity.AccountDTO;
-import net.renfei.sdk.entity.APIResult;
 
 /**
  * <p>Title: AccountService</p>
@@ -15,5 +14,5 @@ public interface AccountService {
     AccountDTO getAccountIdByUserName(String username);
     AccountDTO getAccountIdByEmail(String email);
     AccountDTO getAccountIdByPhone(String phone);
-    APIResult<AccountDTO> getAccountInfo();
+    AccountDTO getAccountInfo();
 }

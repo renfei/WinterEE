@@ -3,9 +3,11 @@ package com.winteree.core.dao;
 import com.winteree.core.dao.entity.RoleDO;
 import com.winteree.core.dao.entity.RoleDOExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface RoleDOMapper {
     long countByExample(RoleDOExample example);
 

@@ -3,9 +3,11 @@ package com.winteree.uaa.dao;
 import com.winteree.uaa.dao.entity.RoleMenuDO;
 import com.winteree.uaa.dao.entity.RoleMenuDOExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface RoleMenuDOMapper {
     long countByExample(RoleMenuDOExample example);
 

@@ -2,9 +2,12 @@ package com.winteree.uaa.dao;
 
 import com.winteree.uaa.dao.entity.AccountDO;
 import com.winteree.uaa.dao.entity.AccountDOExample;
-import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface AccountDOMapper {
     long countByExample(AccountDOExample example);
 

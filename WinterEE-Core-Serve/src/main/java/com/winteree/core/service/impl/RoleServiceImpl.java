@@ -1,16 +1,20 @@
 package com.winteree.core.service.impl;
 
 import com.winteree.api.entity.DataScopeEnum;
+import com.winteree.api.entity.MenuVO;
+import com.winteree.api.entity.OrgEnum;
 import com.winteree.api.entity.RoleDTO;
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
 import com.winteree.core.config.WintereeCoreConfig;
-import com.winteree.core.dao.RoleDOMapper;
-import com.winteree.core.dao.RoleMenuDOMapper;
-import com.winteree.core.dao.UserRoleDOMapper;
+import com.winteree.core.dao.*;
 import com.winteree.core.dao.entity.*;
 import com.winteree.core.entity.AccountDTO;
-import com.winteree.core.service.*;
+import com.winteree.core.service.AccountService;
+import com.winteree.core.service.BaseService;
+import com.winteree.core.service.RoleService;
+import com.winteree.core.service.TenantService;
 import net.renfei.sdk.comm.StateCode;
-import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.ListUtils;
 import org.springframework.stereotype.Service;
@@ -34,19 +38,25 @@ public class RoleServiceImpl extends BaseService implements RoleService {
     private final RoleDOMapper roleDOMapper;
     private final UserRoleDOMapper userRoleDOMapper;
     private final RoleMenuDOMapper roleMenuDOMapper;
+    private final OrganizationDOMapper organizationDOMapper;
+    private final MenuDOMapper menuDOMapper;
 
     protected RoleServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                               AccountService accountService,
                               TenantService tenantService,
                               RoleDOMapper roleDOMapper,
                               UserRoleDOMapper userRoleDOMapper,
-                              RoleMenuDOMapper roleMenuDOMapper) {
+                              RoleMenuDOMapper roleMenuDOMapper,
+                              OrganizationDOMapper organizationDOMapper,
+                              MenuDOMapper menuDOMapper) {
         super(wintereeCoreConfig);
         this.accountService = accountService;
         this.tenantService = tenantService;
         this.roleDOMapper = roleDOMapper;
         this.userRoleDOMapper = userRoleDOMapper;
         this.roleMenuDOMapper = roleMenuDOMapper;
+        this.organizationDOMapper = organizationDOMapper;
+        this.menuDOMapper = menuDOMapper;
     }
 
     /**
@@ -104,12 +114,12 @@ public class RoleServiceImpl extends BaseService implements RoleService {
      * @return 结果
      */
     @Override
-    public APIResult addRole(RoleDTO roleDTO) {
+    public int addRole(RoleDTO roleDTO) throws ForbiddenException, FailureException {
         AccountDTO accountDTO = getSignedUser(accountService);
         if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
             // 如果是超管，完全信任
             if (BeanUtils.isEmpty(roleDTO.getTenantUuid())) {
-                if("".equals(roleDTO.getOfficeUuid())){
+                if ("".equals(roleDTO.getOfficeUuid())) {
                     roleDTO.setOfficeUuid(null);
                 }
             }
@@ -120,7 +130,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             DataScopeEnum dataScopeEnum = this.getDataScope();
             switch (dataScopeEnum) {
                 case ALL:
-                    if("".equals(roleDTO.getOfficeUuid())){
+                    if ("".equals(roleDTO.getOfficeUuid())) {
                         roleDTO.setOfficeUuid(null);
                     }
                     break;
@@ -134,10 +144,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                     break;
                 default:
                     // 其他数据范围的不允许添加
-                    return APIResult.builder()
-                            .code(StateCode.Forbidden)
-                            .message("Forbidden")
-                            .build();
+                    throw new ForbiddenException(StateCode.Forbidden.getDescribe());
             }
         }
         RoleDO roleDO = new RoleDO();
@@ -187,15 +194,9 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                     }
                 }
             }
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .build();
+            return 1;
         } else {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException(StateCode.Failure.getDescribe());
         }
     }
 
@@ -206,18 +207,15 @@ public class RoleServiceImpl extends BaseService implements RoleService {
      * @return 结果
      */
     @Override
-    public APIResult updateRole(RoleDTO roleDTO) {
+    public int updateRole(RoleDTO roleDTO) throws ForbiddenException, FailureException {
         RoleDO oldRole = this.getRoleByUuid(roleDTO.getUuid());
         if (BeanUtils.isEmpty(oldRole)) {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException(StateCode.Failure.getDescribe());
         } else {
             AccountDTO accountDTO = getSignedUser(accountService);
             if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
                 // 如果是超管，完全信任
-                if("".equals(roleDTO.getOfficeUuid())){
+                if ("".equals(roleDTO.getOfficeUuid())) {
                     roleDTO.setOfficeUuid(null);
                 }
             } else {
@@ -226,7 +224,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                     DataScopeEnum dataScopeEnum = this.getDataScope();
                     switch (dataScopeEnum) {
                         case ALL:
-                            if("".equals(roleDTO.getOfficeUuid())){
+                            if ("".equals(roleDTO.getOfficeUuid())) {
                                 roleDTO.setOfficeUuid(null);
                             }
                             break;
@@ -235,25 +233,16 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                                 // 只能编辑自己公司的
                             } else {
                                 // 无权编辑其他公司的角色
-                                return APIResult.builder()
-                                        .code(StateCode.Forbidden)
-                                        .message("Forbidden")
-                                        .build();
+                                throw new ForbiddenException(StateCode.Forbidden.getDescribe());
                             }
                             break;
                         default:
                             // 其他数据范围的不允许添加
-                            return APIResult.builder()
-                                    .code(StateCode.Forbidden)
-                                    .message("Forbidden")
-                                    .build();
+                            throw new ForbiddenException(StateCode.Forbidden.getDescribe());
                     }
                 } else {
                     // 无权跨租户编辑
-                    return APIResult.builder()
-                            .code(StateCode.Forbidden)
-                            .message("Forbidden")
-                            .build();
+                    throw new ForbiddenException(StateCode.Forbidden.getDescribe());
                 }
                 // 检查分配的权限是否是登陆账户拥有的，防止权限泄露
                 // 查询用户所属的角色
@@ -272,10 +261,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                     }
                     if (!have) {
                         // 不允许分配自己没有的权限
-                        return APIResult.builder()
-                                .code(StateCode.Forbidden)
-                                .message("Forbidden")
-                                .build();
+                        throw new ForbiddenException(StateCode.Forbidden.getDescribe());
                     }
                 }
             }
@@ -289,29 +275,25 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             oldRole.setRemarks(roleDTO.getRemarks());
             RoleDOExample example = new RoleDOExample();
             example.createCriteria().andUuidEqualTo(oldRole.getUuid());
-            int updateRows = roleDOMapper.updateByExampleSelective(oldRole, example);
+            int updateRows = roleDOMapper.updateByExample(oldRole, example);
             if (updateRows > 0) {
                 //先删除旧的，再添加新的
                 RoleMenuDOExample roleMenuDOExample = new RoleMenuDOExample();
                 roleMenuDOExample.createCriteria().andRoleUuidEqualTo(oldRole.getUuid());
                 roleMenuDOMapper.deleteByExample(roleMenuDOExample);
-                for (String uuid : roleDTO.getMenuUuid()
-                ) {
-                    RoleMenuDO roleMenuDO = new RoleMenuDO();
-                    roleMenuDO.setRoleUuid(oldRole.getUuid());
-                    roleMenuDO.setMenuUuid(uuid);
-                    roleMenuDO.setUuid(UUID.randomUUID().toString().toUpperCase());
-                    roleMenuDOMapper.insertSelective(roleMenuDO);
+                if (!BeanUtils.isEmpty(roleDTO.getMenuUuid())) {
+                    for (String uuid : roleDTO.getMenuUuid()
+                    ) {
+                        RoleMenuDO roleMenuDO = new RoleMenuDO();
+                        roleMenuDO.setRoleUuid(oldRole.getUuid());
+                        roleMenuDO.setMenuUuid(uuid);
+                        roleMenuDO.setUuid(UUID.randomUUID().toString().toUpperCase());
+                        roleMenuDOMapper.insertSelective(roleMenuDO);
+                    }
                 }
-                return APIResult.builder()
-                        .code(StateCode.OK)
-                        .message("OK")
-                        .build();
+                return 1;
             } else {
-                return APIResult.builder()
-                        .code(StateCode.Failure)
-                        .message("Failure")
-                        .build();
+                throw new FailureException(StateCode.Failure.getDescribe());
             }
         }
     }
@@ -323,13 +305,10 @@ public class RoleServiceImpl extends BaseService implements RoleService {
      * @return 删除结果
      */
     @Override
-    public APIResult deleteRole(String uuid) {
+    public int deleteRole(String uuid) throws ForbiddenException, FailureException {
         RoleDO oldRole = this.getRoleByUuid(uuid);
         if (BeanUtils.isEmpty(oldRole)) {
-            return APIResult.builder()
-                    .code(StateCode.Failure)
-                    .message("Failure")
-                    .build();
+            throw new FailureException(StateCode.Failure.getDescribe());
         } else {
             AccountDTO accountDTO = getSignedUser(accountService);
             if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
@@ -349,31 +328,19 @@ public class RoleServiceImpl extends BaseService implements RoleService {
                                 execDelete(oldRole);
                             } else {
                                 // 无权删除其他公司的角色
-                                return APIResult.builder()
-                                        .code(StateCode.Forbidden)
-                                        .message("Forbidden")
-                                        .build();
+                                throw new ForbiddenException(StateCode.Forbidden.getDescribe());
                             }
                             break;
                         default:
                             // 其他数据范围的不允许删除
-                            return APIResult.builder()
-                                    .code(StateCode.Forbidden)
-                                    .message("Forbidden")
-                                    .build();
+                            throw new ForbiddenException(StateCode.Forbidden.getDescribe());
                     }
                 } else {
                     // 无权跨租户删除
-                    return APIResult.builder()
-                            .code(StateCode.Forbidden)
-                            .message("Forbidden")
-                            .build();
+                    throw new ForbiddenException(StateCode.Forbidden.getDescribe());
                 }
             }
-            return APIResult.builder()
-                    .code(StateCode.OK)
-                    .message("OK")
-                    .build();
+            return 1;
         }
     }
 
@@ -497,9 +464,31 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             roleDTO.setUuid(roleDo.getUuid());
             roleDTO.setTenantUuid(roleDo.getTenantUuid());
             if (!BeanUtils.isEmpty(roleDo.getTenantUuid())) {
-                APIResult<TenantDO> apiResult = tenantService.getTenantDOByUUID(roleDo.getTenantUuid());
-                if (apiResult.getCode() == 200 && apiResult.getData() != null) {
-                    roleDTO.setTenantName(apiResult.getData().getName());
+                TenantDO tenantDO = tenantService.getTenantDOByUUID(roleDo.getTenantUuid());
+                if (tenantDO != null) {
+                    roleDTO.setTenantName(tenantDO.getName());
+                }
+            } else {
+                roleDTO.setTenantName("All");
+            }
+            if (!BeanUtils.isEmpty(roleDo.getOfficeUuid())) {
+                OrganizationDOExample example = new OrganizationDOExample();
+                example.createCriteria().andUuidEqualTo(roleDo.getOfficeUuid()).andOrgTypeEqualTo(OrgEnum.COMPANY.value());
+                OrganizationDO organizationDO = ListUtils.getOne(organizationDOMapper.selectByExample(example));
+                if (organizationDO != null) {
+                    roleDTO.setOfficeName(organizationDO.getName());
+                }
+            }
+            if (!BeanUtils.isEmpty(roleDo.getCreateBy())) {
+                com.winteree.api.entity.AccountDTO accountDTO = accountService.getAccountById(roleDo.getCreateBy());
+                if (accountDTO != null) {
+                    roleDTO.setCreateByName(accountDTO.getUserName());
+                }
+            }
+            if (!BeanUtils.isEmpty(roleDo.getUpdateBy())) {
+                com.winteree.api.entity.AccountDTO accountDTO = accountService.getAccountById(roleDo.getUpdateBy());
+                if (accountDTO != null) {
+                    roleDTO.setUpdateByName(accountDTO.getUserName());
                 }
             }
             roleDTO.setOfficeUuid(roleDo.getOfficeUuid());
@@ -519,11 +508,20 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             List<RoleMenuDO> roleMenuDOS = roleMenuDOMapper.selectByExample(roleMenuDOExample);
             if (!BeanUtils.isEmpty(roleMenuDOS)) {
                 List<String> ids = new ArrayList<>();
+                List<MenuVO> menuVOS = new ArrayList<>();
                 for (RoleMenuDO roleMenu : roleMenuDOS
                 ) {
+                    MenuDOExample menuDOExample = new MenuDOExample();
+                    menuDOExample.createCriteria()
+                            .andUuidEqualTo(roleMenu.getMenuUuid());
+                    MenuDO menuDO = ListUtils.getOne(menuDOMapper.selectByExample(menuDOExample));
                     ids.add(roleMenu.getMenuUuid());
+                    if (menuDO != null) {
+                        menuVOS.add(MenuServiceImpl.convert(menuDO));
+                    }
                 }
                 roleDTO.setMenuUuid(ids);
+                roleDTO.setMenuVos(menuVOS);
             }
             roleDTOS.add(roleDTO);
         }

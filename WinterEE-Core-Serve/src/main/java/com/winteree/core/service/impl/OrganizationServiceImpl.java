@@ -4,6 +4,8 @@ import com.winteree.api.entity.DataScopeEnum;
 import com.winteree.api.entity.GeospatialEnum;
 import com.winteree.api.entity.OrgEnum;
 import com.winteree.api.entity.OrganizationVO;
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.OrganizationDOMapper;
 import com.winteree.core.dao.entity.GeospatialDO;
@@ -12,6 +14,7 @@ import com.winteree.core.dao.entity.OrganizationDOExample;
 import com.winteree.core.entity.AccountDTO;
 import com.winteree.core.service.*;
 import lombok.extern.slf4j.Slf4j;
+import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.ListUtils;
 import org.springframework.stereotype.Service;
@@ -50,6 +53,29 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         this.geospatialService = geospatialService;
         this.roleService = roleService;
         this.organizationDOMapper = organizationDOMapper;
+    }
+
+    public OrganizationDO getOrganizationByUuid(String uuid) {
+        OrganizationDOExample example = new OrganizationDOExample();
+        example.createCriteria().andUuidEqualTo(uuid);
+        return ListUtils.getOne(organizationDOMapper.selectByExample(example));
+    }
+
+    //<editor-fold desc="公司类管理" defaultstate="collapsed">
+
+    /**
+     * 根据UUID获取公司实体
+     *
+     * @param uuid ID
+     * @return 公司实体
+     */
+    @Override
+    public OrganizationDO getCompanyByUuid(String uuid) {
+        OrganizationDOExample example = new OrganizationDOExample();
+        example.createCriteria()
+                .andOrgTypeEqualTo(OrgEnum.COMPANY.value())
+                .andUuidEqualTo(uuid);
+        return ListUtils.getOne(organizationDOMapper.selectByExample(example));
     }
 
     /**
@@ -106,10 +132,66 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         OrganizationVO organizationTenant = new OrganizationVO();
         organizationTenant.setIsTenant(true);
         organizationTenant.setUuid(tenantUuid);
-        organizationTenant.setName(tenantService.getTenantDOByUUID(tenantUuid).getData().getName());
+        organizationTenant.setName(tenantService.getTenantDOByUUID(tenantUuid).getName());
         organizationTenant.setChildren(organizationVOS);
         organizationListAndTenant.add(organizationTenant);
         return organizationListAndTenant;
+    }
+
+    /**
+     * 获取公司列表（简单列表非树状）
+     *
+     * @param tenantUuid
+     * @return
+     */
+    @Override
+    public List<OrganizationVO> getCompanySimpleList(String tenantUuid) {
+        AccountDTO accountDTO = getSignedUser(accountService);
+        List<OrganizationVO> organizationVOS = new ArrayList<>();
+        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            //只有平台超管才能夸租户管理，并且获取所有公司
+            organizationDOExample.createCriteria()
+                    .andTenantUuidEqualTo(tenantUuid)
+                    .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
+            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVO.setIsTenant(false);
+                organizationVOS.add(organizationVO);
+            }
+        } else {
+            //否则只能管理自己归属的租户
+            tenantUuid = accountDTO.getTenantUuid();
+            OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+            criteria
+                    .andTenantUuidEqualTo(tenantUuid)
+                    .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
+            // 验证数据权限范围，是全部还是本公司
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            if (dataScopeEnum.equals(DataScopeEnum.ALL)) {
+                // 加载租户下全部公司
+                List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+                for (OrganizationDO organizationDO : organizationDOS
+                ) {
+                    OrganizationVO organizationVO = convert(organizationDO);
+                    organizationVO.setIsTenant(false);
+                    organizationVOS.add(organizationVO);
+                }
+            } else {
+                // 只加载自己公司以及递归子公司的
+                criteria.andUuidEqualTo(accountDTO.getOfficeUuid());
+                OrganizationDO organizationDO = ListUtils.getOne(organizationDOMapper.selectByExample(organizationDOExample));
+                if (organizationDO != null) {
+                    OrganizationVO organizationVO = convert(organizationDO);
+                    organizationVO.setIsTenant(false);
+                    organizationVOS.add(organizationVO);
+                    getSubsidiary(tenantUuid, organizationDO.getUuid(), organizationVOS);
+                }
+            }
+        }
+        return organizationVOS;
     }
 
     /**
@@ -182,9 +264,20 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         AccountDTO accountDTO = getSignedUser(accountService);
         if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
             // 只有超管提交的数据才完全信任
+            organizationDO.setTenantUuid(organizationVO.getTenantUuid());
         } else {
             // 否则需要检查租户ID
             organizationDO.setTenantUuid(accountDTO.getTenantUuid());
+            // 验证数据权限范围
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            switch (dataScopeEnum) {
+                case ALL:
+                    // 在租户下任意
+                    break;
+                default:
+                    // 权限不足
+                    return 0;
+            }
         }
         organizationDO.setCreateBy(accountDTO.getUuid());
         organizationDO.setCreateTime(new Date());
@@ -210,11 +303,26 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         AccountDTO accountDTO = getSignedUser(accountService);
         if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
             // 只有超管提交的数据才完全信任
+            criteria.andTenantUuidEqualTo(organizationVO.getTenantUuid());
         } else {
             // 否则需要检查租户ID
             criteria.andTenantUuidEqualTo(accountDTO.getTenantUuid());
-            // TODO DataRangeEnum 验证数据权限范围，是全部还是只能编辑自己的公司
-            // TODO 由于先做的组织机构，后做角色权限，此处缺少数据范围权限校验
+            // 验证数据权限范围，是全部还是只能编辑自己的公司
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            switch (dataScopeEnum) {
+                case ALL:
+                    // 在租户下任意修改
+                    break;
+                case COMPANY:
+                    // 只能在自己公司
+                    if (!organizationVO.getUuid().equals(accountDTO.getOfficeUuid())) {
+                        return 0;
+                    }
+                    break;
+                default:
+                    // 权限不足
+                    return 0;
+            }
         }
         criteria.andUuidEqualTo(organizationVO.getUuid())
                 .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
@@ -275,10 +383,13 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         for (OrganizationVO organizationVO : organizationVOS
         ) {
             OrganizationDOExample organizationDOExample = new OrganizationDOExample();
-            organizationDOExample.createCriteria()
+            OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+            criteria
                     .andTenantUuidEqualTo(organizationVO.getTenantUuid())
-                    .andParentUuidEqualTo(organizationVO.getUuid())
-                    .andOrgTypeEqualTo(orgEnum.value());
+                    .andParentUuidEqualTo(organizationVO.getUuid());
+            if (orgEnum != null) {
+                criteria.andOrgTypeEqualTo(orgEnum.value());
+            }
             List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
             if (!BeanUtils.isEmpty(organizationDOS)) {
                 List<OrganizationVO> organizationChildrenList = new ArrayList<>();
@@ -303,6 +414,404 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             organizationVO.setLatitude(geospatialDO.getLatitude());
         }
     }
+
+    /**
+     * 递归查询子公司
+     *
+     * @param tenantUuid      租户ID
+     * @param officeUuid      公司ID
+     * @param organizationVOS 公司列表
+     */
+    private void getSubsidiary(String tenantUuid, String officeUuid, List<OrganizationVO> organizationVOS) {
+        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+        organizationDOExample.createCriteria()
+                .andTenantUuidEqualTo(tenantUuid)
+                .andParentUuidEqualTo(officeUuid);
+        List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+        if (!BeanUtils.isEmpty(organizationDOS)) {
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVO.setIsTenant(false);
+                organizationVOS.add(organizationVO);
+                getSubsidiary(tenantUuid, organizationDO.getUuid(), organizationVOS);
+            }
+        }
+    }
+
+    /**
+     * 判断当前用户是否归属此公司（包含子公司）
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return
+     */
+    private boolean isBelongThisCompany(String tenantUuid, String companyUuid) {
+        List<OrganizationVO> organizationVOS = this.getCompanySimpleList(tenantUuid);
+        if (BeanUtils.isEmpty(organizationVOS)) {
+            return false;
+        } else {
+            for (OrganizationVO org : organizationVOS
+            ) {
+                if (org.getUuid().equals(companyUuid)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    //</editor-fold>
+
+    //<editor-fold desc="部门类管理" defaultstate="collapsed">
+
+    /**
+     * 获取部门列表（树状）
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return 公司下的部门树
+     */
+    @Override
+    public List<OrganizationVO> getDepartmentList(String tenantUuid, String companyUuid) {
+        AccountDTO accountDTO = getSignedUser(accountService);
+        List<OrganizationVO> organizationVOS = new ArrayList<>();
+        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+        boolean recursion = false;
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            recursion = true;
+            //只有平台超管才能夸租户管理，并且获取所有公司
+            organizationDOExample.createCriteria()
+                    .andTenantUuidEqualTo(tenantUuid)
+                    .andParentUuidEqualTo(companyUuid)
+                    .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
+            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVOS.add(organizationVO);
+            }
+        } else {
+            //否则只能管理自己归属的租户
+            tenantUuid = accountDTO.getTenantUuid();
+            OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+            criteria
+                    .andTenantUuidEqualTo(tenantUuid)
+                    .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
+            // 验证数据权限范围，是全部还是本公司
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            switch (dataScopeEnum) {
+                case ALL:
+                    recursion = true;
+                    criteria.andParentUuidEqualTo(companyUuid);
+                    //加载全部
+                    break;
+                case COMPANY:
+                    recursion = true;
+                    // 只能查看所属公司下的
+                    criteria.andParentUuidEqualTo(accountDTO.getOfficeUuid());
+                    break;
+                default:
+                    // 只能加载所属部门
+                    criteria.andUuidEqualTo(accountDTO.getDepartmentUuid());
+                    break;
+            }
+            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVO.setIsTenant(false);
+                organizationVOS.add(organizationVO);
+            }
+        }
+        if (recursion) {
+            getChildren(organizationVOS, null);
+        }
+        return organizationVOS;
+    }
+
+    /**
+     * 添加部门
+     *
+     * @param organizationVO
+     */
+    @Override
+    public int addDepartment(OrganizationVO organizationVO) throws ForbiddenException {
+        OrganizationDO organizationDO = convert(organizationVO);
+        organizationDO.setUuid(UUID.randomUUID().toString());
+        organizationDO.setOrgType(OrgEnum.COMPANY.value());
+        AccountDTO accountDTO = getSignedUser(accountService);
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            // 只有超管提交的数据才完全信任
+        } else {
+            // 否则需要检查租户ID
+            organizationDO.setTenantUuid(accountDTO.getTenantUuid());
+            // 判断数据范围
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            switch (dataScopeEnum) {
+                case ALL:
+                    // 在租户下任意添加
+                    break;
+                case COMPANY:
+                    // 只能在自己公司下面添加部门
+                    if (!this.isBelongThisDepartment(accountDTO.getTenantUuid(), accountDTO.getOfficeUuid(), organizationVO.getParentUuid())) {
+                        // 权限不足
+                        throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                    }
+                    break;
+                default:
+                    // 权限不足
+                    throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+            }
+        }
+        organizationDO.setCreateBy(accountDTO.getUuid());
+        organizationDO.setCreateTime(new Date());
+        organizationDO.setUpdateBy(accountDTO.getUuid());
+        organizationDO.setUpdateTime(new Date());
+        organizationDO.setDelFlag("0");
+        int number = organizationDOMapper.insertSelective(organizationDO);
+        updateCompanyGeospatial(organizationVO, organizationDO, number);
+        return number;
+    }
+
+    /**
+     * 修改部门信息
+     *
+     * @param organizationVO
+     * @return
+     */
+    @Override
+    public int updateDepartment(OrganizationVO organizationVO) throws ForbiddenException, FailureException {
+        OrganizationDO oldOrganizationDO = this.getOrganizationByUuid(organizationVO.getUuid());
+        if (oldOrganizationDO != null && OrgEnum.DEPARTMENT.value() == oldOrganizationDO.getOrgType()) {
+            AccountDTO accountDTO = getSignedUser(accountService);
+            if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+                // 只有超管提交的数据才完全信任
+            } else {
+                // 否则需要检查租户ID
+                if (oldOrganizationDO.getTenantUuid().equals(accountDTO.getTenantUuid())) {
+                    // 判断数据范围
+                    DataScopeEnum dataScopeEnum = roleService.getDataScope();
+                    switch (dataScopeEnum) {
+                        case ALL:
+                            // 在租户下任意修改
+                            break;
+                        case COMPANY:
+                            // 只能在自己公司下面添加部门
+                            if (!this.isBelongThisDepartment(accountDTO.getTenantUuid(), accountDTO.getOfficeUuid(), oldOrganizationDO.getUuid()) ||
+                                    !this.isBelongThisDepartment(accountDTO.getTenantUuid(), accountDTO.getOfficeUuid(), oldOrganizationDO.getParentUuid())) {
+                                // 权限不足
+                                throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                            }
+                            break;
+                        default:
+                            // 权限不足
+                            throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                    }
+                } else {
+                    // 不允许跨租户编辑
+                    throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                }
+            }
+            // 修改
+            oldOrganizationDO.setParentUuid(organizationVO.getParentUuid());
+            oldOrganizationDO.setName(organizationVO.getName());
+            oldOrganizationDO.setAddress(organizationVO.getAddress());
+            oldOrganizationDO.setZipCode(organizationVO.getZipCode());
+            oldOrganizationDO.setMaster(organizationVO.getMaster());
+            oldOrganizationDO.setPhone(organizationVO.getPhone());
+            oldOrganizationDO.setFax(organizationVO.getFax());
+            oldOrganizationDO.setEmail(organizationVO.getEmail());
+            oldOrganizationDO.setPrimaryPerson(organizationVO.getPrimaryPerson());
+            oldOrganizationDO.setDeputyPerson(organizationVO.getDeputyPerson());
+            oldOrganizationDO.setUpdateBy(accountDTO.getUuid());
+            oldOrganizationDO.setUpdateTime(new Date());
+            oldOrganizationDO.setRemarks(organizationVO.getRemarks());
+            oldOrganizationDO.setDelFlag(organizationVO.getDelFlag());
+            OrganizationDOExample example = new OrganizationDOExample();
+            example.createCriteria().andUuidEqualTo(oldOrganizationDO.getUuid());
+            return organizationDOMapper.updateByExampleSelective(oldOrganizationDO, example);
+        } else {
+            // 不是部门类型的
+            throw new FailureException("操作失败，非部门类型");
+        }
+    }
+
+    /**
+     * 删除部门
+     *
+     * @param uuid
+     * @return
+     */
+    @Override
+    public int deleteDepartment(String uuid) throws ForbiddenException, FailureException {
+        OrganizationDO oldOrganizationDO = this.getOrganizationByUuid(uuid);
+        if (oldOrganizationDO != null && OrgEnum.DEPARTMENT.value() == oldOrganizationDO.getOrgType()) {
+            AccountDTO accountDTO = getSignedUser(accountService);
+            if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+                // 超管提交的随便删
+            } else {
+                // 否则需要检查租户ID
+                if (oldOrganizationDO.getTenantUuid().equals(accountDTO.getTenantUuid())) {
+                    // 判断数据范围
+                    DataScopeEnum dataScopeEnum = roleService.getDataScope();
+                    switch (dataScopeEnum) {
+                        case ALL:
+                            // 在租户下任意删
+                            break;
+                        case COMPANY:
+                            // 只能在自己公司下删除
+                            if (!this.isBelongThisDepartment(accountDTO.getTenantUuid(), accountDTO.getOfficeUuid(), oldOrganizationDO.getUuid()) ||
+                                    !this.isBelongThisDepartment(accountDTO.getTenantUuid(), accountDTO.getOfficeUuid(), oldOrganizationDO.getParentUuid())) {
+                                // 权限不足
+                                throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                            }
+                            break;
+                        default:
+                            // 权限不足
+                            throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                    }
+                } else {
+                    // 不允许跨租户编辑
+                    throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                }
+            }
+            // 执行删除逻辑
+            this.deleteDepartment(oldOrganizationDO);
+            return 1;
+        } else {
+            throw new FailureException(StateCode.Failure.getDescribe());
+        }
+    }
+
+    /**
+     * 获取公司下的部门列表（包含子公司）
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return
+     */
+    @Override
+    public List<OrganizationVO> getDepartmentListUnderCompanyUuid(String tenantUuid, String companyUuid) {
+        AccountDTO accountDTO = getSignedUser(accountService);
+        List<OrganizationVO> organizationVOS = new ArrayList<>();
+        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+        OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            // 只有超管提交的数据才完全信任
+        } else {
+            tenantUuid = accountDTO.getTenantUuid();
+            companyUuid = accountDTO.getOfficeUuid();
+        }
+        criteria.andTenantUuidEqualTo(tenantUuid);
+        DataScopeEnum dataScopeEnum = roleService.getDataScope();
+        switch (dataScopeEnum) {
+            case ALL:
+                // 可以获取公司下所有部门
+                criteria.andParentUuidEqualTo(companyUuid);
+                // 添加自己顶级的
+                OrganizationDOExample organizationPrivateExample = new OrganizationDOExample();
+                organizationPrivateExample.createCriteria()
+                        .andTenantUuidEqualTo(tenantUuid).andUuidEqualTo(companyUuid);
+                OrganizationDO organizationPrivate = ListUtils.getOne(organizationDOMapper.selectByExample(organizationPrivateExample));
+                if (organizationPrivate != null) {
+                    organizationVOS.add(convert(organizationPrivate));
+                }
+                break;
+            case COMPANY:
+                // 可以获取自己公司下所有部门
+                criteria.andParentUuidEqualTo(accountDTO.getOfficeUuid());
+                // 添加自己顶级的
+                OrganizationDOExample organizationPrivateExampleCompany = new OrganizationDOExample();
+                organizationPrivateExampleCompany.createCriteria()
+                        .andTenantUuidEqualTo(tenantUuid).andUuidEqualTo(accountDTO.getOfficeUuid());
+                OrganizationDO organizationPrivateCompany = ListUtils.getOne(organizationDOMapper.selectByExample(organizationPrivateExampleCompany));
+                if (organizationPrivateCompany != null) {
+                    organizationVOS.add(convert(organizationPrivateCompany));
+                }
+                break;
+            default:
+                // 只能获取自己部门和以下的
+                criteria.andParentUuidEqualTo(accountDTO.getDepartmentUuid());
+                // 添加自己顶级的
+                OrganizationDOExample organizationPrivateExampleDefault = new OrganizationDOExample();
+                organizationPrivateExampleDefault.createCriteria()
+                        .andTenantUuidEqualTo(tenantUuid).andUuidEqualTo(accountDTO.getDepartmentUuid());
+                OrganizationDO organizationPrivateDefault = ListUtils.getOne(organizationDOMapper.selectByExample(organizationPrivateExampleDefault));
+                if (organizationPrivateDefault != null) {
+                    organizationVOS.add(convert(organizationPrivateDefault));
+                }
+                break;
+        }
+        List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+        if (!BeanUtils.isEmpty(organizationDOS)) {
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVOS.add(organizationVO);
+                // 递归查询子级
+                getDepartmentListUnderCompanyUuid(tenantUuid, organizationVO, organizationVOS);
+            }
+        }
+        return organizationVOS;
+    }
+
+    /**
+     * 递归查询子级部门
+     *
+     * @param tenantUuid
+     * @param organizationVO
+     * @param organizationVOS
+     */
+    private void getDepartmentListUnderCompanyUuid(String tenantUuid, OrganizationVO organizationVO, List<OrganizationVO> organizationVOS) {
+        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+        organizationDOExample.createCriteria()
+                .andTenantUuidEqualTo(tenantUuid)
+                .andParentUuidEqualTo(organizationVO.getUuid());
+        List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+        if (!BeanUtils.isEmpty(organizationDOS)) {
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO2 = convert(organizationDO);
+                organizationVOS.add(organizationVO2);
+                // 递归查询子级
+                getDepartmentListUnderCompanyUuid(tenantUuid, organizationVO2, organizationVOS);
+            }
+        }
+    }
+
+    /**
+     * 判断部门是否归属此公司
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return
+     */
+    private boolean isBelongThisDepartment(String tenantUuid, String companyUuid, String departmentUuid) {
+        // 根据公司ID获取下面的部门列表
+        List<OrganizationVO> organizationVOS = this.getDepartmentListUnderCompanyUuid(tenantUuid, companyUuid);
+        if (BeanUtils.isEmpty(organizationVOS)) {
+            return false;
+        } else {
+            for (OrganizationVO org : organizationVOS
+            ) {
+                if (org.getUuid().equals(departmentUuid)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 部门删除逻辑
+     *
+     * @param oldOrganizationDO
+     */
+    private void deleteDepartment(OrganizationDO oldOrganizationDO) {
+        // TODO 删除部门逻辑比较复杂，牵扯较多，暂时不支持删除逻辑
+    }
+    //<editor-fold>
 
     private OrganizationVO convert(OrganizationDO organizationDO) {
         OrganizationVO organizationVO = new OrganizationVO();

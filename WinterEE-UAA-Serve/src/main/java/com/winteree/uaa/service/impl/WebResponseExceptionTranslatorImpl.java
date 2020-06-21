@@ -3,6 +3,7 @@ package com.winteree.uaa.service.impl;
 import com.winteree.api.exception.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.renfei.sdk.comm.StateCode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +87,7 @@ public class WebResponseExceptionTranslatorImpl implements WebResponseExceptionT
             return new ResponseEntity<>(e, headers,
                     HttpStatus.OK);
         }
-        return new ResponseEntity<>(new WinterAuth2Exception(e.getMessage(), e.getOAuth2ErrorCode()), headers,
+        return new ResponseEntity<>(new WinterAuth2Exception(StateCode.Failure, e.getMessage()), headers,
                 HttpStatus.OK);
 
     }

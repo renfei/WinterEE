@@ -3,9 +3,11 @@ package com.winteree.core.dao;
 import com.winteree.core.dao.entity.OrganizationDO;
 import com.winteree.core.dao.entity.OrganizationDOExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface OrganizationDOMapper {
     long countByExample(OrganizationDOExample example);
 
