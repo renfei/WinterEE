@@ -61,6 +61,82 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         return ListUtils.getOne(organizationDOMapper.selectByExample(example));
     }
 
+    /**
+     * 获取整个组织架构的树
+     *
+     * @param tenantUuid 租户编号
+     * @return
+     */
+    @Override
+    public List<OrganizationVO> getAllOrganizationTree(String tenantUuid, String organizationUuid) {
+        AccountDTO accountDTO = getSignedUser(accountService);
+        List<OrganizationVO> organizationVOS = new ArrayList<>();
+        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+        OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            //只有平台超管才能夸租户管理，并且获取所有公司
+            criteria.andTenantUuidEqualTo(tenantUuid);
+            if (BeanUtils.isEmpty(organizationUuid)) {
+                criteria.andParentUuidEqualTo(tenantUuid);
+            } else {
+                criteria.andParentUuidEqualTo(tenantUuid);
+            }
+            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVO.setIsTenant(false);
+                organizationVOS.add(organizationVO);
+                if (organizationDO.getOrgType() == OrgEnum.COMPANY.value()) {
+                    fillGeospatial(organizationVO);
+                }
+            }
+        } else {
+            //否则只能管理自己归属的租户
+            tenantUuid = accountDTO.getTenantUuid();
+            criteria.andTenantUuidEqualTo(tenantUuid);
+            // 验证数据权限范围，是全部还是本公司
+            DataScopeEnum dataScopeEnum = roleService.getDataScope();
+            switch (dataScopeEnum){
+                case ALL:
+                    criteria.andParentUuidEqualTo(tenantUuid);
+                    break;
+                case COMPANY:
+                    // 只能查看公司下面的
+                    criteria.andParentUuidEqualTo(accountDTO.getOfficeUuid());
+                    break;
+                case DEPARTMENT:
+                    // 只能查询他自己部门下的
+                    criteria.andParentUuidEqualTo(accountDTO.getDepartmentUuid());
+                    break;
+                case COMPANY_AND_DEPARTMENT:
+                    return new ArrayList<>();
+                default:
+                    return new ArrayList<>();
+            }
+            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+            for (OrganizationDO organizationDO : organizationDOS
+            ) {
+                OrganizationVO organizationVO = convert(organizationDO);
+                organizationVO.setIsTenant(false);
+                organizationVOS.add(organizationVO);
+                if (organizationDO.getOrgType() == OrgEnum.COMPANY.value()) {
+                    fillGeospatial(organizationVO);
+                }
+            }
+        }
+        // 递归查询子机构
+        getChildren(organizationVOS, null);
+        List<OrganizationVO> organizationListAndTenant = new ArrayList<>();
+        OrganizationVO organizationTenant = new OrganizationVO();
+        organizationTenant.setIsTenant(true);
+        organizationTenant.setUuid(tenantUuid);
+        organizationTenant.setName(tenantService.getTenantDOByUUID(tenantUuid).getName());
+        organizationTenant.setChildren(organizationVOS);
+        organizationListAndTenant.add(organizationTenant);
+        return organizationListAndTenant;
+    }
+
     //<editor-fold desc="公司类管理" defaultstate="collapsed">
 
     /**
@@ -474,60 +550,69 @@ public class OrganizationServiceImpl extends BaseService implements Organization
      */
     @Override
     public List<OrganizationVO> getDepartmentList(String tenantUuid, String companyUuid) {
-        AccountDTO accountDTO = getSignedUser(accountService);
+        OrganizationDO companyDO = this.getCompanyByUuid(companyUuid);
         List<OrganizationVO> organizationVOS = new ArrayList<>();
-        OrganizationDOExample organizationDOExample = new OrganizationDOExample();
-        boolean recursion = false;
-        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
-            recursion = true;
-            //只有平台超管才能夸租户管理，并且获取所有公司
-            organizationDOExample.createCriteria()
-                    .andTenantUuidEqualTo(tenantUuid)
-                    .andParentUuidEqualTo(companyUuid)
-                    .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
-            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
-            for (OrganizationDO organizationDO : organizationDOS
-            ) {
-                OrganizationVO organizationVO = convert(organizationDO);
-                organizationVOS.add(organizationVO);
+        if (companyDO != null) {
+            AccountDTO accountDTO = getSignedUser(accountService);
+            OrganizationDOExample organizationDOExample = new OrganizationDOExample();
+            boolean recursion = false;
+            if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+                recursion = true;
+                //只有平台超管才能夸租户管理，并且获取所有公司
+                organizationDOExample.createCriteria()
+                        .andTenantUuidEqualTo(tenantUuid)
+                        .andParentUuidEqualTo(companyUuid)
+                        .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
+                List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+                for (OrganizationDO organizationDO : organizationDOS
+                ) {
+                    OrganizationVO organizationVO = convert(organizationDO);
+                    organizationVOS.add(organizationVO);
+                }
+            } else {
+                //否则只能管理自己归属的租户
+                tenantUuid = accountDTO.getTenantUuid();
+                OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
+                criteria
+                        .andTenantUuidEqualTo(tenantUuid)
+                        .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
+                // 验证数据权限范围，是全部还是本公司
+                DataScopeEnum dataScopeEnum = roleService.getDataScope();
+                switch (dataScopeEnum) {
+                    case ALL:
+                        recursion = true;
+                        criteria.andParentUuidEqualTo(companyUuid);
+                        //加载全部
+                        break;
+                    case COMPANY:
+                        recursion = true;
+                        // 只能查看所属公司下的
+                        criteria.andParentUuidEqualTo(accountDTO.getOfficeUuid());
+                        break;
+                    default:
+                        // 只能加载所属部门
+                        criteria.andUuidEqualTo(accountDTO.getDepartmentUuid());
+                        break;
+                }
+                List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
+                for (OrganizationDO organizationDO : organizationDOS
+                ) {
+                    OrganizationVO organizationVO = convert(organizationDO);
+                    organizationVO.setIsTenant(false);
+                    organizationVOS.add(organizationVO);
+                }
             }
+            if (recursion) {
+                getChildren(organizationVOS, null);
+            }
+            List<OrganizationVO> organizations = new ArrayList<>();
+            OrganizationVO companyVO = convert(companyDO);
+            companyVO.setChildren(organizationVOS);
+            organizations.add(companyVO);
+            return organizations;
         } else {
-            //否则只能管理自己归属的租户
-            tenantUuid = accountDTO.getTenantUuid();
-            OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
-            criteria
-                    .andTenantUuidEqualTo(tenantUuid)
-                    .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
-            // 验证数据权限范围，是全部还是本公司
-            DataScopeEnum dataScopeEnum = roleService.getDataScope();
-            switch (dataScopeEnum) {
-                case ALL:
-                    recursion = true;
-                    criteria.andParentUuidEqualTo(companyUuid);
-                    //加载全部
-                    break;
-                case COMPANY:
-                    recursion = true;
-                    // 只能查看所属公司下的
-                    criteria.andParentUuidEqualTo(accountDTO.getOfficeUuid());
-                    break;
-                default:
-                    // 只能加载所属部门
-                    criteria.andUuidEqualTo(accountDTO.getDepartmentUuid());
-                    break;
-            }
-            List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
-            for (OrganizationDO organizationDO : organizationDOS
-            ) {
-                OrganizationVO organizationVO = convert(organizationDO);
-                organizationVO.setIsTenant(false);
-                organizationVOS.add(organizationVO);
-            }
+            return organizationVOS;
         }
-        if (recursion) {
-            getChildren(organizationVOS, null);
-        }
-        return organizationVOS;
     }
 
     /**
@@ -539,7 +624,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
     public int addDepartment(OrganizationVO organizationVO) throws ForbiddenException {
         OrganizationDO organizationDO = convert(organizationVO);
         organizationDO.setUuid(UUID.randomUUID().toString());
-        organizationDO.setOrgType(OrgEnum.COMPANY.value());
+        organizationDO.setOrgType(OrgEnum.DEPARTMENT.value());
         AccountDTO accountDTO = getSignedUser(accountService);
         if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
             // 只有超管提交的数据才完全信任
@@ -569,9 +654,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
         organizationDO.setUpdateBy(accountDTO.getUuid());
         organizationDO.setUpdateTime(new Date());
         organizationDO.setDelFlag("0");
-        int number = organizationDOMapper.insertSelective(organizationDO);
-        updateCompanyGeospatial(organizationVO, organizationDO, number);
-        return number;
+        return organizationDOMapper.insertSelective(organizationDO);
     }
 
     /**
@@ -811,7 +894,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
     private void deleteDepartment(OrganizationDO oldOrganizationDO) {
         // TODO 删除部门逻辑比较复杂，牵扯较多，暂时不支持删除逻辑
     }
-    //<editor-fold>
+    //</editor-fold>
 
     private OrganizationVO convert(OrganizationDO organizationDO) {
         OrganizationVO organizationVO = new OrganizationVO();

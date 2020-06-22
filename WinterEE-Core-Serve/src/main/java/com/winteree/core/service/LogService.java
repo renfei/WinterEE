@@ -20,7 +20,7 @@ public interface LogService {
      * @return
      * @throws FailureException 执行失败异常
      */
-    int log(LogDTO logDTO) throws FailureException;
+    void log(LogDTO logDTO) throws FailureException;
 
     /**
      * 获取系统日志

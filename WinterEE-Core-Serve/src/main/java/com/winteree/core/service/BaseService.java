@@ -51,7 +51,6 @@ public abstract class BaseService {
                         .with(AccountDTO::setUserName, accountDTO.getUserName())
                         .with(AccountDTO::setEmail, accountDTO.getEmail())
                         .with(AccountDTO::setPhone, accountDTO.getPhone())
-                        .with(AccountDTO::setPasswd, accountDTO.getPasswd())
                         .with(AccountDTO::setUserStatus, accountDTO.getUserStatus())
                         .with(AccountDTO::setLockTime, accountDTO.getLockTime())
                         .with(AccountDTO::setUuid, accountDTO.getUuid())

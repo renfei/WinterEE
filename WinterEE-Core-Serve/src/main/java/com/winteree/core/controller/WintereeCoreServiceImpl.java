@@ -87,11 +87,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiIgnore
     public APIResult log(LogDTO logDTO) {
         try {
-            if (logService.log(logDTO) > 0) {
-                return APIResult.success();
-            } else {
-                return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
-            }
+            logService.log(logDTO);
+            return APIResult.success();
         } catch (FailureException failureException) {
             return APIResult.builder().code(StateCode.Failure).message(StateCode.Failure.getDescribe()).build();
         }
@@ -210,6 +207,63 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @PreAuthorize("hasAnyAuthority('signed')")
     public APIResult<AccountDTO> getMyInfo() {
         return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.getAccountInfo()).build();
+    }
+
+    /**
+     * 根据查询条件获取账户列表
+     *
+     * @param accountSearchCriteriaVO 查询条件
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:account:view')")
+    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "accountSearchCriteriaVO", value = "查询条件", required = false, paramType = "query", dataType = "AccountSearchCriteriaVO")
+    })
+    public APIResult<ListData<AccountDTO>> getAccountList(AccountSearchCriteriaVO accountSearchCriteriaVO) {
+        return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.getAccountList(accountSearchCriteriaVO)).build();
+    }
+
+    /**
+     * 添加用户
+     * 密码是在添加用户后，使用密码重置功能进行重置的
+     *
+     * @param accountDTO 用户信息传输对象
+     * @return 插入行数
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:account:add')")
+    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "accountSearchCriteriaVO", value = "查询条件", required = false, paramType = "query", dataType = "AccountSearchCriteriaVO")
+    })
+    public APIResult addAccount(@RequestBody AccountDTO accountDTO) {
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.addAccount(accountDTO)).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Forbidden).message(forbiddenException.getMessage()).build();
+        }
+    }
+
+    /**
+     * 更新账户信息
+     *
+     * @param accountDTO 用户信息传输对象
+     * @return 插入行数
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:account:update')")
+    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "accountSearchCriteriaVO", value = "查询条件", required = false, paramType = "query", dataType = "AccountSearchCriteriaVO")
+    })
+    public APIResult updateAccount(@RequestBody AccountDTO accountDTO) {
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.updateAccount(accountDTO)).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Forbidden).message(forbiddenException.getMessage()).build();
+        }
     }
     //</editor-fold>
 
@@ -544,6 +598,26 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //</editor-fold>
 
     //<editor-fold desc="组织机构类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取整个组织架构的树
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:AllOrganization:view')")
+    @ApiOperation(value = "获取整个组织架构的树接口", notes = "获取整个组织架构的树接口", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult getAllOrganizationTree(String tenantUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(organizationService.getAllOrganizationTree(tenantUuid, tenantUuid))
+                .build();
+    }
 
     /**
      * 获取公司列表接口

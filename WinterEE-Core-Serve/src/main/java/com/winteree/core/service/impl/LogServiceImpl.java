@@ -49,11 +49,11 @@ public class LogServiceImpl extends BaseService implements LogService {
 
     @Async
     @Override
-    public int log(LogDTO logDTO) throws FailureException {
+    public void log(LogDTO logDTO) throws FailureException {
         LogDOWithBLOBs logDOWithBLOBs = convert(logDTO);
         if (logDOWithBLOBs != null) {
             try {
-                return logDOMapper.insertSelective(logDOWithBLOBs);
+                logDOMapper.insertSelective(logDOWithBLOBs);
             } catch (Exception ex) {
                 log.error(ex.getMessage());
                 throw new FailureException("Failure");

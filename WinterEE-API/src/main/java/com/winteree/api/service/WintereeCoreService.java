@@ -98,6 +98,34 @@ public interface WintereeCoreService {
      */
     @GetMapping("/account/myinfo")
     APIResult<AccountDTO> getMyInfo();
+
+    /**
+     * 根据查询条件获取账户列表
+     *
+     * @param accountSearchCriteriaVO 查询条件
+     * @return
+     */
+    @GetMapping("/account")
+    APIResult<ListData<AccountDTO>> getAccountList(AccountSearchCriteriaVO accountSearchCriteriaVO);
+
+    /**
+     * 添加用户
+     * 密码是在添加用户后，使用密码重置功能进行重置的
+     *
+     * @param accountDTO 用户信息传输对象
+     * @return
+     */
+    @PostMapping("/account")
+    APIResult addAccount(AccountDTO accountDTO);
+
+    /**
+     * 更新账户信息
+     *
+     * @param accountDTO 用户信息传输对象
+     * @return
+     */
+    @PutMapping("/account")
+    APIResult updateAccount(AccountDTO accountDTO);
     //</editor-fold>
 
     //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
@@ -299,6 +327,15 @@ public interface WintereeCoreService {
     //</editor-fold>
 
     //<editor-fold desc="组织机构类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取整个组织架构的树
+     *
+     * @param tenantUuid 租户ID
+     * @return
+     */
+    @GetMapping("/organization")
+    APIResult getAllOrganizationTree(String tenantUuid);
 
     /**
      * 获取公司列表

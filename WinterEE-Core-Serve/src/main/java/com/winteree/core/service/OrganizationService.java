@@ -15,6 +15,15 @@ import java.util.List;
  * @date : 2020-06-04 19:35
  */
 public interface OrganizationService {
+
+    /**
+     * 获取整个组织架构的树
+     *
+     * @param tenantUuid 租户编号
+     * @return
+     */
+    List<OrganizationVO> getAllOrganizationTree(String tenantUuid, String organizationUuid);
+
     /**
      * 根据UUID获取公司实体
      *
