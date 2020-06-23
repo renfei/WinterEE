@@ -1,6 +1,7 @@
 package com.winteree.api.service;
 
 import com.winteree.api.entity.*;
+import com.winteree.api.exception.FailureException;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,6 +99,38 @@ public interface WintereeCoreService {
      */
     @GetMapping("/account/myinfo")
     APIResult<AccountDTO> getMyInfo();
+
+    /**
+     * 修改密码
+     *
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException 失败异常信息
+     */
+    @PutMapping("/account/mypassword")
+    APIResult changePassword(@RequestParam("oldPassword") String oldPassword,
+                             @RequestParam("newPassword") String newPassword,
+                             @RequestParam("language") String language,
+                             @RequestParam("keyid") String keyid);
+
+    /**
+     * 重置任意账户密码
+     *
+     * @param accountUuid 账户ID
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException 失败异常信息
+     */
+    @PutMapping("/account/resetpassword")
+    APIResult passwordReset(@RequestBody String accountUuid,
+                            @RequestBody String newPassword,
+                            @RequestBody String language,
+                            @RequestBody String keyid);
 
     /**
      * 根据查询条件获取账户列表
@@ -392,6 +425,17 @@ public interface WintereeCoreService {
     @GetMapping("/organization/department")
     APIResult getDepartmentList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
                                 @RequestParam(name = "companyUuid", required = false) String companyUuid);
+
+    /**
+     * 获取部门列表（简单列表非树状）
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return
+     */
+    @GetMapping("/organization/department/simpleList")
+    APIResult getDepartmentSimpleList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
+                                      @RequestParam(name = "companyUuid", required = false) String companyUuid);
 
     /**
      * 添加部门

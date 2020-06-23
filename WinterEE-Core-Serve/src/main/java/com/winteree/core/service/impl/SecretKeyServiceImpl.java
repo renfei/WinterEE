@@ -7,6 +7,7 @@ import com.winteree.core.dao.SecretKeyDOMapper;
 import com.winteree.core.dao.entity.SecretKeyDOExample;
 import com.winteree.core.dao.entity.SecretKeyDOWithBLOBs;
 import com.winteree.core.service.BaseService;
+import com.winteree.core.service.I18nMessageService;
 import com.winteree.core.service.SecretKeyService;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.*;
@@ -25,11 +26,14 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class SecretKeyServiceImpl extends BaseService implements SecretKeyService {
+    private final I18nMessageService i18NService;
     private final SecretKeyDOMapper secretKeyDOMapper;
 
     protected SecretKeyServiceImpl(WintereeCoreConfig wintereeCoreConfig,
+                                   I18nMessageService i18NService,
                                    SecretKeyDOMapper secretKeyDOMapper) {
         super(wintereeCoreConfig);
+        this.i18NService = i18NService;
         this.secretKeyDOMapper = secretKeyDOMapper;
     }
 
@@ -88,5 +92,40 @@ public class SecretKeyServiceImpl extends BaseService implements SecretKeyServic
         map.put("keyid", uuid);
         map.put("aeskey", aesEnc);
         return map;
+    }
+
+    @Override
+    public String getSecretKeyStringById(String id) {
+        SecretKeyDOExample secretKeyDOExample = new SecretKeyDOExample();
+        secretKeyDOExample.createCriteria()
+                .andUuidEqualTo(id);
+        SecretKeyDOWithBLOBs secretKeyDOWithBLOBs = ListUtils.getOne(secretKeyDOMapper.selectByExampleWithBLOBs(secretKeyDOExample));
+        if (BeanUtils.isEmpty(secretKeyDOWithBLOBs)) {
+            return null;
+        } else {
+            return secretKeyDOWithBLOBs.getPrivateKey();
+        }
+    }
+
+    /**
+     * 解密
+     *
+     * @param value    密文
+     * @param language 语言
+     * @param keyId    秘钥ID
+     * @return 明文
+     */
+    @Override
+    public String decrypt(String value, String language, String keyId) throws FailureException {
+        String aesKey = this.getSecretKeyStringById(keyId);
+        if (aesKey == null) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.aeskeyiddoesnotexist", "AESKeyId不存在"));
+        }
+        try {
+            value = AESUtil.decrypt(value, aesKey);
+        } catch (Exception ex) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.passworddecryptionfailed", "密码解密失败"));
+        }
+        return value;
     }
 }

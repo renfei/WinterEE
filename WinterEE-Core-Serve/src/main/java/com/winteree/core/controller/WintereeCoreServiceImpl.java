@@ -210,6 +210,62 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     /**
+     * 修改密码
+     *
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException 失败异常信息
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
+    @ApiOperation(value = "修改自己的密码", notes = "修改自己的密码", tags = "账户接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "oldPassword", value = "旧密码", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "newPassword", value = "新密码", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "keyid", value = "秘钥ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult changePassword(String oldPassword, String newPassword, String language, String keyid) {
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.changePassword(oldPassword, newPassword, language, keyid)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
+        }
+    }
+
+    /**
+     * 重置任意账户密码
+     *
+     * @param accountUuid 账户ID
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException 失败异常信息
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:account:resetpasseord')")
+    @ApiOperation(value = "修改自己的密码", notes = "修改自己的密码", tags = "账户接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "accountUuid", value = "账户ID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "newPassword", value = "新密码", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "keyid", value = "秘钥ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult passwordReset(String accountUuid, String newPassword, String language, String keyid) {
+        try {
+            return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.passwordReset(accountUuid, newPassword, language, keyid)).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Forbidden).message(forbiddenException.getMessage()).build();
+        }
+    }
+
+    /**
      * 根据查询条件获取账户列表
      *
      * @param accountSearchCriteriaVO 查询条件
@@ -751,6 +807,28 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .code(StateCode.OK)
                 .message("OK")
                 .data(organizationService.getDepartmentList(tenantUuid, companyUuid))
+                .build();
+    }
+
+    /**
+     * 获取部门列表（简单列表非树状）
+     *
+     * @param tenantUuid  租户ID
+     * @param companyUuid 公司ID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:department:view')")
+    @ApiOperation(value = "获取部门列表（简单列表非树状）", notes = "获取部门列表（简单列表非树状）", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "companyUuid", value = "公司ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult getDepartmentSimpleList(String tenantUuid, String companyUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(organizationService.getDepartmentSimpleList(tenantUuid, companyUuid))
                 .build();
     }
 

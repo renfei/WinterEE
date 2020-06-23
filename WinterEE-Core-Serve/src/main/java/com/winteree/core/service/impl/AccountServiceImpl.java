@@ -3,6 +3,7 @@ package com.winteree.core.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.winteree.api.entity.*;
+import com.winteree.api.exception.FailureException;
 import com.winteree.api.exception.ForbiddenException;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.AccountDOMapper;
@@ -12,13 +13,19 @@ import com.winteree.core.dao.UserRoleDOMapper;
 import com.winteree.core.dao.entity.*;
 import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
+import com.winteree.core.service.I18nMessageService;
+import com.winteree.core.service.SecretKeyService;
+import lombok.extern.slf4j.Slf4j;
+import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.Builder;
 import net.renfei.sdk.utils.ListUtils;
+import net.renfei.sdk.utils.PasswordUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -27,19 +34,26 @@ import java.util.*;
  *
  * @author RenFei
  */
+@Slf4j
 @Service
 public class AccountServiceImpl extends BaseService implements AccountService {
+    private final I18nMessageService i18NService;
+    private final SecretKeyService secretKeyService;
     private final AccountDOMapper accountDOMapper;
     private final RoleDOMapper roleDOMapper;
     private final UserRoleDOMapper userRoleDOMapper;
     private final OrganizationDOMapper organizationDOMapper;
 
     protected AccountServiceImpl(WintereeCoreConfig wintereeCoreConfig,
+                                 I18nMessageService i18NService,
+                                 SecretKeyService secretKeyService,
                                  AccountDOMapper accountDOMapper,
                                  RoleDOMapper roleDOMapper,
                                  UserRoleDOMapper userRoleDOMapper,
                                  OrganizationDOMapper organizationDOMapper) {
         super(wintereeCoreConfig);
+        this.i18NService = i18NService;
+        this.secretKeyService = secretKeyService;
         this.accountDOMapper = accountDOMapper;
         this.roleDOMapper = roleDOMapper;
         this.userRoleDOMapper = userRoleDOMapper;
@@ -126,6 +140,8 @@ public class AccountServiceImpl extends BaseService implements AccountService {
         }
         // 给传输类填充公司名称和部门名称信息
         fillCompanyAndDepartmentInfo(accountDTOS);
+        // 填充角色ID
+        fillRoles(accountDTOS);
         accountDTOListData.setData(accountDTOS);
         return accountDTOListData;
     }
@@ -169,6 +185,37 @@ public class AccountServiceImpl extends BaseService implements AccountService {
                     throw new ForbiddenException("权限不足");
             }
         }
+        // 检查用户名、手机、电邮重复的情况
+        AccountDOExample example = new AccountDOExample();
+        if (BeanUtils.isEmpty(addAccountDTO.getUserName())) {
+            throw new FailureException("用户名不能为空");
+        } else {
+            example.createCriteria()
+                    .andTenantUuidEqualTo(addAccountDTO.getTenantUuid())
+                    .andUserNameEqualTo(addAccountDTO.getUserName());
+            if (!BeanUtils.isEmpty(accountDOMapper.selectByExample(example))) {
+                throw new FailureException("用户名被占用");
+            }
+        }
+        if (!BeanUtils.isEmpty(addAccountDTO.getPhone())) {
+            example = new AccountDOExample();
+            example.createCriteria()
+                    .andTenantUuidEqualTo(addAccountDTO.getTenantUuid())
+                    .andPhoneEqualTo(addAccountDTO.getPhone());
+            if (!BeanUtils.isEmpty(accountDOMapper.selectByExample(example))) {
+                throw new FailureException("手机号码被占用");
+            }
+        }
+        if (!BeanUtils.isEmpty(addAccountDTO.getEmail())) {
+            example = new AccountDOExample();
+            example.createCriteria()
+                    .andTenantUuidEqualTo(addAccountDTO.getTenantUuid())
+                    .andEmailEqualTo(addAccountDTO.getEmail());
+            if (!BeanUtils.isEmpty(accountDOMapper.selectByExample(example))) {
+                throw new FailureException("邮件地址被占用");
+            }
+        }
+
         // 密码是在添加用户后，使用密码重置功能进行重置的
         AccountDO accountDO = Builder.of(AccountDO::new)
                 .with(AccountDO::setUuid, UUID.randomUUID().toString().toUpperCase())
@@ -181,7 +228,9 @@ public class AccountServiceImpl extends BaseService implements AccountService {
                 .with(AccountDO::setPhone, addAccountDTO.getPhone())
                 .with(AccountDO::setUserStatus, 1)
                 .build();
-        return accountDOMapper.insertSelective(accountDO);
+        int rows = accountDOMapper.insertSelective(accountDO);
+        updateRole(addAccountDTO);
+        return rows;
     }
 
     /**
@@ -230,6 +279,38 @@ public class AccountServiceImpl extends BaseService implements AccountService {
                     throw new ForbiddenException("权限不足");
                 }
             }
+            // 检查用户名、手机、电邮重复的情况
+            AccountDOExample checkexample = new AccountDOExample();
+            if (BeanUtils.isEmpty(updateAccountDTO.getUserName())) {
+                throw new FailureException("用户名不能为空");
+            } else {
+                if (oldAccountDTO.getUserName() == null || !oldAccountDTO.getUserName().equals(updateAccountDTO.getUserName())) {
+                    checkexample.createCriteria()
+                            .andTenantUuidEqualTo(updateAccountDTO.getTenantUuid())
+                            .andUserNameEqualTo(updateAccountDTO.getUserName());
+                    if (!BeanUtils.isEmpty(accountDOMapper.selectByExample(checkexample))) {
+                        throw new FailureException("用户名被占用");
+                    }
+                }
+            }
+            if (oldAccountDTO.getPhone() == null || !oldAccountDTO.getPhone().equals(updateAccountDTO.getPhone())) {
+                checkexample = new AccountDOExample();
+                checkexample.createCriteria()
+                        .andTenantUuidEqualTo(updateAccountDTO.getTenantUuid())
+                        .andPhoneEqualTo(updateAccountDTO.getPhone());
+                if (!BeanUtils.isEmpty(accountDOMapper.selectByExample(checkexample))) {
+                    throw new FailureException("手机号码被占用");
+                }
+            }
+            if (oldAccountDTO.getEmail() == null || !oldAccountDTO.getEmail().equals(updateAccountDTO.getEmail())) {
+                checkexample = new AccountDOExample();
+                checkexample.createCriteria()
+                        .andTenantUuidEqualTo(updateAccountDTO.getTenantUuid())
+                        .andEmailEqualTo(updateAccountDTO.getEmail());
+                if (!BeanUtils.isEmpty(accountDOMapper.selectByExample(checkexample))) {
+                    throw new FailureException("邮件地址被占用");
+                }
+            }
             // 只允许更新这几项字段，这不是BUG！例如用户名是不允许修改的
             AccountDO accountDO = new AccountDO();
             accountDO.setOfficeUuid(updateAccountDTO.getOfficeUuid());
@@ -239,9 +320,121 @@ public class AccountServiceImpl extends BaseService implements AccountService {
             accountDO.setUpdateTime(new Date());
             AccountDOExample example = new AccountDOExample();
             example.createCriteria().andUuidEqualTo(oldAccountDTO.getUuid());
+            updateRole(updateAccountDTO);
             return accountDOMapper.updateByExampleSelective(accountDO, example);
         } else {
             return 0;
+        }
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException 失败异常信息
+     */
+    @Override
+    public int changePassword(String oldPassword, String newPassword, String language, String keyid) throws FailureException {
+        com.winteree.core.entity.AccountDTO accountDTO = getSignedUser(this);
+        if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(newPassword)) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的密码"));
+        }
+        // AES解密密码
+        oldPassword = secretKeyService.decrypt(oldPassword, language, keyid);
+        newPassword = secretKeyService.decrypt(newPassword, language, keyid);
+        if (!PasswordUtils.verifyPassword(oldPassword, accountDTO.getPasswd())) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的密码"));
+        }
+        try {
+            newPassword = PasswordUtils.createHash(newPassword);
+        } catch (PasswordUtils.CannotPerformOperationException e) {
+            log.error(e.getMessage(), e);
+            throw new FailureException("失败！内部服务器错误");
+        }
+        AccountDO accountDO = new AccountDO();
+        accountDO.setPasswd(newPassword);
+        AccountDOExample example = new AccountDOExample();
+        example.createCriteria().andUuidEqualTo(accountDTO.getUuid());
+        return accountDOMapper.updateByExampleSelective(accountDO, example);
+    }
+
+    /**
+     * 重置任意账户密码
+     *
+     * @param accountUuid 账户ID
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException   失败异常信息
+     * @throws ForbiddenException 权限不足异常信息
+     */
+    @Override
+    public int passwordReset(String accountUuid, String newPassword, String language, String keyid) throws FailureException, ForbiddenException {
+        if (StringUtils.isEmpty(newPassword)) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的密码"));
+        }
+        com.winteree.core.entity.AccountDTO signedAccountDTO = getSignedUser(this);
+        AccountDTO accountDTO = this.getAccountById(accountUuid);
+        if (accountDTO != null) {
+            if (wintereeCoreConfig.getRootAccount().equals(signedAccountDTO.getUuid())) {
+                // 超管登陆，啥都不限制
+            } else {
+                if (wintereeCoreConfig.getRootAccount().equals(accountUuid)) {
+                    // 超管的账号
+                    if (!signedAccountDTO.getUuid().equals(wintereeCoreConfig.getRootAccount())) {
+                        throw new ForbiddenException("超管的账号只能超管自己重置");
+                    }
+                }
+                if (!signedAccountDTO.getTenantUuid().equals(accountDTO.getTenantUuid())) {
+                    // 不可跨租户管理用户
+                    throw new ForbiddenException("权限不足");
+                }
+                DataScopeEnum dataScopeEnum = this.getDataScope();
+                switch (dataScopeEnum) {
+                    case ALL:
+                        break;
+                    case COMPANY:
+                        // TODO 此处应该还考虑子公司
+                        if (accountDTO.getOfficeUuid().equals(signedAccountDTO.getOfficeUuid())) {
+                            // 只能管理自己公司的
+                        } else {
+                            // 无权管理其他公司的角色
+                            throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                        }
+                        break;
+                    case DEPARTMENT:
+                        // TODO 此处应该还考虑子部门
+                        if (accountDTO.getDepartmentUuid().equals(signedAccountDTO.getDepartmentUuid())) {
+                            // 只能管理自己公司的
+                        } else {
+                            // 无权管理其他公司的角色
+                            throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                        }
+                    default:
+                        // 其他数据范围的不允许
+                        throw new ForbiddenException(StateCode.Forbidden.getDescribe());
+                }
+            }
+            // AES解密密码
+            newPassword = secretKeyService.decrypt(newPassword, language, keyid);
+            try {
+                newPassword = PasswordUtils.createHash(newPassword);
+            } catch (PasswordUtils.CannotPerformOperationException e) {
+                log.error(e.getMessage(), e);
+                throw new FailureException("失败！内部服务器错误");
+            }
+            AccountDO accountDO = new AccountDO();
+            accountDO.setPasswd(newPassword);
+            AccountDOExample example = new AccountDOExample();
+            example.createCriteria().andUuidEqualTo(accountUuid);
+            return accountDOMapper.updateByExampleSelective(accountDO, example);
+        } else {
+            throw new FailureException("失败！用户未找到");
         }
     }
 
@@ -327,6 +520,43 @@ public class AccountServiceImpl extends BaseService implements AccountService {
                 if (organizationDO != null) {
                     accountDTO.setDepartmentName(organizationDO.getName());
                 }
+            }
+        }
+    }
+
+    /**
+     * 更新用户的角色
+     *
+     * @param accountDTO
+     */
+    private void updateRole(AccountDTO accountDTO) {
+        // 先删除再添加
+        UserRoleDOExample example = new UserRoleDOExample();
+        example.createCriteria().andAccountUuidEqualTo(accountDTO.getUuid());
+        userRoleDOMapper.deleteByExample(example);
+        // 添加
+        for (String roleid : accountDTO.getRoles()
+        ) {
+            UserRoleDO userRoleDO = new UserRoleDO();
+            userRoleDO.setUuid(UUID.randomUUID().toString().toUpperCase());
+            userRoleDO.setAccountUuid(accountDTO.getUuid());
+            userRoleDO.setRoleUuid(roleid);
+            userRoleDOMapper.insertSelective(userRoleDO);
+        }
+    }
+
+    private void fillRoles(List<AccountDTO> accountDTOS) {
+        for (AccountDTO accountDTO : accountDTOS
+        ) {
+            UserRoleDOExample example = new UserRoleDOExample();
+            example.createCriteria().andAccountUuidEqualTo(accountDTO.getUuid());
+            List<UserRoleDO> userRoleDOS = userRoleDOMapper.selectByExample(example);
+            if (BeanUtils.isEmpty(userRoleDOS)) {
+                accountDTO.setRoles(new ArrayList<>());
+            } else {
+                List<String> ids = new ArrayList<>();
+                userRoleDOS.forEach(id -> ids.add(id.getRoleUuid()));
+                accountDTO.setRoles(ids);
             }
         }
     }

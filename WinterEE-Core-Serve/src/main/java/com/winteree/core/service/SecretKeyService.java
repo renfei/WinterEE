@@ -14,5 +14,18 @@ import java.util.Map;
  */
 public interface SecretKeyService {
     Map<Integer, String> secretKey();
+
     Map<String, String> setSecretKey(ReportPublicKeyVO reportPublicKeyVO) throws FailureException;
+
+    String getSecretKeyStringById(String id);
+
+    /**
+     * 解密
+     *
+     * @param value    密文
+     * @param language 语言
+     * @param keyId    秘钥ID
+     * @return 明文
+     */
+    String decrypt(String value, String language, String keyId);
 }

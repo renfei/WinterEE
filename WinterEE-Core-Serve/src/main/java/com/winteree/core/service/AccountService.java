@@ -3,6 +3,7 @@ package com.winteree.core.service;
 import com.winteree.api.entity.AccountDTO;
 import com.winteree.api.entity.AccountSearchCriteriaVO;
 import com.winteree.api.entity.ListData;
+import com.winteree.api.exception.FailureException;
 import com.winteree.api.exception.ForbiddenException;
 
 /**
@@ -39,6 +40,31 @@ public interface AccountService {
      * @throws ForbiddenException 权限不足异常
      */
     int updateAccount(AccountDTO updateAccountDTO) throws ForbiddenException;
+
+    /**
+     * 修改密码
+     *
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException 失败异常信息
+     */
+    int changePassword(String oldPassword, String newPassword, String language, String keyid) throws FailureException;
+
+    /**
+     * 重置任意账户密码
+     *
+     * @param accountUuid 账户ID
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException   失败异常信息
+     * @throws ForbiddenException 权限不足异常信息
+     */
+    int passwordReset(String accountUuid, String newPassword, String language, String keyid) throws FailureException, ForbiddenException;
 
     AccountDTO getAccountById(String uuid);
 

@@ -79,6 +79,14 @@ public interface OrganizationService {
     List<OrganizationVO> getDepartmentList(String tenantUuid, String companyUuid);
 
     /**
+     * 获取部门列表（简单列表非树状）
+     * @param tenantUuid 租户ID
+     * @param companyUuid 公司ID
+     * @return 公司下的部门列表
+     */
+    List<OrganizationVO> getDepartmentSimpleList(String tenantUuid, String companyUuid);
+
+    /**
      * 添加部门
      *
      * @param organizationVO

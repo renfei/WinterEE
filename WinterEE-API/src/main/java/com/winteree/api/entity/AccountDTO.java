@@ -23,4 +23,5 @@ public class AccountDTO {
     private Integer userStatus;
     private Date lockTime;
     private List<String> authorities;
+    private List<String> roles;
 }
