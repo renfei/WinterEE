@@ -1,0 +1,57 @@
+application:
+  version: 1.0.0-SNAPSHOT
+#======================================#
+#========== Server settings ===========#
+#======================================#
+
+server:
+  port: 8888
+
+#======================================#
+#========== Spring settings ===========#
+#======================================#
+
+spring:
+  # 应用程序名称
+  application:
+    name: WinterEE-Config-Serve
+  # 当前环境名称（注意：不可设置为 test 它是单元测试专用的名称）
+  profiles:
+    active: native
+  security:
+    user:
+      password: 1234
+  # 分布式配置中心
+  cloud:
+    bus:
+      trace:
+        enabled: true # 启用日志跟踪
+    config:
+      server:
+        # 提前加载配置文件，保证后续数据库连接正常启动
+        bootstrap: true
+        default-profile: default
+        default-label: master
+        native:
+          search-locations: classpath:/config
+        # 使用Git储存配置文件
+        git:
+          uri: https://github.com/renfei-net/WinterEE.git
+          default-label: winteree-config
+          username: ~
+          password: ~
+  # 消息队列服务
+    rabbitmq:
+      host: localhost
+      port: 15672
+      username:
+      password:
+
+# 日志配置
+logging:
+  config: classpath:logback-spring.xml
+
+endpoints:
+  web:
+    exposure:
+      include: "*"

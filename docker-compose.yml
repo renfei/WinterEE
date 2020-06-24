@@ -1,0 +1,81 @@
+version: '2'
+services:
+  WinterEE-MariaDB:
+    build:
+      context: ./environment/db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    restart: always
+    container_name: WinterEE-MariaDB
+    hostname: WinterEE-MariaDB
+    image: winteree-mariadb
+    ports:
+      - 3306:3306
+
+  WinterEE-Redis:
+    build:
+      context: ./environment/redis
+    restart: always
+    container_name: WinterEE-Redis
+    hostname: WinterEE-Redis
+    ports:
+      - 6379:6379
+
+  WinterEE-RabbitMQ:
+    build:
+      context: ./environment/rabbitmq
+    restart: always
+    container_name: WinterEE-RabbitMQ
+    hostname: WinterEE-RabbitMQ
+    ports:
+      - 15672:15672
+
+  WinterEE-Config-Serve:
+    build:
+      context: ./WinterEE-Config-Serve
+    restart: always
+    ports:
+      - 8114:8114
+    container_name: WinterEE-UAA-Serve
+    hostname: WinterEE-UAA-Serve
+    image: winteree-uaa-serve
+
+  WinterEE-Eureka-Serve:
+    build:
+      context: ./WinterEE-Eureka-Serve
+    restart: always
+    ports:
+      - 8761:8761
+    container_name: WinterEE-Eureka-Serve
+    hostname: WinterEE-Eureka-Serve
+    image: winteree-eureka-serve
+
+  WinterEE-UAA-Serve:
+    build:
+      context: ./WinterEE-UAA-Serve
+    restart: always
+    ports:
+      - 8081:8081
+    container_name: WinterEE-UAA-Serve
+    hostname: WinterEE-UAA-Serve
+    image: winteree-uaa-serve
+
+  WinterEE-Core-Serve:
+    build:
+      context: ./WinterEE-Core-Serve
+    restart: always
+    ports:
+      - 8090:8090
+    container_name: WinterEE-Core-Serve
+    hostname: WinterEE-Core-Serve
+    image: winteree-core-serve
+
+  WinterEE-Gateway-Serve:
+    build:
+      context: ./WinterEE-Gateway-Serve
+    restart: always
+    ports:
+      - 8081:8081
+    container_name: WinterEE-Gateway-Serve
+    hostname: WinterEE-Gateway-Serve
+    image: winteree-gateway-serve
