@@ -1,37 +1,26 @@
 server:
-  port: 8081
-zuul:
-  routes:
-    WinterEE-UAA-Serve: /uaa/**
-    WinterEE-Config-Serve: /api/config/**
-    WinterEE-Core-Serve: /core/**
-    Your-Module-Serve: /your/**
-  host:
-    maxTotalConnections: 10000
-    maxPerRouteConnections: 10000
-    semaphore:
-      max-semaphores: 200
-  ignored-patterns:
-    - /admin
-    - /config
-  sensitiveHeaders:
-ribbon:
-  ReadTimeout: 60000
-  ConnectTimeout: 60000
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 60000
-feign:
-  hystrix:
-    enabled: false
+  port: 8091
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis:
+  typeAliasesPackage: domain.yourmodule.dao.entity
+  mapperLocations: classpath*:mapper/*.xml
+#    configuration:
+#      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#pagehelper分页插件配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 security:
   oauth2:
     client:
-      clientId: WinterEE-Gateway-Serve
+      clientId: Your-Module-Serve
       clientSecret: w4nHQGH8oBsj4HMrgcYVyZRFPFbMUuLK
       accessTokenUri: http://localhost:8114/oauth/token
       scope:
@@ -39,7 +28,10 @@ security:
     resource:
       user-info-uri: http://localhost:8114/oauth2/userinfo
       token-info-uri: http://localhost:8114/oauth/check_token
-gateway:
+feign:
+  hystrix:
+    enabled: true
+yourmodule:
   oauth2:
     # openssl genrsa -out jwt.pem 2048
     # openssl rsa -in jwt.pem
@@ -82,9 +74,3 @@ gateway:
       clps/VdBap9BxU3/0YoFXRIc18nyzrWo2BcY2KQqX//AJC3OAfrfDmo+BGK8E0mp
       8wIDAQAB
       -----END PUBLIC KEY-----
-spring:
-  datasource:
-    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver

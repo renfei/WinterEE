@@ -56,6 +56,15 @@ public interface WintereeCoreService {
     AccountDTO findAccountByUsername(String username);
 
     /**
+     * 根据UUID获取账号对象
+     *
+     * @param uuid UUID
+     * @return AccountDTO
+     */
+    @GetMapping("/inside/account/uuid")
+    AccountDTO findAccountByUuid(String uuid);
+
+    /**
      * 根据邮箱地址获取账号对象
      *
      * @param email 电子邮件
@@ -119,18 +128,12 @@ public interface WintereeCoreService {
     /**
      * 重置任意账户密码
      *
-     * @param accountUuid 账户ID
-     * @param newPassword 新密码
-     * @param language    语言
-     * @param keyid       秘钥ID
+     * @param passwordResetDAT 传输对象
      * @return 受影响行数
      * @throws FailureException 失败异常信息
      */
     @PutMapping("/account/resetpassword")
-    APIResult passwordReset(@RequestBody String accountUuid,
-                            @RequestBody String newPassword,
-                            @RequestBody String language,
-                            @RequestBody String keyid);
+    APIResult passwordReset(@RequestBody PasswordResetDAT passwordResetDAT);
 
     /**
      * 根据查询条件获取账户列表

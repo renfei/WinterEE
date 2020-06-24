@@ -138,6 +138,12 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @ApiIgnore
+    public AccountDTO findAccountByUuid(String uuid) {
+        return accountService.getAccountById(uuid);
+    }
+
+    @Override
+    @ApiIgnore
     public AccountDTO findAccountByEmail(String email) {
         return accountService.getAccountIdByEmail(email);
     }
@@ -239,10 +245,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     /**
      * 重置任意账户密码
      *
-     * @param accountUuid 账户ID
-     * @param newPassword 新密码
-     * @param language    语言
-     * @param keyid       秘钥ID
+     * @param passwordResetDAT 数据传输对象
      * @return 受影响行数
      * @throws FailureException 失败异常信息
      */
@@ -250,14 +253,12 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @PreAuthorize("hasAnyAuthority('platf:account:resetpasseord')")
     @ApiOperation(value = "修改自己的密码", notes = "修改自己的密码", tags = "账户接口", response = APIResult.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "accountUuid", value = "账户ID", required = false, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "newPassword", value = "新密码", required = false, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String"),
-            @ApiImplicitParam(name = "keyid", value = "秘钥ID", required = false, paramType = "query", dataType = "String")
+            @ApiImplicitParam(name = "passwordResetDAT", value = "账户ID", required = false, paramType = "query", dataType = "PasswordResetDAT")
     })
-    public APIResult passwordReset(String accountUuid, String newPassword, String language, String keyid) {
+    public APIResult passwordReset(PasswordResetDAT passwordResetDAT) {
         try {
-            return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.passwordReset(accountUuid, newPassword, language, keyid)).build();
+            return APIResult.builder().code(StateCode.OK).message("OK")
+                    .data(accountService.passwordReset(passwordResetDAT.getAccountUuid(), passwordResetDAT.getNewPassword(), passwordResetDAT.getLanguage(), passwordResetDAT.getKeyid())).build();
         } catch (FailureException failureException) {
             return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
         } catch (ForbiddenException forbiddenException) {
