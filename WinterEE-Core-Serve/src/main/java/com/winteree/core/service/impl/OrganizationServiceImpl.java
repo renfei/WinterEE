@@ -586,6 +586,21 @@ public class OrganizationServiceImpl extends BaseService implements Organization
     //<editor-fold desc="部门类管理" defaultstate="collapsed">
 
     /**
+     * 根据UUID获取部门
+     *
+     * @param uuid 部门UUID
+     * @return
+     */
+    @Override
+    public OrganizationDO getDepartmentByUuid(String uuid) {
+        OrganizationDOExample example = new OrganizationDOExample();
+        example.createCriteria()
+                .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value())
+                .andUuidEqualTo(uuid);
+        return ListUtils.getOne(organizationDOMapper.selectByExample(example));
+    }
+
+    /**
      * 获取部门列表（树状）
      *
      * @param tenantUuid  租户ID
