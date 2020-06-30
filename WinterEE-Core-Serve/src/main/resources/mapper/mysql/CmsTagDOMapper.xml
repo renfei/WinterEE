@@ -9,7 +9,7 @@
     <result column="uuid" jdbcType="VARCHAR" property="uuid" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.winteree.core.dao.entity.CmsTagDO">
-    <result column="describe" jdbcType="LONGVARCHAR" property="describe" />
+    <result column="`describe`" jdbcType="LONGVARCHAR" property="describe" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -73,7 +73,7 @@
     id, site_uuid, en_name, zh_name, uuid
   </sql>
   <sql id="Blob_Column_List">
-    describe
+    `describe`
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="com.winteree.core.dao.entity.CmsTagDOExample" resultMap="ResultMapWithBLOBs">
     select
@@ -125,7 +125,7 @@
   </delete>
   <insert id="insert" parameterType="com.winteree.core.dao.entity.CmsTagDO">
     insert into winteree_core_cms_tag (id, site_uuid, en_name, 
-      zh_name, uuid, describe
+      zh_name, uuid, `describe`
       )
     values (#{id,jdbcType=BIGINT}, #{siteUuid,jdbcType=VARCHAR}, #{enName,jdbcType=VARCHAR}, 
       #{zhName,jdbcType=VARCHAR}, #{uuid,jdbcType=VARCHAR}, #{describe,jdbcType=LONGVARCHAR}
@@ -150,7 +150,7 @@
         uuid,
       </if>
       <if test="describe != null">
-        describe,
+        `describe`,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -170,7 +170,7 @@
         #{uuid,jdbcType=VARCHAR},
       </if>
       <if test="describe != null">
-        #{describe,jdbcType=LONGVARCHAR},
+        #{`describe`,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -199,7 +199,7 @@
         uuid = #{record.uuid,jdbcType=VARCHAR},
       </if>
       <if test="record.describe != null">
-        describe = #{record.describe,jdbcType=LONGVARCHAR},
+        `describe` = #{record.describe,jdbcType=LONGVARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -213,7 +213,7 @@
       en_name = #{record.enName,jdbcType=VARCHAR},
       zh_name = #{record.zhName,jdbcType=VARCHAR},
       uuid = #{record.uuid,jdbcType=VARCHAR},
-      describe = #{record.describe,jdbcType=LONGVARCHAR}
+      `describe` = #{record.describe,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -245,7 +245,7 @@
         uuid = #{uuid,jdbcType=VARCHAR},
       </if>
       <if test="describe != null">
-        describe = #{describe,jdbcType=LONGVARCHAR},
+        `describe` = #{describe,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -256,7 +256,7 @@
       en_name = #{enName,jdbcType=VARCHAR},
       zh_name = #{zhName,jdbcType=VARCHAR},
       uuid = #{uuid,jdbcType=VARCHAR},
-      describe = #{describe,jdbcType=LONGVARCHAR}
+      `describe` = #{describe,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.CmsTagDO">

@@ -20,6 +20,14 @@ public class WintereeCoreConfig {
     private Boolean enableSwagger;
     private Oauth2 oauth2;
     private Aliyun aliyun;
+    private String aliyunOssEndpoint;
+    private String aliyunOssPublicBuckename;
+    private String aliyunOssPrivateBuckename;
+    private String storageOssPrivateUrl;
+    private String storageType;
+    private String storagePath;
+    private String storageUrl;
+    private String storagePublicUrl;
     private String systemname;
     private String totpseed;
 

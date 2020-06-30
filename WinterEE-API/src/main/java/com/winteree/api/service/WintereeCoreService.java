@@ -4,6 +4,7 @@ import com.winteree.api.entity.*;
 import com.winteree.api.exception.FailureException;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -690,4 +691,10 @@ public interface WintereeCoreService {
     @DeleteMapping("/cms/tag")
     APIResult deleteCmsTag(String uuid);
     //</editor-fold>
+
+    @PostMapping("/uploadPublicFile")
+    APIResult<String> uploadPublicFile(MultipartFile file);
+
+    @PostMapping("/uploadPrivateFile")
+    APIResult<String> uploadPrivateFile(MultipartFile file);
 }

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winteree.core.dao.FilesDOMapper">
+  <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.FilesDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="tenant_uuid" jdbcType="VARCHAR" property="tenantUuid" />
+    <result column="office_uuid" jdbcType="VARCHAR" property="officeUuid" />
+    <result column="department_uuid" jdbcType="VARCHAR" property="departmentUuid" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="original_file_name" jdbcType="VARCHAR" property="originalFileName" />
+    <result column="storage_type" jdbcType="VARCHAR" property="storageType" />
+    <result column="storage_path" jdbcType="VARCHAR" property="storagePath" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="bucke_name" jdbcType="VARCHAR" property="buckeName" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, uuid, tenant_uuid, office_uuid, department_uuid, file_name, original_file_name, 
+    storage_type, storage_path, create_time, create_by, bucke_name
+  </sql>
+  <select id="selectByExample" parameterType="com.winteree.core.dao.entity.FilesDOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from winteree_core_files
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from winteree_core_files
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from winteree_core_files
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.FilesDOExample">
+    delete from winteree_core_files
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.winteree.core.dao.entity.FilesDO">
+    insert into winteree_core_files (id, uuid, tenant_uuid, 
+      office_uuid, department_uuid, file_name, 
+      original_file_name, storage_type, storage_path, 
+      create_time, create_by, bucke_name
+      )
+    values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{tenantUuid,jdbcType=VARCHAR}, 
+      #{officeUuid,jdbcType=VARCHAR}, #{departmentUuid,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, 
+      #{originalFileName,jdbcType=VARCHAR}, #{storageType,jdbcType=VARCHAR}, #{storagePath,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{buckeName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.FilesDO">
+    insert into winteree_core_files
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="tenantUuid != null">
+        tenant_uuid,
+      </if>
+      <if test="officeUuid != null">
+        office_uuid,
+      </if>
+      <if test="departmentUuid != null">
+        department_uuid,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="originalFileName != null">
+        original_file_name,
+      </if>
+      <if test="storageType != null">
+        storage_type,
+      </if>
+      <if test="storagePath != null">
+        storage_path,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="buckeName != null">
+        bucke_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantUuid != null">
+        #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="officeUuid != null">
+        #{officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentUuid != null">
+        #{departmentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="originalFileName != null">
+        #{originalFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="storageType != null">
+        #{storageType,jdbcType=VARCHAR},
+      </if>
+      <if test="storagePath != null">
+        #{storagePath,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="buckeName != null">
+        #{buckeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.winteree.core.dao.entity.FilesDOExample" resultType="java.lang.Long">
+    select count(*) from winteree_core_files
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update winteree_core_files
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.uuid != null">
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tenantUuid != null">
+        tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.officeUuid != null">
+        office_uuid = #{record.officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departmentUuid != null">
+        department_uuid = #{record.departmentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileName != null">
+        file_name = #{record.fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.originalFileName != null">
+        original_file_name = #{record.originalFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.storageType != null">
+        storage_type = #{record.storageType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.storagePath != null">
+        storage_path = #{record.storagePath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.buckeName != null">
+        bucke_name = #{record.buckeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update winteree_core_files
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      office_uuid = #{record.officeUuid,jdbcType=VARCHAR},
+      department_uuid = #{record.departmentUuid,jdbcType=VARCHAR},
+      file_name = #{record.fileName,jdbcType=VARCHAR},
+      original_file_name = #{record.originalFileName,jdbcType=VARCHAR},
+      storage_type = #{record.storageType,jdbcType=VARCHAR},
+      storage_path = #{record.storagePath,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_by = #{record.createBy,jdbcType=VARCHAR},
+      bucke_name = #{record.buckeName,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.FilesDO">
+    update winteree_core_files
+    <set>
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantUuid != null">
+        tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="officeUuid != null">
+        office_uuid = #{officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentUuid != null">
+        department_uuid = #{departmentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="originalFileName != null">
+        original_file_name = #{originalFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="storageType != null">
+        storage_type = #{storageType,jdbcType=VARCHAR},
+      </if>
+      <if test="storagePath != null">
+        storage_path = #{storagePath,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="buckeName != null">
+        bucke_name = #{buckeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.FilesDO">
+    update winteree_core_files
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      office_uuid = #{officeUuid,jdbcType=VARCHAR},
+      department_uuid = #{departmentUuid,jdbcType=VARCHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      original_file_name = #{originalFileName,jdbcType=VARCHAR},
+      storage_type = #{storageType,jdbcType=VARCHAR},
+      storage_path = #{storagePath,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      bucke_name = #{buckeName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -711,7 +711,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         CmsTagDOExample example = new CmsTagDOExample();
         example.createCriteria().andEnNameEqualTo(cmsTagDTO.getEnName());
         List<CmsTagDO> cmsTagDOS = cmsTagDOMapper.selectByExample(example);
-        if (cmsTagDOS != null || cmsTagDOS.size() > 0) {
+        if (cmsTagDOS != null && cmsTagDOS.size() > 0) {
             throw new FailureException("标签英文名已经存在不能重复添加");
         }
         CmsTagDO cmsTagDO = convert(cmsTagDTO);

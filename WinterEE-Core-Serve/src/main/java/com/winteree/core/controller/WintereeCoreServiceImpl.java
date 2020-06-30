@@ -10,16 +10,24 @@ import com.winteree.core.service.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.GoogleAuthenticator;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +38,7 @@ import java.util.Map;
  *
  * @author RenFei
  */
+@Slf4j
 @RestController
 public class WintereeCoreServiceImpl extends BaseController implements WintereeCoreService {
     //<editor-fold desc="依赖服务" defaultstate="collapsed">
@@ -44,6 +53,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final OrganizationService organizationService;
     private final RoleService roleService;
     private final CmsService cmsService;
+    private final FileService fileService;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -57,7 +67,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    OAuthClientService oAuthClientService,
                                    OrganizationService organizationService,
                                    RoleService roleService,
-                                   CmsService cmsService) {
+                                   CmsService cmsService,
+                                   FileService fileService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -69,6 +80,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.organizationService = organizationService;
         this.roleService = roleService;
         this.cmsService = cmsService;
+        this.fileService = fileService;
     }
     //</editor-fold>
 
@@ -1442,4 +1454,87 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         }
     }
     //</editor-fold>
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:publicfile:upload')")
+    @ApiOperation(value = "公开文件上传接口", notes = "该接口上传的文件将直接公共读，不做权限校验", tags = "文件类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile")
+    })
+    public APIResult<String> uploadPublicFile(MultipartFile file) {
+        try {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("")
+                    .data(fileService.uploadPublicFile(file))
+                    .build();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (Exception exception) {
+            log.error(exception.getMessage(), exception);
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message("Failure")
+                    .build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('signed')")
+    @ApiOperation(value = "私有文件上传接口", notes = "该接口上传的文件获取时会做简单的校验，不会公共读", tags = "文件类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile")
+    })
+    public APIResult<String> uploadPrivateFile(MultipartFile file) {
+        try {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("")
+                    .data(fileService.uploadPrivateFile(file))
+                    .build();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (Exception exception) {
+            log.error(exception.getMessage(), exception);
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message("Failure")
+                    .build();
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('signed')")
+    @GetMapping("/getFile")
+    public void getFile(String uuid, HttpServletResponse response) throws IOException {
+        FileDTO fileDTO = fileService.getFileOnVerification(uuid);
+        if (fileDTO == null) {
+            response.setStatus(404);
+            response.getWriter().write("404 Not Found.");
+        } else {
+            if (fileDTO.getFile() != null) {
+                //设置响应头控制浏览器以下载的形式打开文件
+                response.setHeader("content-disposition",
+                        "attachment;fileName=" + fileDTO.getFile().getName());
+                InputStream in = new FileInputStream(fileDTO.getFile()); //获取下载文件的输入流
+                int count = 0;
+                byte[] by = new byte[1024];
+                //通过response对象获取OutputStream流
+                OutputStream out = response.getOutputStream();
+                while ((count = in.read(by)) != -1) {
+                    out.write(by, 0, count);//将缓冲区的数据输出到浏览器
+                }
+                in.close();
+                out.flush();
+                out.close();
+            } else {
+                response.sendRedirect(fileDTO.getFileUrl());
+            }
+        }
+    }
 }
