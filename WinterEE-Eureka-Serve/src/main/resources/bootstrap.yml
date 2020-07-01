@@ -1,0 +1,20 @@
+application:
+  version: 1.0.0-SNAPSHOT
+#这个文件是spring知道在哪里查找配置文件并保存初始配置的入口点
+spring:
+  application:
+    name: WinterEE-Eureka-serve
+  cloud:
+    config:
+      uri: http://localhost:8888 #where the WinterEE-Config-Serve is running
+      fail-fast: true #如果无法到达WinterEE-Config-Serve，服务将无法运行
+      password: 1234 #password of the WinterEE-Config-Serve
+      username: user #username of the WinterEE-Config-Serve
+eureka:
+  instance:
+    prefer-ip-address: true #当应用程序注册到eureka时，它使用它的IP地址而不是它的主机名
+  client:
+    registerWithEureka: false #告诉内置的eureka客户机不要向eureka注册，因为我们应该充当服务器
+    fetchRegistry: false
+server:
+  port: 8761
