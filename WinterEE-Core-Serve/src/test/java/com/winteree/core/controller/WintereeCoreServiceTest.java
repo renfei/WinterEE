@@ -70,6 +70,7 @@ public class WintereeCoreServiceTest {
         Assertions.assertEquals(wintereeCoreService.getMessage(null, message, "默认测试消息"), "默认测试消息");
     }
 
+    //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
     @Test
     @Rollback
     @Transactional
@@ -112,6 +113,7 @@ public class WintereeCoreServiceTest {
         Map<String, String> apiResultMap = (Map<String, String>) setSecretKeyResult.getData();
         Assertions.assertNotNull(RSAUtils.decrypt(apiResultMap.get("aeskey"), clientPriKey));
     }
+    //</editor-fold>
 
     //<editor-fold desc="账户类的接口" defaultstate="collapsed">
     @Test
@@ -120,6 +122,14 @@ public class WintereeCoreServiceTest {
         Assertions.assertNull(wintereeCoreService.findAccountByUsername(""));
         Assertions.assertNull(wintereeCoreService.findAccountByUsername("tests"));
         Assertions.assertNotNull(wintereeCoreService.findAccountByUsername("admin"));
+    }
+
+    @Test
+    public void getAccountIdByUuidTest() {
+        Assertions.assertNull(wintereeCoreService.findAccountByUuid(null));
+        Assertions.assertNull(wintereeCoreService.findAccountByUuid(""));
+        Assertions.assertNull(wintereeCoreService.findAccountByUuid("tests"));
+        Assertions.assertNotNull(wintereeCoreService.findAccountByUuid("9369919A-F95E-44CF-AB0A-6BCD1D933403"));
     }
 
     @Test
@@ -154,6 +164,18 @@ public class WintereeCoreServiceTest {
         Assertions.assertEquals(wintereeCoreService.checkAccount("13001000000", "zh-CN").getMessage(), "Phone");
         Assertions.assertEquals(wintereeCoreService.checkAccount("admin", "zh-CN").getMessage(), "UserName");
         Assertions.assertEquals(wintereeCoreService.checkAccount("tester", "zh-CN").getCode(), StateCode.Failure.getCode());
+    }
+
+    @Test
+    public void getMyInfoTest(){
+        Assertions.assertEquals(wintereeCoreService.getMyInfo().getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void changePasswordTest(){
+        Assertions.assertEquals(wintereeCoreService.changePassword("yYtZkSpPI2zMEETWGV3ZoQ==","a8Ywm0Qx5SAGxiahG5H6tQ==","","64a01c36-f863-494d-80ab-85439c512536").getCode(), StateCode.OK.getCode());
     }
     //</editor-fold>
 }

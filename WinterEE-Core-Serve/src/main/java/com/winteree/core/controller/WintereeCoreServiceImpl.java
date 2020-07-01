@@ -266,7 +266,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:account:resetpasseord')")
-    @ApiOperation(value = "修改自己的密码", notes = "修改自己的密码", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "重置任意账户密码", notes = "重置任意账户密码", tags = "账户接口", response = APIResult.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "passwordResetDAT", value = "账户ID", required = false, paramType = "query", dataType = "PasswordResetDAT")
     })
