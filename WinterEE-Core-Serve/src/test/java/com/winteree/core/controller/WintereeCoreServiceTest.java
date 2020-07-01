@@ -1,9 +1,6 @@
 package com.winteree.core.controller;
 
-import com.winteree.api.entity.LogDTO;
-import com.winteree.api.entity.LogSubTypeEnum;
-import com.winteree.api.entity.LogTypeEnum;
-import com.winteree.api.entity.ReportPublicKeyVO;
+import com.winteree.api.entity.*;
 import com.winteree.api.service.WintereeCoreService;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
@@ -176,6 +173,128 @@ public class WintereeCoreServiceTest {
     @Transactional
     public void changePasswordTest(){
         Assertions.assertEquals(wintereeCoreService.changePassword("yYtZkSpPI2zMEETWGV3ZoQ==","a8Ywm0Qx5SAGxiahG5H6tQ==","","64a01c36-f863-494d-80ab-85439c512536").getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void passwordResetTest(){
+        PasswordResetDAT passwordResetDAT = new PasswordResetDAT();
+        passwordResetDAT.setAccountUuid("");
+        passwordResetDAT.setKeyid("64a01c36-f863-494d-80ab-85439c512536");
+        passwordResetDAT.setLanguage("9369919A-F95E-44CF-AB0A-6BCD1D933403");
+        passwordResetDAT.setNewPassword("a8Ywm0Qx5SAGxiahG5H6tQ");
+        Assertions.assertEquals(wintereeCoreService.passwordReset(passwordResetDAT).getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    public void getAccountListTest(){
+        AccountSearchCriteriaVO accountSearchCriteriaVO = new AccountSearchCriteriaVO();
+        accountSearchCriteriaVO.setTenantuuid("BC21F895-63DA-4E94-9D9E-D4CD2DCFB189");
+        accountSearchCriteriaVO.setAccountUuid("9369919A-F95E-44CF-AB0A-6BCD1D933403");
+        accountSearchCriteriaVO.setEmail("i@renfei.net");
+        accountSearchCriteriaVO.setPages(1);
+        accountSearchCriteriaVO.setRows(10);
+        accountSearchCriteriaVO.setPhone("13001000000");
+        accountSearchCriteriaVO.setUserName("admin");
+        Assertions.assertEquals(wintereeCoreService.getAccountList(accountSearchCriteriaVO).getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void addAccountTest(){
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setEmail("ads@ssdf.com");
+        accountDTO.setPhone("13001000000");
+        accountDTO.setUserName("Tester");
+        accountDTO.setTenantUuid("BC21F895-63DA-4E94-9D9E-D4CD2DCFB189");
+        Assertions.assertEquals(wintereeCoreService.addAccount(accountDTO).getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void updateAccountTest(){
+        AccountDTO accountDTO = wintereeCoreService.findAccountByUuid("9369919A-F95E-44CF-AB0A-6BCD1D933403");
+        accountDTO.setUserName("tetete");
+        accountDTO.setEmail("dfs@wre.com");
+        accountDTO.setPhone("13101000000");
+        Assertions.assertEquals(wintereeCoreService.updateAccount(accountDTO).getCode(), StateCode.OK.getCode());
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
+    @Test
+    public void getMenuTreeTest(){
+        Assertions.assertEquals(wintereeCoreService.getMenuTree("").getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    public void getMenuAndAuthorityTreeTest(){
+        Assertions.assertEquals(wintereeCoreService.getMenuAndAuthorityTree("").getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    public void getSettingMenuTreeTest(){
+        Assertions.assertEquals(wintereeCoreService.getSettingMenuTree().getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    public void getSettingMenuListTest(){
+        Assertions.assertEquals(wintereeCoreService.getSettingMenuList().getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    public void getSettingMenuTest(){
+        Assertions.assertEquals(wintereeCoreService.getSettingMenu("99406120-183c-4029-a992-1c707aba5ba2").getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void deleteSettingMenuByUuidTest(){
+        Assertions.assertEquals(wintereeCoreService.deleteSettingMenuByUuid("99406120-183c-4029-a992-1c707aba5ba2").getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void updateSettingMenuTest(){
+        MenuVO menuVO = wintereeCoreService.getSettingMenu("99406120-183c-4029-a992-1c707aba5ba2").getData();
+        menuVO.setIcon("aaa");
+        menuVO.setText("Test");
+        menuVO.setHref("Test");
+        menuVO.setI18n("Test");
+        menuVO.setIcondown("Test");
+        menuVO.setIsMenu(false);
+        menuVO.setParentUuid("root");
+        menuVO.setRemarks("Test");
+        menuVO.setPermission("Test");
+        menuVO.setSort(1L);
+        menuVO.setTarget("Test");
+        menuVO.setModel(false);
+        Assertions.assertEquals(wintereeCoreService.updateSettingMenu(menuVO).getCode(), StateCode.OK.getCode());
+    }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void addSettingMenuTest(){
+        MenuVO menuVO = new MenuVO();
+        menuVO.setIcon("aaa");
+        menuVO.setText("Test");
+        menuVO.setHref("Test");
+        menuVO.setI18n("Test");
+        menuVO.setIcondown("Test");
+        menuVO.setIsMenu(false);
+        menuVO.setParentUuid("root");
+        menuVO.setRemarks("Test");
+        menuVO.setPermission("Test");
+        menuVO.setSort(1L);
+        menuVO.setTarget("Test");
+        menuVO.setModel(false);
+        Assertions.assertEquals(wintereeCoreService.addSettingMenu(menuVO).getCode(), StateCode.OK.getCode());
     }
     //</editor-fold>
 }
