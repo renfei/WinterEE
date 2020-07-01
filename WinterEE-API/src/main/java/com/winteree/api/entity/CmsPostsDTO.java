@@ -1,6 +1,8 @@
 package com.winteree.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -21,9 +23,15 @@ public class CmsPostsDTO {
     private Long views;
     private Long thumbsUp;
     private Long thumbsDown;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date releaseTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     private String createBy;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date updateTime;
     private String updateBy;
     private Boolean isDelete;
@@ -31,6 +39,8 @@ public class CmsPostsDTO {
     private Double avgViews;
     private Double avgComment;
     private Double pageRank;
+    @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date pageRankUpdateTime;
     private String featuredImage;
     private String title;

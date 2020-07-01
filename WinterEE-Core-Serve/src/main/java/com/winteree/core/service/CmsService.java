@@ -171,6 +171,14 @@ public interface CmsService {
     ListData<CmsTagDTO> getTagList(String siteUuid, int pages, int rows) throws ForbiddenException, FailureException;
 
     /**
+     * 根据文章UUID获取标签列表
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    List<CmsTagDTO> getTagListByPostUuid(String postUuid);
+
+    /**
      * 根据UUID获取标签对象
      *
      * @param siteUuid 站点UUID

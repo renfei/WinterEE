@@ -495,7 +495,16 @@ public class CmsServiceImpl extends BaseService implements CmsService {
             return cmsPostsDTOListData;
         }
         List<CmsPostsDTO> cmsPostsDTOS = new ArrayList<>();
-        cmsPostsDOWithBLOBs.forEach(cmsPostsWithBLOBs -> cmsPostsDTOS.add(convert(cmsPostsWithBLOBs)));
+        cmsPostsDOWithBLOBs.forEach(cmsPostsWithBLOBs -> {
+            CmsPostsDTO cmsPostsDTO = convert(cmsPostsWithBLOBs);
+            List<CmsTagDTO> cmsTagDTOS = this.getTagListByPostUuid(cmsPostsWithBLOBs.getUuid());
+            if (!BeanUtils.isEmpty(cmsTagDTOS)) {
+                List<String> ids = new ArrayList<>();
+                cmsTagDTOS.forEach(tag -> ids.add(tag.getUuid()));
+                cmsPostsDTO.setTagIds(ids);
+            }
+            cmsPostsDTOS.add(cmsPostsDTO);
+        });
         cmsPostsDTOListData.setData(cmsPostsDTOS);
         cmsPostsDTOListData.setTotal(page.getTotal());
         return cmsPostsDTOListData;
@@ -518,6 +527,9 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         }
         AccountDTO accountDTO = getSignedUser(accountService);
         CmsPostsDOWithBLOBs cmsPostsDOWithBLOBs = convert(cmsPostsDTO);
+        if (cmsPostsDTO.getReleaseTime() == null) {
+            cmsPostsDOWithBLOBs.setReleaseTime(new Date());
+        }
         cmsPostsDOWithBLOBs.setUuid(UUID.randomUUID().toString().toUpperCase());
         cmsPostsDOWithBLOBs.setAvgComment(0D);
         cmsPostsDOWithBLOBs.setAvgViews(0D);
@@ -662,6 +674,33 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         cmsTagDTOListData.setTotal(page.getTotal());
         cmsTagDTOListData.setData(cmsTagDTOS);
         return cmsTagDTOListData;
+    }
+
+    /**
+     * 根据文章UUID获取标签列表
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    @Override
+    public List<CmsTagDTO> getTagListByPostUuid(String postUuid) {
+        CmsTagPostsDOExample cmsTagPostsDOExample = new CmsTagPostsDOExample();
+        cmsTagPostsDOExample.createCriteria().andPostUuidEqualTo(postUuid);
+        List<CmsTagPostsDO> cmsTagPostsDOS = cmsTagPostsDOMapper.selectByExample(cmsTagPostsDOExample);
+        List<String> ids = new ArrayList<>();
+        if (BeanUtils.isEmpty(cmsTagPostsDOS)) {
+            return null;
+        }
+        cmsTagPostsDOS.forEach(cms -> ids.add(cms.getTagUuid()));
+        CmsTagDOExample cmsTagDOExample = new CmsTagDOExample();
+        cmsTagDOExample.createCriteria().andUuidIn(ids);
+        List<CmsTagDO> cmsTagDOS = cmsTagDOMapper.selectByExampleWithBLOBs(cmsTagDOExample);
+        if (BeanUtils.isEmpty(cmsTagDOS)) {
+            return null;
+        }
+        List<CmsTagDTO> cmsTagDTOS = new ArrayList<>();
+        cmsTagDOS.forEach(cmsTagDO -> cmsTagDTOS.add(convert(cmsTagDO)));
+        return cmsTagDTOS;
     }
 
     /**

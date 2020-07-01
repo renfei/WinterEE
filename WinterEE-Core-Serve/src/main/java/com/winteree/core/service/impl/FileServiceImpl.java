@@ -89,7 +89,7 @@ public class FileServiceImpl extends BaseService implements FileService {
             case "oss":
                 // 上传到 OSS
                 if (path.startsWith("/")) {
-                    path = path.substring(1, path.length() - 1);
+                    path = path.substring(1);
                 }
                 this.aliyunOssUploadPubilcFile(file.getInputStream(), path + fileName);
                 break;
@@ -111,7 +111,7 @@ public class FileServiceImpl extends BaseService implements FileService {
         filesDO.setCreateTime(new Date());
         filesDO.setBuckeName(wintereeCoreConfig.getAliyunOssPublicBuckename());
         filesDOMapper.insertSelective(filesDO);
-        return wintereeCoreConfig.getStoragePublicUrl() + path + fileName;
+        return wintereeCoreConfig.getStoragePublicUrl() + fileName;
     }
 
     /**

@@ -1465,7 +1465,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         try {
             return APIResult.builder()
                     .code(StateCode.OK)
-                    .message("")
+                    .message("成功")
                     .data(fileService.uploadPublicFile(file))
                     .build();
         } catch (FailureException failureException) {
