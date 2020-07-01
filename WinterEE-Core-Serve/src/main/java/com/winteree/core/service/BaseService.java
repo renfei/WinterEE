@@ -47,6 +47,9 @@ public abstract class BaseService {
                 }
                 return Builder.of(AccountDTO::new)
                         .with(AccountDTO::setUuid, accountDTO.getUuid())
+                        .with(AccountDTO::setTenantUuid, accountDTO.getTenantUuid())
+                        .with(AccountDTO::setOfficeUuid, accountDTO.getOfficeUuid())
+                        .with(AccountDTO::setDepartmentUuid, accountDTO.getDepartmentUuid())
                         .with(AccountDTO::setCreateTime, accountDTO.getCreateTime())
                         .with(AccountDTO::setUserName, accountDTO.getUserName())
                         .with(AccountDTO::setEmail, accountDTO.getEmail())

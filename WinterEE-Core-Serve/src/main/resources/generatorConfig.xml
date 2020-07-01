@@ -49,5 +49,12 @@
 <!--        <table tableName="winteree_core_tenant_info" domainObjectName="TenantInfoDO"></table>-->
 <!--        <table tableName="winteree_core_organization" domainObjectName="OrganizationDO"></table>-->
 <!--        <table tableName="winteree_core_role" domainObjectName="RoleDO"></table>-->
+<!--        <table tableName="winteree_core_cms_site" domainObjectName="CmsSiteDO"></table>-->
+<!--        <table tableName="winteree_core_cms_posts" domainObjectName="CmsPostsDO"></table>-->
+<!--        <table tableName="winteree_core_cms_category" domainObjectName="CmsCategoryDO"></table>-->
+<!--        <table tableName="winteree_core_cms_tag" domainObjectName="CmsTagDO"></table>-->
+<!--        <table tableName="winteree_core_cms_tag_posts" domainObjectName="CmsTagPostsDO"></table>-->
+<!--        <table tableName="winteree_core_cms_comments" domainObjectName="CmsCommentsDO"></table>-->
+<!--        <table tableName="winteree_core_files" domainObjectName="FilesDO"></table>-->
     </context>
 </generatorConfiguration>

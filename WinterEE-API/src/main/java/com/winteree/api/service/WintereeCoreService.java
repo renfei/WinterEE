@@ -4,6 +4,7 @@ import com.winteree.api.entity.*;
 import com.winteree.api.exception.FailureException;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -497,4 +498,203 @@ public interface WintereeCoreService {
     @DeleteMapping("/role/data")
     APIResult deleteRole(String uuid);
     //</editor-fold>
+
+    //<editor-fold desc="CMS类的接口" defaultstate="collapsed">
+
+    /**
+     * 获取CMS站点列表（后台管理）
+     *
+     * @param tenantUuid 租户ID
+     * @param page       页码
+     * @param rows       行数
+     * @return 站点列表
+     */
+    @GetMapping("/cms/site/list")
+    APIResult<ListData<CmsSiteDTO>> getCmsSiteList(@RequestParam(name = "tenantUuid") String tenantUuid,
+                                                   @RequestParam(name = "page") int page,
+                                                   @RequestParam(name = "rows") int rows);
+
+    /**
+     * 根据UUID获取CMS系统站点（后台管理）
+     *
+     * @param uuid UUID
+     * @return 站点传输对象
+     */
+    @GetMapping("/cms/site")
+    APIResult<CmsSiteDTO> getCmsSiteByUuid(String uuid);
+
+    /**
+     * 根据域名获取站点信息
+     *
+     * @param domain 域名
+     * @return
+     */
+    @GetMapping("/cms/site/domain")
+    APIResult<CmsSiteDTO> getCmsSiteByDomain(String domain);
+
+    /**
+     * 添加站点（后台管理）
+     *
+     * @param cmsSiteDTO 站点信息传输对象
+     * @return
+     */
+    @PostMapping("/cms/site")
+    APIResult addCmsSite(@RequestBody CmsSiteDTO cmsSiteDTO);
+
+    /**
+     * 更新站点（后台管理）
+     *
+     * @param cmsSiteDTO 站点信息传输对象
+     * @return
+     */
+    @PutMapping("/cms/site")
+    APIResult updateCmsSite(@RequestBody CmsSiteDTO cmsSiteDTO);
+
+    /**
+     * 删除站点所有内容（后台管理）
+     *
+     * @param uuid 站点ID
+     * @return
+     */
+    @DeleteMapping("/cms/site")
+    APIResult deleteCmsSite(String uuid);
+
+    /**
+     * 获取CMS系统分类列表（后台管理）
+     *
+     * @param siteUuid 站点ID
+     * @return 文章分类列表
+     */
+    @GetMapping("/cms/category/list")
+    APIResult<List<CmsCategoryDTO>> getCmsCategoryList(String siteUuid);
+
+    /**
+     * 根据UUID获取CMS系统站点下的分类
+     *
+     * @param uuid 分类UUID
+     * @return 分类对象
+     */
+    @GetMapping("/cms/category")
+    APIResult<CmsCategoryDTO> getCmsCategoryByUuid(String uuid);
+
+    /**
+     * 添加文章分类（后台管理）
+     *
+     * @param cmsCategoryDTO 文章分类传输对象
+     * @return
+     */
+    @PostMapping("/cms/category")
+    APIResult addCmsCategory(@RequestBody CmsCategoryDTO cmsCategoryDTO);
+
+    /**
+     * 更新文章分类（后台管理）
+     *
+     * @param cmsCategoryDTO 文章分类传输对象
+     * @return
+     */
+    @PutMapping("/cms/category")
+    APIResult updateCmsCategory(@RequestBody CmsCategoryDTO cmsCategoryDTO);
+
+    /**
+     * 删除文章分类（后台管理）
+     *
+     * @param cmsCategoryUuid 文章分类UUID
+     * @return
+     */
+    @DeleteMapping("/cms/category")
+    APIResult deleteCmsCategory(String cmsCategoryUuid);
+
+    /**
+     * 根据查询条件获取文章列表（后台管理）
+     *
+     * @param cmsPostSearchCriteriaVO 查询条件
+     * @return 文章列表
+     */
+    @GetMapping("/cms/posts/list")
+    APIResult<ListData<CmsPostsDTO>> getCmsPostList(CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO);
+
+    /**
+     * 添加文章（后台管理）
+     *
+     * @param cmsPostsDTO 文章传输对象
+     * @return
+     */
+    @PostMapping("/cms/posts")
+    APIResult addCmsPost(@RequestBody CmsPostsDTO cmsPostsDTO);
+
+    /**
+     * 修改文章（后台管理）
+     *
+     * @param cmsPostsDTO 文章传输对象
+     * @return
+     */
+    @PutMapping("/cms/posts")
+    APIResult updateCmsPost(@RequestBody CmsPostsDTO cmsPostsDTO);
+
+    /**
+     * 删除文章（后台管理）
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    @DeleteMapping("/cms/posts")
+    APIResult deleteCmsPost(String uuid);
+
+    /**
+     * 获取标签列表（后台管理）
+     *
+     * @param siteUuid 站点UUID
+     * @param pages    页码
+     * @param rows     行数
+     * @return 标签列表
+     */
+    @GetMapping("/cms/tag/list")
+    APIResult<ListData<CmsTagDTO>> getTagList(@RequestParam(name = "siteUuid") String siteUuid,
+                                              @RequestParam(name = "pages") int pages,
+                                              @RequestParam(name = "rows") int rows);
+
+    /**
+     * 根据UUID获取标签对象
+     *
+     * @param siteUuid 站点UUID
+     * @param uuid     标签对象UUID
+     * @return 标签对象
+     */
+    @GetMapping("/cms/tag")
+    APIResult<CmsTagDTO> getTagByUuid(@RequestParam(name = "siteUuid") String siteUuid,
+                                      @RequestParam(name = "uuid") String uuid);
+
+    /**
+     * 添加标签
+     *
+     * @param cmsTagDTO 标签传输对象
+     * @return
+     */
+    @PostMapping("/cms/tag")
+    APIResult addCmsTag(@RequestBody CmsTagDTO cmsTagDTO);
+
+    /**
+     * 更新标签
+     *
+     * @param cmsTagDTO 标签传输对象
+     * @return
+     */
+    @PutMapping("/cms/tag")
+    APIResult updateCmsTag(@RequestBody CmsTagDTO cmsTagDTO);
+
+    /**
+     * 删除标签
+     *
+     * @param uuid 标签UUID
+     * @return
+     */
+    @DeleteMapping("/cms/tag")
+    APIResult deleteCmsTag(String uuid);
+    //</editor-fold>
+
+    @PostMapping("/uploadPublicFile")
+    APIResult<String> uploadPublicFile(MultipartFile file);
+
+    @PostMapping("/uploadPrivateFile")
+    APIResult<String> uploadPrivateFile(MultipartFile file);
 }

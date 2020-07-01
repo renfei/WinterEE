@@ -70,6 +70,14 @@ public interface OrganizationService {
     int updateCompany(OrganizationVO organizationVO);
 
     /**
+     * 根据UUID获取部门
+     *
+     * @param uuid 部门UUID
+     * @return
+     */
+    OrganizationDO getDepartmentByUuid(String uuid);
+
+    /**
      * 获取部门列表（树状）
      *
      * @param tenantUuid  租户ID

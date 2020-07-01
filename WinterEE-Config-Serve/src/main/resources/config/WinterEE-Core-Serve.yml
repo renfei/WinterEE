@@ -2,7 +2,7 @@ server:
   port: 8090
 spring:
   datasource:
-    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -14,7 +14,7 @@ spring:
       from: t_e_s_t_e_r@163.com
 mybatis:
   typeAliasesPackage: com.winteree.core.dao.entity
-  mapperLocations: classpath*:mapper/*.xml
+  mapperLocations: classpath*:mapper/mysql/*.xml
   #  configuration:
   #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   #pagehelper分页插件配置
@@ -46,9 +46,17 @@ winteree:
     systemname: WinterEE
     totpseed: FycVPCjKmVLfMup4aV8Q7VHgsmkxLaTt
     aliyun:
-      regionId: regionId
+      regionId: cn-beijing
       accessKeyId: accessKeyId
       secret: secret
+    aliyunOssEndpoint: http://oss-cn-beijing.aliyuncs.com
+    aliyunOssPublicBuckename: renfei #阿里云公共读储存桶
+    aliyunOssPrivateBuckename: renfei-private #阿里云私有储存桶，通过颁发签名链接访问
+    storageOssPrivateUrl: http://oss.renfei.net/ #如果存储在私有OSS上，鉴权通过后会颁发签名链接，重定向到OSS的地址
+    storageType: local #存储到本地还是云 或者 oss
+    storagePath: /opt/upload/ #上传存储的路径
+    storageUrl: http://localhost/getFile?uuid= #上传文件以后返回的链接开头，访问文件时有鉴权（适用于私有文件鉴权）
+    storagePublicUrl: https://cdn.renfei.net/opt/upload/ #上传文件以后返回的链接开头，公共读访问（适用于公共读文件）
     oauth2:
       # openssl genrsa -out jwt.pem 2048
       # openssl rsa -in jwt.pem
