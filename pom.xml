@@ -94,7 +94,7 @@
         <druid.version>1.1.17</druid.version>
         <swagger.version>2.9.2</swagger.version>
         <aliyunsdk.version>4.5.2</aliyunsdk.version>
-        <aliyunsdkpush.version>3.10.1</aliyunsdkpush.version>
+        <aliyunsdkpush.version>3.13.3</aliyunsdkpush.version>
         <feign-httpclient.version>11.0</feign-httpclient.version>
         <httpclient.version>4.5.12</httpclient.version>
         <aliyun-sdk-oss.version>3.10.2</aliyun-sdk-oss.version>
