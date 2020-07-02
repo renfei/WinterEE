@@ -91,7 +91,7 @@
         <renfeisdk.version>0.0.18</renfeisdk.version>
         <lombok.version>1.18.12</lombok.version>
         <pagehelper.version>1.2.5</pagehelper.version>
-        <druid.version>1.1.17</druid.version>
+        <druid.version>1.1.23</druid.version>
         <swagger.version>2.9.2</swagger.version>
         <aliyunsdk.version>4.5.2</aliyunsdk.version>
         <aliyunsdkpush.version>3.13.3</aliyunsdkpush.version>
