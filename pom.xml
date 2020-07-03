@@ -90,7 +90,7 @@
         <spring-cloud.version>Hoxton.SR6</spring-cloud.version>
         <renfeisdk.version>0.0.18</renfeisdk.version>
         <lombok.version>1.18.12</lombok.version>
-        <pagehelper.version>1.2.5</pagehelper.version>
+        <pagehelper.version>1.2.13</pagehelper.version>
         <druid.version>1.1.17</druid.version>
         <swagger.version>2.9.2</swagger.version>
         <aliyunsdk.version>4.5.2</aliyunsdk.version>
