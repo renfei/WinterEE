@@ -21,6 +21,8 @@ spring:
   security:
     user:
       password: 1234
+  main:
+    allow-bean-definition-overriding: true
   # 分布式配置中心
   cloud:
     bus:

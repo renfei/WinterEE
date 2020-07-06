@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winteree.core.dao.CmsSiteDOMapper">
+  <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.CmsSiteDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="tenant_uuid" jdbcType="VARCHAR" property="tenantUuid" />
+    <result column="office_uuid" jdbcType="VARCHAR" property="officeUuid" />
+    <result column="department_uuid" jdbcType="VARCHAR" property="departmentUuid" />
+    <result column="site_name" jdbcType="VARCHAR" property="siteName" />
+    <result column="site_domain" jdbcType="VARCHAR" property="siteDomain" />
+    <result column="site_keyword" jdbcType="VARCHAR" property="siteKeyword" />
+    <result column="site_description" jdbcType="VARCHAR" property="siteDescription" />
+    <result column="icp_no" jdbcType="VARCHAR" property="icpNo" />
+    <result column="is_comment" jdbcType="BIT" property="isComment" />
+    <result column="gongan_no" jdbcType="VARCHAR" property="gonganNo" />
+    <result column="analysis_code" jdbcType="VARCHAR" property="analysisCode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="site_enable" jdbcType="BIT" property="siteEnable" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, uuid, tenant_uuid, office_uuid, department_uuid, site_name, site_domain, site_keyword, 
+    site_description, icp_no, is_comment, gongan_no, analysis_code, create_time, create_by, 
+    update_time, update_by, site_enable
+  </sql>
+  <select id="selectByExample" parameterType="com.winteree.core.dao.entity.CmsSiteDOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from winteree.winteree_core_cms_site
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from winteree.winteree_core_cms_site
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from winteree.winteree_core_cms_site
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.CmsSiteDOExample">
+    delete from winteree.winteree_core_cms_site
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.winteree.core.dao.entity.CmsSiteDO">
+    insert into winteree.winteree_core_cms_site (id, uuid, tenant_uuid, 
+      office_uuid, department_uuid, site_name, 
+      site_domain, site_keyword, site_description, 
+      icp_no, is_comment, gongan_no, 
+      analysis_code, create_time, create_by, 
+      update_time, update_by, site_enable
+      )
+    values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{tenantUuid,jdbcType=VARCHAR}, 
+      #{officeUuid,jdbcType=VARCHAR}, #{departmentUuid,jdbcType=VARCHAR}, #{siteName,jdbcType=VARCHAR}, 
+      #{siteDomain,jdbcType=VARCHAR}, #{siteKeyword,jdbcType=VARCHAR}, #{siteDescription,jdbcType=VARCHAR}, 
+      #{icpNo,jdbcType=VARCHAR}, #{isComment,jdbcType=BIT}, #{gonganNo,jdbcType=VARCHAR}, 
+      #{analysisCode,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=VARCHAR}, #{siteEnable,jdbcType=BIT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.CmsSiteDO">
+    insert into winteree.winteree_core_cms_site
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="tenantUuid != null">
+        tenant_uuid,
+      </if>
+      <if test="officeUuid != null">
+        office_uuid,
+      </if>
+      <if test="departmentUuid != null">
+        department_uuid,
+      </if>
+      <if test="siteName != null">
+        site_name,
+      </if>
+      <if test="siteDomain != null">
+        site_domain,
+      </if>
+      <if test="siteKeyword != null">
+        site_keyword,
+      </if>
+      <if test="siteDescription != null">
+        site_description,
+      </if>
+      <if test="icpNo != null">
+        icp_no,
+      </if>
+      <if test="isComment != null">
+        is_comment,
+      </if>
+      <if test="gonganNo != null">
+        gongan_no,
+      </if>
+      <if test="analysisCode != null">
+        analysis_code,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="siteEnable != null">
+        site_enable,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantUuid != null">
+        #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="officeUuid != null">
+        #{officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentUuid != null">
+        #{departmentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="siteName != null">
+        #{siteName,jdbcType=VARCHAR},
+      </if>
+      <if test="siteDomain != null">
+        #{siteDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="siteKeyword != null">
+        #{siteKeyword,jdbcType=VARCHAR},
+      </if>
+      <if test="siteDescription != null">
+        #{siteDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="icpNo != null">
+        #{icpNo,jdbcType=VARCHAR},
+      </if>
+      <if test="isComment != null">
+        #{isComment,jdbcType=BIT},
+      </if>
+      <if test="gonganNo != null">
+        #{gonganNo,jdbcType=VARCHAR},
+      </if>
+      <if test="analysisCode != null">
+        #{analysisCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="siteEnable != null">
+        #{siteEnable,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.winteree.core.dao.entity.CmsSiteDOExample" resultType="java.lang.Long">
+    select count(*) from winteree.winteree_core_cms_site
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update winteree.winteree_core_cms_site
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.uuid != null">
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tenantUuid != null">
+        tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.officeUuid != null">
+        office_uuid = #{record.officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departmentUuid != null">
+        department_uuid = #{record.departmentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.siteName != null">
+        site_name = #{record.siteName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.siteDomain != null">
+        site_domain = #{record.siteDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.siteKeyword != null">
+        site_keyword = #{record.siteKeyword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.siteDescription != null">
+        site_description = #{record.siteDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="record.icpNo != null">
+        icp_no = #{record.icpNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isComment != null">
+        is_comment = #{record.isComment,jdbcType=BIT},
+      </if>
+      <if test="record.gonganNo != null">
+        gongan_no = #{record.gonganNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.analysisCode != null">
+        analysis_code = #{record.analysisCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.siteEnable != null">
+        site_enable = #{record.siteEnable,jdbcType=BIT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update winteree.winteree_core_cms_site
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      office_uuid = #{record.officeUuid,jdbcType=VARCHAR},
+      department_uuid = #{record.departmentUuid,jdbcType=VARCHAR},
+      site_name = #{record.siteName,jdbcType=VARCHAR},
+      site_domain = #{record.siteDomain,jdbcType=VARCHAR},
+      site_keyword = #{record.siteKeyword,jdbcType=VARCHAR},
+      site_description = #{record.siteDescription,jdbcType=VARCHAR},
+      icp_no = #{record.icpNo,jdbcType=VARCHAR},
+      is_comment = #{record.isComment,jdbcType=BIT},
+      gongan_no = #{record.gonganNo,jdbcType=VARCHAR},
+      analysis_code = #{record.analysisCode,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_by = #{record.createBy,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=VARCHAR},
+      site_enable = #{record.siteEnable,jdbcType=BIT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.CmsSiteDO">
+    update winteree.winteree_core_cms_site
+    <set>
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantUuid != null">
+        tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="officeUuid != null">
+        office_uuid = #{officeUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="departmentUuid != null">
+        department_uuid = #{departmentUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="siteName != null">
+        site_name = #{siteName,jdbcType=VARCHAR},
+      </if>
+      <if test="siteDomain != null">
+        site_domain = #{siteDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="siteKeyword != null">
+        site_keyword = #{siteKeyword,jdbcType=VARCHAR},
+      </if>
+      <if test="siteDescription != null">
+        site_description = #{siteDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="icpNo != null">
+        icp_no = #{icpNo,jdbcType=VARCHAR},
+      </if>
+      <if test="isComment != null">
+        is_comment = #{isComment,jdbcType=BIT},
+      </if>
+      <if test="gonganNo != null">
+        gongan_no = #{gonganNo,jdbcType=VARCHAR},
+      </if>
+      <if test="analysisCode != null">
+        analysis_code = #{analysisCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="siteEnable != null">
+        site_enable = #{siteEnable,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.CmsSiteDO">
+    update winteree.winteree_core_cms_site
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      office_uuid = #{officeUuid,jdbcType=VARCHAR},
+      department_uuid = #{departmentUuid,jdbcType=VARCHAR},
+      site_name = #{siteName,jdbcType=VARCHAR},
+      site_domain = #{siteDomain,jdbcType=VARCHAR},
+      site_keyword = #{siteKeyword,jdbcType=VARCHAR},
+      site_description = #{siteDescription,jdbcType=VARCHAR},
+      icp_no = #{icpNo,jdbcType=VARCHAR},
+      is_comment = #{isComment,jdbcType=BIT},
+      gongan_no = #{gonganNo,jdbcType=VARCHAR},
+      analysis_code = #{analysisCode,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      site_enable = #{siteEnable,jdbcType=BIT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

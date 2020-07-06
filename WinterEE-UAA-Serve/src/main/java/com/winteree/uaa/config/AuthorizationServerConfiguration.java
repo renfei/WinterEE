@@ -3,11 +3,11 @@ package com.winteree.uaa.config;
 import com.winteree.uaa.granter.CustomRefreshTokenGranter;
 import com.winteree.uaa.granter.PasswordCustomTokenGranter;
 import com.winteree.uaa.granter.VerificationCodeCustomTokenGranter;
+import com.winteree.uaa.service.WinterEEJdbcClientDetailsService;
 import com.winteree.uaa.service.impl.CustomUserDetailsServiceImpl;
 import com.winteree.uaa.service.impl.WebResponseExceptionTranslatorImpl;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.PasswordUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -23,7 +23,6 @@ import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter;
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
@@ -46,8 +45,7 @@ import java.util.List;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
-    @Autowired
-    private JdbcClientDetailsService jdbcClientDetailsService;
+    private final WinterEEJdbcClientDetailsService jdbcClientDetailsService;
     private final TokenStore tokenStore;
     private final WintereeUaaConfig wintereeUaaConfig;
     private final JwtAccessTokenConverter accessTokenConverter;
@@ -58,16 +56,19 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                                             WintereeUaaConfig wintereeUaaConfig,
                                             JwtAccessTokenConverter accessTokenConverter,
                                             PasswordEncoder passwordEncoder,
-                                            CustomUserDetailsServiceImpl customUserDetailsServiceImpl) {
+                                            CustomUserDetailsServiceImpl customUserDetailsServiceImpl,
+                                            WinterEEJdbcClientDetailsService winterEEJdbcClientDetailsService) {
         this.tokenStore = tokenStore;
         this.wintereeUaaConfig = wintereeUaaConfig;
         this.accessTokenConverter = accessTokenConverter;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsServiceImpl = customUserDetailsServiceImpl;
+        this.jdbcClientDetailsService = winterEEJdbcClientDetailsService;
     }
 
     /**
      * 定义客户详细信息服务的配置器。客户端详细信息可以被初始化，或者您可以直接引用一个现有的存储。（client_id ，client_secret，redirect_uri 等配置信息）
+     *
      * @param clients
      * @throws Exception
      */
@@ -78,6 +79,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     /**
      * 配置令牌端点的安全约束
+     *
      * @param security
      * @throws Exception
      */
@@ -85,12 +87,13 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.allowFormAuthenticationForClients()
                 .tokenKeyAccess("permitAll()")
-                .checkTokenAccess("isAuthenticated()")
+                .checkTokenAccess("permitAll()")
                 .passwordEncoder(passwordEncoder);
     }
 
     /**
      * 配置授权以及令牌的访问端点和令牌服务（比如：配置令牌的签名与存储方式）
+     *
      * @param endpoints
      */
     @Override
@@ -119,8 +122,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     }
 
     @Bean
-    public JdbcClientDetailsService jdbcClientDetailsService(DataSource dataSource) {
-        JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
+    public WinterEEJdbcClientDetailsService jdbcClientDetailsService(DataSource dataSource) {
+        WinterEEJdbcClientDetailsService clientDetailsService = new WinterEEJdbcClientDetailsService(dataSource);
         clientDetailsService.setPasswordEncoder(passwordEncoder);
         return clientDetailsService;
     }
