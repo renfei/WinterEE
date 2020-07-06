@@ -11,3 +11,6 @@ security:
     resource:
       user-info-uri: http://localhost:8114/oauth2/userinfo
       token-info-uri: http://localhost:8114/oauth/check_token
+spring:
+  main:
+    allow-bean-definition-overriding: true

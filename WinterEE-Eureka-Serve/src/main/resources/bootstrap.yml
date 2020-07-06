@@ -4,6 +4,8 @@ application:
 spring:
   application:
     name: WinterEE-Eureka-serve
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     config:
       uri: http://localhost:8888 #where the WinterEE-Config-Serve is running
