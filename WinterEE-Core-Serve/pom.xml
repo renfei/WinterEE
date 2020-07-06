@@ -93,6 +93,14 @@
             <artifactId>aliyun-sdk-oss</artifactId>
             <version>${aliyun-sdk-oss.version}</version>
         </dependency>
+        <!--对达梦数据库的支持-->
+        <dependency>
+            <groupId>com.dm</groupId>
+            <artifactId>Dm7JdbcDriver</artifactId>
+            <version>1.7</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../environment/lib/Dm7JdbcDriver17.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
