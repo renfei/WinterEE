@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winteree.core.dao.TenantInfoDOMapper">
+  <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.TenantInfoDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="tenant_uuid" jdbcType="VARCHAR" property="tenantUuid" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.winteree.core.dao.entity.TenantInfoDOWithBLOBs">
+    <result column="administrators" jdbcType="LONGVARCHAR" property="administrators" />
+    <result column="contact" jdbcType="LONGVARCHAR" property="contact" />
+    <result column="address" jdbcType="LONGVARCHAR" property="address" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, uuid, tenant_uuid
+  </sql>
+  <sql id="Blob_Column_List">
+    administrators, contact, address
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.winteree.core.dao.entity.TenantInfoDOExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from winteree.winteree_core_tenant_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.winteree.core.dao.entity.TenantInfoDOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from winteree.winteree_core_tenant_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from winteree.winteree_core_tenant_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from winteree.winteree_core_tenant_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.TenantInfoDOExample">
+    delete from winteree.winteree_core_tenant_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.winteree.core.dao.entity.TenantInfoDOWithBLOBs">
+    insert into winteree.winteree_core_tenant_info (id, uuid, tenant_uuid, 
+      administrators, contact, address
+      )
+    values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{tenantUuid,jdbcType=VARCHAR}, 
+      #{administrators,jdbcType=LONGVARCHAR}, #{contact,jdbcType=LONGVARCHAR}, #{address,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.TenantInfoDOWithBLOBs">
+    insert into winteree.winteree_core_tenant_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="tenantUuid != null">
+        tenant_uuid,
+      </if>
+      <if test="administrators != null">
+        administrators,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantUuid != null">
+        #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="administrators != null">
+        #{administrators,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.winteree.core.dao.entity.TenantInfoDOExample" resultType="java.lang.Long">
+    select count(*) from winteree.winteree_core_tenant_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update winteree.winteree_core_tenant_info
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.uuid != null">
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tenantUuid != null">
+        tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.administrators != null">
+        administrators = #{record.administrators,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.contact != null">
+        contact = #{record.contact,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update winteree.winteree_core_tenant_info
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      administrators = #{record.administrators,jdbcType=LONGVARCHAR},
+      contact = #{record.contact,jdbcType=LONGVARCHAR},
+      address = #{record.address,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update winteree.winteree_core_tenant_info
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.TenantInfoDOWithBLOBs">
+    update winteree.winteree_core_tenant_info
+    <set>
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="tenantUuid != null">
+        tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="administrators != null">
+        administrators = #{administrators,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.winteree.core.dao.entity.TenantInfoDOWithBLOBs">
+    update winteree.winteree_core_tenant_info
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      administrators = #{administrators,jdbcType=LONGVARCHAR},
+      contact = #{contact,jdbcType=LONGVARCHAR},
+      address = #{address,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.TenantInfoDO">
+    update winteree.winteree_core_tenant_info
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
