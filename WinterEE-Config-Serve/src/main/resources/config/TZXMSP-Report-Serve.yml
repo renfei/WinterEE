@@ -1,5 +1,5 @@
 server:
-  port: 8091
+  port: 8181
 spring:
   datasource:
     url: jdbc:dm://localhost:15326
@@ -11,8 +11,8 @@ spring:
     driver-class-name: dm.jdbc.driver.DmDriver
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 mybatis:
-  typeAliasesPackage: domain.yourmodule.dao.entity
-  mapperLocations: classpath*:mapper/*.xml
+  typeAliasesPackage: com.philisense.report.dao.entity
+  mapperLocations: classpath*:mapper/dameng/*.xml
 #    configuration:
 #      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #pagehelper分页插件配置
@@ -24,7 +24,7 @@ pagehelper:
 security:
   oauth2:
     client:
-      clientId: Your-Module-Serve
+      clientId: TZXMSP-Report-Serve
       clientSecret: w4nHQGH8oBsj4HMrgcYVyZRFPFbMUuLK
       accessTokenUri: http://localhost:8114/oauth/token
       scope:
@@ -35,7 +35,7 @@ security:
 feign:
   hystrix:
     enabled: true
-yourmodule:
+report:
   oauth2:
     # openssl genrsa -out jwt.pem 2048
     # openssl rsa -in jwt.pem
