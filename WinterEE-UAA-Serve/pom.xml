@@ -12,6 +12,7 @@
     <artifactId>WinterEE-UAA-Serve</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>WinterEE-UAA-Serve</name>
+    <packaging>war</packaging>
     <description>User Authorization Authentication</description>
 
     <dependencies>
