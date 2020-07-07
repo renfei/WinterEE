@@ -11,6 +11,7 @@
 
     <groupId>com.philisense</groupId>
     <artifactId>TZXMSP-Report-Serve</artifactId>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>

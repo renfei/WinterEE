@@ -12,6 +12,7 @@
     <artifactId>WinterEE-Gateway-Serve</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>WinterEE-Gateway-Serve</name>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
