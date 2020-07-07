@@ -3,7 +3,7 @@ server:
 zuul:
   routes:
     WinterEE-UAA-Serve: /uaa/**
-    WinterEE-Config-Serve: /api/config/**
+    WinterEE-Config-Serve: /config/**
     WinterEE-Core-Serve: /core/**
     Your-Module-Serve: /your/**
   host:

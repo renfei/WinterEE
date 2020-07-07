@@ -80,6 +80,37 @@ public class ResourceServerConfig {
         }
     }
 
+    /**
+     * Config的资源配置
+     */
+    @Configuration
+    @EnableResourceServer
+    public static class ConfigServerConfig extends ResourceServerConfigurerAdapter {
+        private final TokenStore tokenStore;
+
+        public ConfigServerConfig(TokenStore tokenStore) {
+            this.tokenStore = tokenStore;
+        }
+
+        @Override
+        public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+            resources.tokenStore(tokenStore).resourceId(RESOURCE_ID).stateless(true);
+        }
+
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            http
+                    .authorizeRequests()
+                    .antMatchers("/config/actuator/bus-refresh").permitAll()
+                    .antMatchers("/config/actuator/bus-env").permitAll()
+                    .antMatchers("/config/actuator/bus-refresh").permitAll()
+                    .antMatchers("/config/actuator/env").permitAll()
+                    .antMatchers("/config/actuator/refresh").permitAll()
+                    .antMatchers("/config/monitor").permitAll()
+                    .antMatchers("/config/**").access("#oauth2.isClient()");
+        }
+    }
+
     @Bean
     public AccessDecisionManager accessDecisionManager() {
         List<AccessDecisionVoter<? extends Object>> decisionVoters
