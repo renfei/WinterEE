@@ -101,6 +101,16 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/../environment/lib/Dm7JdbcDriver17.jar</systemPath>
         </dependency>
+        <!-- Druid 依赖 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${alibaba-druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
