@@ -1,5 +1,5 @@
 ## WinterEE
-[![Build Status](https://travis-ci.com/renfei-net/WinterEE.svg?branch=master)](https://travis-ci.com/renfei-net/WinterEE)
+[![Build Status](https://api.travis-ci.com/renfei-net/WinterEE.svg?branch=master)](https://travis-ci.com/renfei-net/WinterEE)
 [![Coverage Status](https://coveralls.io/repos/github/renfei-net/WinterEE/badge.svg?branch=master)](https://coveralls.io/github/renfei-net/WinterEE?branch=master)
 [![codebeat badge](https://codebeat.co/badges/c9071c17-7646-4790-831f-d57ec130efd5)](https://codebeat.co/projects/github-com-renfei-net-winteree-master)
 [![Build status](https://ci.appveyor.com/api/projects/status/7nnjlgf4a7cppn9f/branch/master?svg=true)](https://ci.appveyor.com/project/NeilRen/winteree/branch/master)
