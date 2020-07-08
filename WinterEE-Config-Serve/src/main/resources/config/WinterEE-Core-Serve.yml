@@ -2,14 +2,41 @@ server:
   port: 8090
 spring:
   datasource:
-    url: jdbc:dm://localhost:15326
+     url: jdbc:dm://localhost:15326
 #    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
-    username: SYSDBA
+     username: SYSDBA
 #    username: root
-    password: SYSDBA
+     password: SYSDBA
 #    password: root
-    driver-class-name: dm.jdbc.driver.DmDriver
+     driver-class-name: dm.jdbc.driver.DmDriver
 #    driver-class-name: com.mysql.cj.jdbc.Driver
+    #Druid 连接池通用配置
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      # 下面为连接池的补充设置，应用到上面所有数据源中
+      # 初始化大小，最小，最大
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      # sql 校验
+      validation-query: select 1 from dual
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      max-pool-prepared-statement-per-connection-size: 20
+      filters: stat # wall 若开启 wall，会把 if 中的 and 判断为注入进行拦截
+      use-global-data-source-stat: true
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
   mail:
     host: smtp.163.com
     username: t_e_s_t_e_r@163.com
@@ -60,7 +87,7 @@ winteree:
     storageOssPrivateUrl: http://oss.renfei.net/ #如果存储在私有OSS上，鉴权通过后会颁发签名链接，重定向到OSS的地址
     storageType: local #存储到本地还是云 或者 oss
     storagePath: /opt/upload/ #上传存储的路径
-    storageUrl: http://localhost/getFile?uuid= #上传文件以后返回的链接开头，访问文件时有鉴权（适用于私有文件鉴权）
+    storageUrl: http://127.0.0.1:3306/getFile?uuid= #上传文件以后返回的链接开头，访问文件时有鉴权（适用于私有文件鉴权）
     storagePublicUrl: https://cdn.renfei.net/opt/upload/ #上传文件以后返回的链接开头，公共读访问（适用于公共读文件）
     oauth2:
       # openssl genrsa -out jwt.pem 2048
