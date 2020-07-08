@@ -36,9 +36,7 @@ jobs:
           done
 
       - name: Loading Database
-        env:
-          PORT: ${{ job.services.mariadb.ports[3306] }}
-        run: mysql -h 127.0.0.1 -p $PORT -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
+        run: mysql -h 127.0.0.1 -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
 
       - name: Cache Maven packages
         uses: actions/cache@v2
