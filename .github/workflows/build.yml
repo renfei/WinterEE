@@ -14,7 +14,7 @@ jobs:
           - 3306
         env:
           MYSQL_USER: user
-          MYSQL_PASSWORD: password
+          MYSQL_PASSWORD: root
           MYSQL_DATABASE: winteree
           MYSQL_ROOT_PASSWORD: root
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
@@ -34,7 +34,11 @@ jobs:
           while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
             sleep 1
           done
-          mysql -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
+
+      - name: Loading Database
+        env:
+          PORT: ${{ job.services.mariadb.ports[3306] }}
+        run: mysql -h 127.0.0.1 -p $PORT -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
 
       - name: Cache Maven packages
         uses: actions/cache@v2
