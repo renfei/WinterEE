@@ -4,20 +4,32 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: Testing
+    name: building
     runs-on: ubuntu-latest
 
     services:
-      mariadb:
-        image: mariadb:latest
+      mysql:
+        image: mysql:5.7
         ports:
-          - 3306
+          - 3306:3306
         env:
-          MYSQL_USER: user
-          MYSQL_PASSWORD: password
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: winteree
           MYSQL_ROOT_PASSWORD: root
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+      rabbitmq:
+        image: rabbitmq:3.7.26-management-alpine
+        ports:
+          - 15672:15672
+          - 5672:5672
+      zipkin:
+        image: openzipkin/zipkin:2.21.1
+        ports:
+          - 9411:9411
+      redis:
+        image: redis:6.0.1
+        ports:
+          - 6379:6379
 
     steps:
       - uses: actions/checkout@v2
@@ -27,18 +39,18 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Verify MariaDB connection
-        uses: actions/checkout@v1
+      - name: Verify MariaDB Connection and Load Data
         env:
-          PORT: ${{ job.services.mariadb.ports[3306] }}
+          PORT: ${{ job.services.mysql.ports[3306] }}
         run: |
           while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
             sleep 1
           done
 
-      - name: Loading DataBase
-        shell: bash
-        run: mysql -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
+      - name: Loading Database
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
+        run: mysql -h 127.0.0.1 -P $PORT -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
 
       - name: Cache Maven packages
         uses: actions/cache@v2

@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
 #    url: jdbc:dm://10.211.55.7:5236
-    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://127.0.0.1:3306/winteree?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
 #    username: SYSDBA
     username: root
 #    password: SYSDBA
@@ -87,7 +87,7 @@ winteree:
     storageOssPrivateUrl: http://oss.renfei.net/ #如果存储在私有OSS上，鉴权通过后会颁发签名链接，重定向到OSS的地址
     storageType: local #存储到本地还是云 或者 oss
     storagePath: /opt/upload/ #上传存储的路径
-    storageUrl: http://localhost/getFile?uuid= #上传文件以后返回的链接开头，访问文件时有鉴权（适用于私有文件鉴权）
+    storageUrl: http://127.0.0.1:3306/getFile?uuid= #上传文件以后返回的链接开头，访问文件时有鉴权（适用于私有文件鉴权）
     storagePublicUrl: https://cdn.renfei.net/opt/upload/ #上传文件以后返回的链接开头，公共读访问（适用于公共读文件）
     oauth2:
       # openssl genrsa -out jwt.pem 2048
