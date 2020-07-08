@@ -3,7 +3,7 @@ server:
 zuul:
   routes:
     WinterEE-UAA-Serve: /uaa/**
-    WinterEE-Config-Serve: /api/config/**
+    WinterEE-Config-Serve: /config/**
     WinterEE-Core-Serve: /core/**
     Your-Module-Serve: /your/**
   host:
@@ -82,13 +82,3 @@ gateway:
       clps/VdBap9BxU3/0YoFXRIc18nyzrWo2BcY2KQqX//AJC3OAfrfDmo+BGK8E0mp
       8wIDAQAB
       -----END PUBLIC KEY-----
-spring:
-  datasource:
-#    url: jdbc:dm://10.211.55.7:5236
-    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
-#    username: SYSDBA
-    username: root
-#    password: SYSDBA
-    password: root
-#    driver-class-name: dm.jdbc.driver.DmDriver
-    driver-class-name: com.mysql.cj.jdbc.Driver
