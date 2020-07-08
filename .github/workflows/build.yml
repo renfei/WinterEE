@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: Testing
+    name: building
     runs-on: ubuntu-latest
 
     services:
@@ -27,17 +27,14 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Verify MariaDB connection
+      - name: Verify MariaDB Connection and Load Data
         env:
           PORT: ${{ job.services.mariadb.ports[3306] }}
         run: |
           while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
             sleep 1
           done
-
-      - name: Loading DataBase
-        shell: bash
-        run: mysql -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
+          mysql -uroot -proot --default-character-set=utf8 winteree < environment/db/winteree.sql
 
       - name: Cache Maven packages
         uses: actions/cache@v2
