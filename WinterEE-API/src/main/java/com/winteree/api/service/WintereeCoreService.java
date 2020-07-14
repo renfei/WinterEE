@@ -54,7 +54,7 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/username")
-    AccountDTO findAccountByUsername(String username);
+    AccountDTO findAccountByUsername(@RequestParam("username") String username);
 
     /**
      * 根据UUID获取账号对象
@@ -63,7 +63,7 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/uuid")
-    AccountDTO findAccountByUuid(String uuid);
+    AccountDTO findAccountByUuid(@RequestParam("uuid") String uuid);
 
     /**
      * 根据邮箱地址获取账号对象
@@ -72,7 +72,7 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/email")
-    AccountDTO findAccountByEmail(String email);
+    AccountDTO findAccountByEmail(@RequestParam("email") String email);
 
     /**
      * 根据手机号获取账号对象
@@ -81,7 +81,7 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/phone")
-    AccountDTO findAccountByPhoneNumber(String phone);
+    AccountDTO findAccountByPhoneNumber(@RequestParam("phone") String phone);
 
     /**
      * 创建一个Totp的秘钥
@@ -90,7 +90,7 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/account/totp")
-    APIResult<String> createTotp(String username);
+    APIResult<String> createTotp(@RequestParam("username") String username);
 
     /**
      * 检查一个用户名是否存在以及类型
@@ -153,7 +153,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/account")
-    APIResult addAccount(AccountDTO accountDTO);
+    APIResult addAccount(@RequestBody AccountDTO accountDTO);
 
     /**
      * 更新账户信息
@@ -162,7 +162,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/account")
-    APIResult updateAccount(AccountDTO accountDTO);
+    APIResult updateAccount(@RequestBody AccountDTO accountDTO);
     //</editor-fold>
 
     //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
@@ -195,28 +195,28 @@ public interface WintereeCoreService {
     APIResult<List<MenuVO>> getSettingMenuList();
 
     @GetMapping("/setting/menu")
-    APIResult<MenuVO> getSettingMenu(String uuid);
+    APIResult<MenuVO> getSettingMenu(@RequestParam("uuid") String uuid);
 
     /**
      * @param uuid
      * @return
      */
     @DeleteMapping("/setting/menu")
-    APIResult deleteSettingMenuByUuid(String uuid);
+    APIResult deleteSettingMenuByUuid(@RequestParam("uuid") String uuid);
 
     /**
      * @param menuVO
      * @return
      */
     @PutMapping("/setting/menu")
-    APIResult updateSettingMenu(MenuVO menuVO);
+    APIResult updateSettingMenu(@RequestBody MenuVO menuVO);
 
     /**
      * @param menuVO
      * @return
      */
     @PostMapping("/setting/menu")
-    APIResult addSettingMenu(MenuVO menuVO);
+    APIResult addSettingMenu(@RequestBody MenuVO menuVO);
     //</editor-fold>
 
     //<editor-fold desc="日志类的接口" defaultstate="collapsed">
@@ -293,7 +293,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/setting/tenant")
-    APIResult addTenant(TenantDTO tenantDTO);
+    APIResult addTenant(@RequestBody TenantDTO tenantDTO);
 
     /**
      * 修改租户
@@ -302,7 +302,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/setting/tenant")
-    APIResult updateTenant(TenantDTO tenantDTO);
+    APIResult updateTenant(@RequestBody TenantDTO tenantDTO);
 
     /**
      * 根据租户ID获取基础信息（开放服务，无需身份校验）
@@ -311,7 +311,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/tenant/info")
-    APIResult<TenantInfoDTO> getTenantInfo(String tenantUUID);
+    APIResult<TenantInfoDTO> getTenantInfo(@RequestParam("tenantUUID") String tenantUUID);
 
     /**
      * 修改租户基础信息
@@ -320,7 +320,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/tenant/info")
-    APIResult updateTenantInfo(TenantInfoDTO tenantInfoDTO);
+    APIResult updateTenantInfo(@RequestBody TenantInfoDTO tenantInfoDTO);
     //</editor-fold>
 
     //<editor-fold desc="OAtuh类的接口" defaultstate="collapsed">
@@ -342,7 +342,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/setting/oauthclient")
-    APIResult addOAuthClient(OAuthClientDTO oAuthClientDTO);
+    APIResult addOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO);
 
     /**
      * 修改OAtuh客户端
@@ -351,7 +351,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/setting/oauthclient")
-    APIResult updateOAuthClient(OAuthClientDTO oAuthClientDTO);
+    APIResult updateOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO);
 
     /**
      * 删除OAtuh客户端
@@ -360,7 +360,7 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/setting/oauthclient")
-    APIResult deleteOAuthClient(String clientId);
+    APIResult deleteOAuthClient(@RequestParam("clientId") String clientId);
     //</editor-fold>
 
     //<editor-fold desc="组织机构类的接口" defaultstate="collapsed">
@@ -372,7 +372,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization")
-    APIResult getAllOrganizationTree(String tenantUuid);
+    APIResult getAllOrganizationTree(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 获取公司列表
@@ -381,7 +381,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/company")
-    APIResult getCompanyList(String tenantUuid);
+    APIResult getCompanyList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 获取公司列表（简单列表非树状）
@@ -390,7 +390,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/company/simpleList")
-    APIResult getCompanySimpleList(String tenantUuid);
+    APIResult getCompanySimpleList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 获取公司列表
@@ -399,7 +399,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/myCompany")
-    APIResult getMyCompanyList(String tenantUuid);
+    APIResult getMyCompanyList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 添加新增公司
@@ -408,7 +408,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/organization/company")
-    APIResult addCompany(OrganizationVO organizationVO);
+    APIResult addCompany(@RequestBody OrganizationVO organizationVO);
 
     /**
      * 更新公司信息
@@ -417,7 +417,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/organization/company")
-    APIResult updateCompany(OrganizationVO organizationVO);
+    APIResult updateCompany(@RequestBody OrganizationVO organizationVO);
 
     /**
      * 获取部门列表（树状）
@@ -448,7 +448,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/organization/department")
-    APIResult addDepartment(OrganizationVO organizationVO);
+    APIResult addDepartment(@RequestBody OrganizationVO organizationVO);
 
     /**
      * 添加部门
@@ -457,7 +457,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/organization/department")
-    APIResult updateDepartment(OrganizationVO organizationVO);
+    APIResult updateDepartment(@RequestBody OrganizationVO organizationVO);
     //</editor-fold>
 
     //<editor-fold desc="角色类的接口" defaultstate="collapsed">
@@ -469,7 +469,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/role/list")
-    APIResult getRoleList(String tenantUuid);
+    APIResult getRoleList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 添加角色
@@ -478,7 +478,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/role/data")
-    APIResult addRole(RoleDTO roleDTO);
+    APIResult addRole(@RequestBody RoleDTO roleDTO);
 
     /**
      * 更新角色
@@ -487,7 +487,7 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/role/data")
-    APIResult updateRole(RoleDTO roleDTO);
+    APIResult updateRole(@RequestBody RoleDTO roleDTO);
 
     /**
      * 删除角色
@@ -496,7 +496,7 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/role/data")
-    APIResult deleteRole(String uuid);
+    APIResult deleteRole(@RequestParam("uuid") String uuid);
     //</editor-fold>
 
     //<editor-fold desc="CMS类的接口" defaultstate="collapsed">
@@ -521,7 +521,7 @@ public interface WintereeCoreService {
      * @return 站点传输对象
      */
     @GetMapping("/cms/site")
-    APIResult<CmsSiteDTO> getCmsSiteByUuid(String uuid);
+    APIResult<CmsSiteDTO> getCmsSiteByUuid(@RequestParam("uuid") String uuid);
 
     /**
      * 根据域名获取站点信息
@@ -530,7 +530,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/site/domain")
-    APIResult<CmsSiteDTO> getCmsSiteByDomain(String domain);
+    APIResult<CmsSiteDTO> getCmsSiteByDomain(@RequestParam("domain") String domain);
 
     /**
      * 添加站点（后台管理）
@@ -557,7 +557,7 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/site")
-    APIResult deleteCmsSite(String uuid);
+    APIResult deleteCmsSite(@RequestParam("uuid") String uuid);
 
     /**
      * 获取CMS系统分类列表（后台管理）
@@ -566,7 +566,7 @@ public interface WintereeCoreService {
      * @return 文章分类列表
      */
     @GetMapping("/cms/category/list")
-    APIResult<List<CmsCategoryDTO>> getCmsCategoryList(String siteUuid);
+    APIResult<List<CmsCategoryDTO>> getCmsCategoryList(@RequestParam("siteUuid") String siteUuid);
 
     /**
      * 根据UUID获取CMS系统站点下的分类
@@ -575,7 +575,7 @@ public interface WintereeCoreService {
      * @return 分类对象
      */
     @GetMapping("/cms/category")
-    APIResult<CmsCategoryDTO> getCmsCategoryByUuid(String uuid);
+    APIResult<CmsCategoryDTO> getCmsCategoryByUuid(@RequestParam("uuid") String uuid);
 
     /**
      * 添加文章分类（后台管理）
@@ -602,7 +602,7 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/category")
-    APIResult deleteCmsCategory(String cmsCategoryUuid);
+    APIResult deleteCmsCategory(@RequestParam("cmsCategoryUuid") String cmsCategoryUuid);
 
     /**
      * 根据查询条件获取文章列表（后台管理）
@@ -638,7 +638,7 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/posts")
-    APIResult deleteCmsPost(String uuid);
+    APIResult deleteCmsPost(@RequestParam("uuid") String uuid);
 
     /**
      * 获取标签列表（后台管理）
@@ -689,7 +689,7 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/tag")
-    APIResult deleteCmsTag(String uuid);
+    APIResult deleteCmsTag(@RequestParam("uuid") String uuid);
     //</editor-fold>
 
     @PostMapping("/uploadPublicFile")
