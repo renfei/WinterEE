@@ -1,7 +1,7 @@
 package com.winteree.api.service;
 
 import net.renfei.sdk.entity.APIResult;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @date : 2020-07-13 16:35
  */
 public interface WintereeUaaService {
-    @PostMapping("/oauth/token")
+    @GetMapping("/oauth/token")
     APIResult signIn(
             @RequestParam("name") String name,
             @RequestParam("password") String password,
@@ -22,4 +22,7 @@ public interface WintereeUaaService {
             @RequestParam("client_secret") String client_secret,
             @RequestParam("language") String language
     );
+
+    @GetMapping("/oauth/check_token")
+    String checkToken(@RequestParam("token") String token);
 }
