@@ -1,13 +1,14 @@
 package com.winteree.gateway.config;
 
+import com.winteree.gateway.client.WintereeUaaServiceClient;
 import com.winteree.gateway.filter.AccessFilter;
 import com.winteree.gateway.filter.AuthFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Collections;
@@ -17,9 +18,15 @@ import java.util.Collections;
  */
 @Configuration
 public class ZuulConfig {
+    private final WintereeUaaServiceClient wintereeUaaServiceClient;
+
+    public ZuulConfig(WintereeUaaServiceClient wintereeUaaServiceClient) {
+        this.wintereeUaaServiceClient = wintereeUaaServiceClient;
+    }
+
     @Bean
     public AuthFilter perFilter() {
-        return new AuthFilter();
+        return new AuthFilter(wintereeUaaServiceClient);
     }
 
     @Bean
