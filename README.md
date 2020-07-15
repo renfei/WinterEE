@@ -1,3 +1,7 @@
+# 投资在线审批平台
+【注意】不要修改修改WinterEE脚手架中的代码，你可以依赖WinterEE的服务，但WinterEE去依赖你的服务是错误的。方便后续跟随WinterEE升级。修改时看到包名为`com.winteree`的就是WinterEE脚手架的部分，不应该修改，如果有BUG或安全漏洞，请在开源社区提交ISSUES，从开源框架的修改来影响项目，直接修改会导致后续无法跟随开源社区升级。  
+修改仅限：增加你自己的业务模块代码、配置文件修改。
+
 ## WinterEE
 [![Actions Status](https://github.com/renfei-net/WinterEE/workflows/build/badge.svg)](https://github.com/renfei-net/WinterEE/actions)
 [![Build Status](https://api.travis-ci.com/renfei-net/WinterEE.svg?branch=master)](https://travis-ci.com/renfei-net/WinterEE)
@@ -16,4 +20,4 @@ WinterEE是基于SpringCloud的开发脚手架，它名字的由来就要先了�
 
 ### 前端项目
 此项目是后端项目，后台前端项目请访问[WinterEE-Front](https://github.com/renfei-net/WinterEE-Front) ，后台前端项目使用的是Vue.js，
-使用了 vue、vue-router、vue-i18n、vuetifyjs、axios等。其他前端类型类如APP、小程序需要您自行开发。
+使用了 vue、vue-router、vue-i18n、vuetifyjs、axios等。其他前端类型类如APP、小程序需要您自行开发。 

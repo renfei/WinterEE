@@ -2,13 +2,13 @@ server:
   port: 8090
 spring:
   datasource:
-#    url: jdbc:dm://10.211.55.7:5236
-    url: jdbc:mysql://127.0.0.1:3306/winteree?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
-#    username: SYSDBA
+#     url: jdbc:dm://localhost:15326
+    url: jdbc:mysql://localhost/winteree?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf-8
+#     username: SYSDBA
     username: root
-#    password: SYSDBA
+#     password: SYSDBA
     password: root
-#    driver-class-name: dm.jdbc.driver.DmDriver
+#     driver-class-name: dm.jdbc.driver.DmDriver
     driver-class-name: com.mysql.cj.jdbc.Driver
     #Druid 连接池通用配置
     type: com.alibaba.druid.pool.DruidDataSource
