@@ -20,4 +20,4 @@ WinterEE是基于SpringCloud的开发脚手架，它名字的由来就要先了�
 
 ### 前端项目
 此项目是后端项目，后台前端项目请访问[WinterEE-Front](https://github.com/renfei-net/WinterEE-Front) ，后台前端项目使用的是Vue.js，
-使用了 vue、vue-router、vue-i18n、vuetifyjs、axios等。其他前端类型类如APP、小程序需要您自行开发。
+使用了 vue、vue-router、vue-i18n、vuetifyjs、axios等。其他前端类型类如APP、小程序需要您自行开发。 
