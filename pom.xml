@@ -34,8 +34,6 @@
         <module>WinterEE-Gateway-Serve</module>
         <module>WinterEE-API</module>
         <module>Your-Module-Serve</module>
-        <module>TZXMSP-Report-Serve</module>
-        <module>TZXMSP-Approve-Serve</module>
     </modules>
 
     <name>WinterEE</name>
