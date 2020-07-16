@@ -1453,6 +1453,164 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                     .build();
         }
     }
+
+    /**
+     * 获取CMS菜单树
+     *
+     * @param siteUuid 站点UUID
+     * @param menuType 菜单类型
+     * @return
+     */
+    @Override
+    @ApiOperation(value = "获取CMS菜单树（CMS系统）", notes = "获取CMS菜单树（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "menuType", value = "菜单类型", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<List<CmsMenuVO>> getCmsMenuBySiteUuidAndType(String siteUuid, int menuType) {
+        CmsMenuEnum cmsMenuEnum = CmsMenuEnum.valueOf(menuType);
+        if (cmsMenuEnum == null) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message("menuType Error")
+                    .build();
+        }
+        try {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(cmsService.getCmsMenuBySiteUuidAndType(siteUuid, cmsMenuEnum))
+                    .build();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * 根据CMS系统的UUID获取菜单对象
+     *
+     * @param uuid 菜单UUID
+     * @return
+     */
+    @Override
+    @ApiOperation(value = "根据CMS系统的UUID获取菜单对象（CMS系统）", notes = "根据CMS系统的UUID获取菜单对象（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "菜单UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<CmsMenuVO> getCmsMenuByUuid(String uuid) {
+        try {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(cmsService.getCmsMenuByUuid(uuid))
+                    .build();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * 添加菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmsmenu:add')")
+    @ApiOperation(value = "添加菜单（CMS系统）", notes = "添加菜单（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cmsMenuVO", value = "菜单对象", required = false, paramType = "query", dataType = "CmsMenuVO")
+    })
+    public APIResult addCmsMenu(CmsMenuVO cmsMenuVO) {
+        try {
+            cmsService.addCmsMenu(cmsMenuVO);
+            return APIResult.success();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * 修改菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmsmenu:update')")
+    @ApiOperation(value = "修改菜单（CMS系统）", notes = "修改菜单（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cmsMenuVO", value = "菜单对象", required = false, paramType = "query", dataType = "CmsMenuVO")
+    })
+    public APIResult updateCmsMenu(CmsMenuVO cmsMenuVO) {
+        try {
+            cmsService.updateCmsMenu(cmsMenuVO);
+            return APIResult.success();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    /**
+     * 删除菜单（CMS系统）
+     *
+     * @param uuid
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmsmenu:delete')")
+    @ApiOperation(value = "删除菜单（CMS系统）", notes = "删除菜单（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "菜单UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult deleteCmsMenu(String uuid) {
+        try {
+            cmsService.deleteCmsMenu(uuid);
+            return APIResult.success();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
     //</editor-fold>
 
     @Override

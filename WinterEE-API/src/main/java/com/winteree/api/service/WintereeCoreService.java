@@ -690,6 +690,53 @@ public interface WintereeCoreService {
      */
     @DeleteMapping("/cms/tag")
     APIResult deleteCmsTag(@RequestParam("uuid") String uuid);
+
+    /**
+     * 获取CMS菜单树
+     *
+     * @param siteUuid 站点UUID
+     * @param menuType 菜单类型
+     * @return
+     */
+    @GetMapping("/cms/menu/tree")
+    APIResult<List<CmsMenuVO>> getCmsMenuBySiteUuidAndType(@RequestParam("siteUuid") String siteUuid,
+                                                           @RequestParam("menuType") int menuType);
+
+    /**
+     * 根据CMS系统的UUID获取菜单对象
+     *
+     * @param uuid 菜单UUID
+     * @return
+     */
+    @GetMapping("/cms/menu")
+    APIResult<CmsMenuVO> getCmsMenuByUuid(@RequestParam("uuid") String uuid);
+
+    /**
+     * 添加菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     */
+    @PostMapping("/cms/menu")
+    APIResult addCmsMenu(@RequestBody CmsMenuVO cmsMenuVO);
+
+    /**
+     * 修改菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     */
+    @PutMapping("/cms/menu")
+    APIResult updateCmsMenu(@RequestBody CmsMenuVO cmsMenuVO);
+
+    /**
+     * 删除菜单（CMS系统）
+     *
+     * @param uuid
+     * @return
+     */
+    @DeleteMapping("/cms/menu")
+    APIResult deleteCmsMenu(@RequestParam("uuid") String uuid);
     //</editor-fold>
 
     @PostMapping("/uploadPublicFile")

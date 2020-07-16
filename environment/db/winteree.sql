@@ -101,7 +101,7 @@ CREATE TABLE `winteree_core_cms_category` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING BTREE,
   UNIQUE KEY `uk_ename` (`en_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统分类';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统分类';
 
 -- ----------------------------
 -- Records of winteree_core_cms_category
@@ -131,10 +131,39 @@ CREATE TABLE `winteree_core_cms_comments` (
   `is_owner` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否是官方回复',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统评论表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统评论表';
 
 -- ----------------------------
 -- Records of winteree_core_cms_comments
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_cms_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_cms_menu`;
+CREATE TABLE `winteree_core_cms_menu` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(36) NOT NULL COMMENT 'UUID',
+  `puuid` varchar(36) NOT NULL COMMENT '父级ID，顶级是站点ID',
+  `site_uuid` varchar(36) NOT NULL COMMENT '站点ID',
+  `menu_text` varchar(255) NOT NULL COMMENT '菜单名称',
+  `menu_link` varchar(255) NOT NULL COMMENT '菜单链接',
+  `menu_icon` varchar(255) DEFAULT NULL COMMENT '图标',
+  `is_new_win` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否新窗口打开',
+  `menu_type` int(11) NOT NULL COMMENT '菜单类型',
+  `order_number` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `create_by` varchar(36) NOT NULL COMMENT '创建人',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  `update_by` varchar(36) NOT NULL COMMENT '更新人',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_uuid` (`uuid`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统菜单表';
+
+-- ----------------------------
+-- Records of winteree_core_cms_menu
 -- ----------------------------
 BEGIN;
 COMMIT;
@@ -172,7 +201,7 @@ CREATE TABLE `winteree_core_cms_posts` (
   `page_rank_update_time` datetime DEFAULT NULL COMMENT '权重更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1003291 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统文章表';
+) ENGINE=InnoDB AUTO_INCREMENT=1003290 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统文章表';
 
 -- ----------------------------
 -- Records of winteree_core_cms_posts
@@ -206,7 +235,7 @@ CREATE TABLE `winteree_core_cms_site` (
   `site_enable` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否启用',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统站点表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统站点表';
 
 -- ----------------------------
 -- Records of winteree_core_cms_site
@@ -229,7 +258,7 @@ CREATE TABLE `winteree_core_cms_tag` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING BTREE,
   UNIQUE KEY `uk_ename` (`en_name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统标签分类';
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COMMENT='CMS系统标签分类';
 
 -- ----------------------------
 -- Records of winteree_core_cms_tag
@@ -342,7 +371,7 @@ CREATE TABLE `winteree_core_log` (
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=5508 DEFAULT CHARSET=utf8mb4 COMMENT='日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=5563 DEFAULT CHARSET=utf8mb4 COMMENT='日志表';
 
 -- ----------------------------
 -- Records of winteree_core_log
@@ -522,7 +551,7 @@ CREATE TABLE `winteree_core_role` (
   `del_flag` char(1) NOT NULL DEFAULT '0' COMMENT '删除标记',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='角色表';
 
 -- ----------------------------
 -- Records of winteree_core_role
@@ -543,7 +572,7 @@ CREATE TABLE `winteree_core_role_menu` (
   `menu_uuid` varchar(36) NOT NULL COMMENT '菜单UUID',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COMMENT='角色与菜单关联表';
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COMMENT='角色与菜单关联表';
 
 -- ----------------------------
 -- Records of winteree_core_role_menu
@@ -584,7 +613,7 @@ CREATE TABLE `winteree_core_secret_key` (
   `uuid` varchar(36) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COMMENT='秘钥表';
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COMMENT='秘钥表';
 
 -- ----------------------------
 -- Records of winteree_core_secret_key
@@ -610,6 +639,12 @@ INSERT INTO `winteree_core_secret_key` VALUES (17, 'MIIBIjANBgkqhkiG9w0BAQEFAAOC
 INSERT INTO `winteree_core_secret_key` VALUES (18, NULL, 'pO2uE77bh9Oso4HQ', '2020-06-22 13:40:19', NULL, 'd9a2fddc-4c4a-4adf-b350-bb3af791512b');
 INSERT INTO `winteree_core_secret_key` VALUES (19, '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', '2020-06-22 14:06:21', NULL, '8a82725c-8906-4719-ab88-9c5f90f1b66c');
 INSERT INTO `winteree_core_secret_key` VALUES (20, NULL, 'p340MYnQfvDNfn2F', '2020-06-22 14:06:21', NULL, '7c7b98b4-2f7d-4208-9683-3269717b11fc');
+INSERT INTO `winteree_core_secret_key` VALUES (21, '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', '2020-07-06 16:05:51', NULL, 'e5520839-0ab1-4d52-a8f0-20973d6892d4');
+INSERT INTO `winteree_core_secret_key` VALUES (22, NULL, 'WjxfXgmVm6s566AY', '2020-07-06 16:05:51', NULL, '92a1917f-5f25-4d37-8493-a3fd914dd274');
+INSERT INTO `winteree_core_secret_key` VALUES (23, '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', '2020-07-07 13:29:05', NULL, '3fa70258-87ea-4f99-a169-fd3b20ebf8b9');
+INSERT INTO `winteree_core_secret_key` VALUES (24, NULL, 'wpg1Cau3pXcchNXn', '2020-07-07 13:29:05', NULL, '449cbbc3-2e98-4494-80c8-bdff8a56b890');
+INSERT INTO `winteree_core_secret_key` VALUES (25, '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', '2020-07-15 12:41:56', NULL, '0f9ce224-98a2-4cc4-9179-3e44415bf89c');
+INSERT INTO `winteree_core_secret_key` VALUES (26, NULL, 'PDc6Qd8wwk829390', '2020-07-15 12:41:56', NULL, '4171c6e2-73aa-41ba-8372-350651cf045c');
 COMMIT;
 
 -- ----------------------------

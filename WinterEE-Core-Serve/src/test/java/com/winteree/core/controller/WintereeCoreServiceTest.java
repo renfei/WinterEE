@@ -740,5 +740,27 @@ public class WintereeCoreServiceTest {
     public void deleteCmsTagTest() {
         Assertions.assertEquals(wintereeCoreService.deleteCmsTag("17CE6CBF-174B-4152-9949-F415CDFB33B7").getCode(), StateCode.OK.getCode());
     }
+
+    @Test
+    @Rollback
+    @Transactional
+    public void getCmsMenuTest() {
+        CmsMenuVO cmsMenuVO = new CmsMenuVO();
+        cmsMenuVO.setIsNewWin(false);
+        cmsMenuVO.setMenuIcon("");
+        cmsMenuVO.setMenuLink("/");
+        cmsMenuVO.setMenuText("Home");
+        cmsMenuVO.setMenuType(1);
+        cmsMenuVO.setOrderNumber(9999);
+        cmsMenuVO.setPuuid("1BD49B64-3206-4E27-A4F5-93DD9CD28157");
+        cmsMenuVO.setSiteUuid("1BD49B64-3206-4E27-A4F5-93DD9CD28157");
+        String uuid = UUID.randomUUID().toString().toUpperCase();
+        cmsMenuVO.setUuid(uuid);
+        Assertions.assertEquals(wintereeCoreService.addCmsMenu(cmsMenuVO).getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.updateCmsMenu(cmsMenuVO).getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.getCmsMenuBySiteUuidAndType("1BD49B64-3206-4E27-A4F5-93DD9CD28157", 1).getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.getCmsMenuByUuid(uuid).getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.deleteCmsMenu(uuid).getCode(), StateCode.OK.getCode());
+    }
     //</editor-fold>
 }

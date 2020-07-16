@@ -218,4 +218,50 @@ public interface CmsService {
      * @throws FailureException   失败异常
      */
     int deleteCmsTag(String uuid) throws ForbiddenException, FailureException;
+
+    /**
+     * 获取CMS菜单树
+     *
+     * @param siteUuid    站点UUID
+     * @param cmsMenuEnum 菜单类型
+     * @return CMS菜单树
+     */
+    List<CmsMenuVO> getCmsMenuBySiteUuidAndType(String siteUuid, CmsMenuEnum cmsMenuEnum);
+
+    /**
+     * 根据CMS系统的UUID获取菜单对象
+     *
+     * @param uuid 菜单UUID
+     * @return
+     */
+    CmsMenuVO getCmsMenuByUuid(String uuid);
+
+    /**
+     * 添加菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     * @throws ForbiddenException
+     * @throws FailureException
+     */
+    int addCmsMenu(CmsMenuVO cmsMenuVO) throws ForbiddenException, FailureException;
+
+    /**
+     * 修改菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     * @throws ForbiddenException
+     * @throws FailureException
+     */
+    int updateCmsMenu(CmsMenuVO cmsMenuVO) throws ForbiddenException, FailureException;
+
+    /**
+     * 删除菜单（CMS系统）
+     *
+     * @param uuid
+     * @return
+     * @throws ForbiddenException
+     */
+    int deleteCmsMenu(String uuid) throws ForbiddenException;
 }

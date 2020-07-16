@@ -40,6 +40,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     private final CmsSiteDOMapper cmsSiteDOMapper;
     private final CmsTagDOMapper cmsTagDOMapper;
     private final CmsTagPostsDOMapper cmsTagPostsDOMapper;
+    private final CmsMenuDOMapper cmsMenuDOMapper;
 
     protected CmsServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                              AccountService accountService,
@@ -51,7 +52,8 @@ public class CmsServiceImpl extends BaseService implements CmsService {
                              CmsPostsDOMapper cmsPostsDOMapper,
                              CmsSiteDOMapper cmsSiteDOMapper,
                              CmsTagDOMapper cmsTagDOMapper,
-                             CmsTagPostsDOMapper cmsTagPostsDOMapper) {
+                             CmsTagPostsDOMapper cmsTagPostsDOMapper,
+                             CmsMenuDOMapper cmsMenuDOMapper) {
         super(wintereeCoreConfig);
         this.accountService = accountService;
         this.roleService = roleService;
@@ -63,6 +65,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         this.cmsSiteDOMapper = cmsSiteDOMapper;
         this.cmsTagDOMapper = cmsTagDOMapper;
         this.cmsTagPostsDOMapper = cmsTagPostsDOMapper;
+        this.cmsMenuDOMapper = cmsMenuDOMapper;
     }
 
     /**
@@ -822,6 +825,157 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     }
 
     /**
+     * 获取CMS菜单树
+     *
+     * @param siteUuid    站点UUID
+     * @param cmsMenuEnum 菜单类型
+     * @return CMS菜单树
+     */
+    @Override
+    public List<CmsMenuVO> getCmsMenuBySiteUuidAndType(String siteUuid, CmsMenuEnum cmsMenuEnum) {
+        // 因为CMS是开放的，而且菜单没有什么敏感信息，所以获取菜单的操作就不做站点权限校验了
+        CmsMenuDOExample example = new CmsMenuDOExample();
+        example.setOrderByClause("order_number DESC");
+        example.createCriteria()
+                .andSiteUuidEqualTo(siteUuid)
+                .andMenuTypeEqualTo(cmsMenuEnum.value())
+                .andPuuidEqualTo(siteUuid);
+        List<CmsMenuDO> cmsMenuDOS = cmsMenuDOMapper.selectByExample(example);
+        if (BeanUtils.isEmpty(cmsMenuDOS)) {
+            return null;
+        }
+        List<CmsMenuVO> cmsMenuVOS = new ArrayList<>();
+        cmsMenuDOS.forEach(cmsMenuDO -> cmsMenuVOS.add(convert(cmsMenuDO)));
+        setCmsMenuChildren(cmsMenuVOS);
+        return cmsMenuVOS;
+    }
+
+    /**
+     * 根据CMS系统的UUID获取菜单对象
+     *
+     * @param uuid 菜单UUID
+     * @return
+     */
+    @Override
+    public CmsMenuVO getCmsMenuByUuid(String uuid) {
+        CmsMenuDOExample example = new CmsMenuDOExample();
+        example.createCriteria().andUuidEqualTo(uuid);
+        return convert(ListUtils.getOne(cmsMenuDOMapper.selectByExample(example)));
+    }
+
+    /**
+     * 添加菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     * @throws ForbiddenException
+     * @throws FailureException
+     */
+    @Override
+    public int addCmsMenu(CmsMenuVO cmsMenuVO) throws ForbiddenException, FailureException {
+        CmsSiteDTO cmsSiteDTO = this.getCmsSiteByUuid(cmsMenuVO.getSiteUuid());
+        if (cmsSiteDTO == null) {
+            throw new FailureException("所属站点不存在");
+        }
+        if (!cmsMenuVO.getSiteUuid().equals(cmsMenuVO.getPuuid())) {
+            if (BeanUtils.isEmpty(this.getCmsMenuByUuid(cmsMenuVO.getPuuid()))) {
+                throw new FailureException("指定的父级菜单不存在");
+            }
+        }
+        CmsMenuDO cmsMenuDO = convert(cmsMenuVO);
+        cmsMenuDO.setCreateBy(getSignedUser(accountService).getUuid());
+        cmsMenuDO.setCreateTime(new Date());
+        cmsMenuDO.setUpdateBy(getSignedUser(accountService).getUuid());
+        cmsMenuDO.setUpdateTime(new Date());
+        return cmsMenuDOMapper.insertSelective(cmsMenuDO);
+    }
+
+    /**
+     * 修改菜单（CMS系统）
+     *
+     * @param cmsMenuVO
+     * @return
+     * @throws ForbiddenException
+     * @throws FailureException
+     */
+    @Override
+    public int updateCmsMenu(CmsMenuVO cmsMenuVO) throws ForbiddenException, FailureException {
+        CmsMenuDOExample example = new CmsMenuDOExample();
+        example.createCriteria().andUuidEqualTo(cmsMenuVO.getUuid());
+        CmsMenuDO oldCmsMenu = ListUtils.getOne(cmsMenuDOMapper.selectByExample(example));
+        if (BeanUtils.isEmpty(oldCmsMenu)) {
+            throw new FailureException("要修改的菜单不存在");
+        }
+        // 这里获取一下站点是为了校验他是否有这个站点的权限
+        CmsSiteDTO cmsSiteDTO = this.getCmsSiteByUuid(cmsMenuVO.getSiteUuid());
+        if (cmsSiteDTO == null) {
+            throw new FailureException("所属站点不存在");
+        }
+        if (!cmsMenuVO.getSiteUuid().equals(cmsMenuVO.getPuuid())) {
+            if (BeanUtils.isEmpty(this.getCmsMenuByUuid(cmsMenuVO.getPuuid()))) {
+                throw new FailureException("指定的父级菜单不存在");
+            }
+        }
+        oldCmsMenu.setIsNewWin(cmsMenuVO.getIsNewWin());
+        oldCmsMenu.setPuuid(cmsMenuVO.getPuuid());
+        oldCmsMenu.setMenuText(cmsMenuVO.getMenuText());
+        oldCmsMenu.setMenuIcon(cmsMenuVO.getMenuIcon());
+        oldCmsMenu.setMenuLink(cmsMenuVO.getMenuLink());
+        oldCmsMenu.setMenuType(cmsMenuVO.getMenuType());
+        oldCmsMenu.setOrderNumber(cmsMenuVO.getOrderNumber());
+        oldCmsMenu.setUpdateBy(getSignedUser(accountService).getUuid());
+        oldCmsMenu.setUpdateTime(new Date());
+        return cmsMenuDOMapper.updateByExampleSelective(oldCmsMenu, example);
+    }
+
+    /**
+     * 删除菜单（CMS系统）
+     *
+     * @param uuid
+     * @return
+     * @throws ForbiddenException
+     */
+    @Override
+    public int deleteCmsMenu(String uuid) throws ForbiddenException {
+        CmsMenuDOExample example = new CmsMenuDOExample();
+        example.createCriteria().andUuidEqualTo(uuid);
+        CmsMenuDO oldCmsMenu = ListUtils.getOne(cmsMenuDOMapper.selectByExample(example));
+        if (BeanUtils.isEmpty(oldCmsMenu)) {
+            throw new FailureException("要删除的菜单不存在");
+        }
+        // 这里获取一下站点是为了校验他是否有这个站点的权限
+        this.getCmsSiteByUuid(oldCmsMenu.getSiteUuid());
+        return cmsMenuDOMapper.deleteByExample(example);
+    }
+
+    /**
+     * 递归查询子级菜单（CMS系统）
+     *
+     * @param cmsMenuVOS
+     */
+    private void setCmsMenuChildren(List<CmsMenuVO> cmsMenuVOS) {
+        if (BeanUtils.isEmpty(cmsMenuVOS)) {
+            return;
+        }
+        for (CmsMenuVO menu : cmsMenuVOS
+        ) {
+            CmsMenuDOExample example = new CmsMenuDOExample();
+            example.setOrderByClause("order_number DESC");
+            example.createCriteria()
+                    .andSiteUuidEqualTo(menu.getSiteUuid())
+                    .andMenuTypeEqualTo(menu.getMenuType())
+                    .andPuuidEqualTo(menu.getUuid());
+            List<CmsMenuDO> cmsMenuDOS = cmsMenuDOMapper.selectByExample(example);
+            if (!BeanUtils.isEmpty(cmsMenuVOS)) {
+                List<CmsMenuVO> cmsMenuChildren = new ArrayList<>();
+                cmsMenuDOS.forEach(cmsMenuDO -> cmsMenuChildren.add(convert(cmsMenuDO)));
+                menu.setChildren(cmsMenuChildren);
+                setCmsMenuChildren(cmsMenuChildren);
+            }
+        }
+    }
+
+    /**
      * 新增标签和文章关系表数据
      * 因为标签和文章关系应该是程序自动维护的，所以是私有方法
      *
@@ -1050,6 +1204,34 @@ public class CmsServiceImpl extends BaseService implements CmsService {
                 .with(CmsTagDO::setEnName, cmsTagDTO.getEnName())
                 .with(CmsTagDO::setZhName, cmsTagDTO.getZhName())
                 .with(CmsTagDO::setDescribe, cmsTagDTO.getDescribe())
+                .build();
+    }
+
+    private CmsMenuVO convert(CmsMenuDO cmsMenuDO) {
+        return Builder.of(CmsMenuVO::new)
+                .with(CmsMenuVO::setUuid, cmsMenuDO.getUuid())
+                .with(CmsMenuVO::setSiteUuid, cmsMenuDO.getSiteUuid())
+                .with(CmsMenuVO::setPuuid, cmsMenuDO.getPuuid())
+                .with(CmsMenuVO::setOrderNumber, cmsMenuDO.getOrderNumber())
+                .with(CmsMenuVO::setMenuType, cmsMenuDO.getMenuType())
+                .with(CmsMenuVO::setMenuText, cmsMenuDO.getMenuText())
+                .with(CmsMenuVO::setMenuLink, cmsMenuDO.getMenuLink())
+                .with(CmsMenuVO::setMenuIcon, cmsMenuDO.getMenuIcon())
+                .with(CmsMenuVO::setIsNewWin, cmsMenuDO.getIsNewWin())
+                .build();
+    }
+
+    private CmsMenuDO convert(CmsMenuVO cmsMenuVO) {
+        return Builder.of(CmsMenuDO::new)
+                .with(CmsMenuDO::setUuid, cmsMenuVO.getUuid())
+                .with(CmsMenuDO::setSiteUuid, cmsMenuVO.getSiteUuid())
+                .with(CmsMenuDO::setPuuid, cmsMenuVO.getPuuid())
+                .with(CmsMenuDO::setOrderNumber, cmsMenuVO.getOrderNumber())
+                .with(CmsMenuDO::setMenuType, cmsMenuVO.getMenuType())
+                .with(CmsMenuDO::setMenuText, cmsMenuVO.getMenuText())
+                .with(CmsMenuDO::setMenuLink, cmsMenuVO.getMenuLink())
+                .with(CmsMenuDO::setMenuIcon, cmsMenuVO.getMenuIcon())
+                .with(CmsMenuDO::setIsNewWin, cmsMenuVO.getIsNewWin())
                 .build();
     }
 }
