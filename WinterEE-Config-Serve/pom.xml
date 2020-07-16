@@ -11,7 +11,7 @@
 
     <artifactId>WinterEE-Config-Serve</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>WinterEE-Config-Serve</name>
 
     <dependencies>

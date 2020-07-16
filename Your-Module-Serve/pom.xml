@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Your-Module</artifactId>
+    <artifactId>Your-Module-Serve</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>Your-Module-Serve</name>
 

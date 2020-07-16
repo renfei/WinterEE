@@ -1,8 +1,6 @@
 package com.winteree.gateway;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -19,7 +17,7 @@ import org.springframework.web.context.request.RequestContextListener;
 @EnableAuthorizationServer
 @EnableAsync(proxyTargetClass = true)
 @EnableFeignClients(basePackages = "com.winteree.gateway")
-public class GatewayApplication extends SpringBootServletInitializer {
+public class GatewayApplication {
     public static void main(String[] args) {
         SpringApplication.run(GatewayApplication.class, args);
     }
@@ -27,10 +25,5 @@ public class GatewayApplication extends SpringBootServletInitializer {
     @Bean
     public RequestContextListener requestContextListener() {
         return new RequestContextListener();
-    }
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(GatewayApplication.class);
     }
 }
