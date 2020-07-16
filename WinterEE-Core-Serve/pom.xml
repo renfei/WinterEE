@@ -12,7 +12,7 @@
     <artifactId>WinterEE-Core-Serve</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>WinterEE-Core-Serve</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
