@@ -43,6 +43,27 @@ spring:
     password: OHTLBKEQFTJIYXOC
     properties:
       from: t_e_s_t_e_r@163.com
+  quartz:
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: WinterEEScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: winteree_core_qrtz_
+            isClustered: true
+            clusterCheckinInterval: 10000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+    #数据库方式
+    job-store-type: jdbc
 mybatis:
   typeAliasesPackage: com.winteree.core.dao.entity
   mapperLocations: classpath*:mapper/mysql/*.xml

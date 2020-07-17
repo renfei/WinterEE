@@ -10,10 +10,7 @@ import com.winteree.core.dao.*;
 import com.winteree.core.dao.entity.*;
 import com.winteree.core.entity.AccountDTO;
 import com.winteree.core.service.*;
-import net.renfei.sdk.utils.BeanUtils;
-import net.renfei.sdk.utils.Builder;
-import net.renfei.sdk.utils.ListUtils;
-import net.renfei.sdk.utils.StringUtils;
+import net.renfei.sdk.utils.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -949,6 +946,48 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     }
 
     /**
+     * 跟新文章评级
+     */
+    @Override
+    public void updatePageRank() {
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        int pages = 1;
+        for (; ; ) {
+            PageHelper.startPage(pages, 100);
+            List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(example);
+            if (BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+                break;
+            }
+            pages++;
+            for (CmsPostsDOWithBLOBs post : cmsPostsDOWithBLOBs
+            ) {
+                setPageRank(post);
+                cmsPostsDOMapper.updateByPrimaryKey(post);
+            }
+        }
+
+    }
+
+    private void setPageRank(CmsPostsDOWithBLOBs cmsPostsDOWithBLOBs) {
+        PageRankUtil pageRankUtil = new PageRankUtil();
+        cmsPostsDOWithBLOBs.setPageRank(pageRankUtil.getPageRank(
+                cmsPostsDOWithBLOBs.getReleaseTime(),
+                cmsPostsDOWithBLOBs.getViews(),
+                0L,
+                DATE_WEIGHTED, VIEW_WEIGHTED, COMMENTHTED
+        ));
+        cmsPostsDOWithBLOBs.setAvgViews(pageRankUtil.getAvgViews(
+                cmsPostsDOWithBLOBs.getReleaseTime(),
+                cmsPostsDOWithBLOBs.getViews()
+        ));
+        cmsPostsDOWithBLOBs.setAvgComment(pageRankUtil.getAvgComments(
+                cmsPostsDOWithBLOBs.getReleaseTime(),
+                0L
+        ));
+        cmsPostsDOWithBLOBs.setPageRankUpdateTime(new Date());
+    }
+
+    /**
      * 递归查询子级菜单（CMS系统）
      *
      * @param cmsMenuVOS
@@ -1233,5 +1272,31 @@ public class CmsServiceImpl extends BaseService implements CmsService {
                 .with(CmsMenuDO::setMenuIcon, cmsMenuVO.getMenuIcon())
                 .with(CmsMenuDO::setIsNewWin, cmsMenuVO.getIsNewWin())
                 .build();
+    }
+
+    /**
+     * 文件评级工具内部类
+     */
+    public class PageRankUtil {
+        public Double getPageRank(Date date, Long views, Long comments,
+                                  Double dateWeighted, Double viewWeighted, Double commentWeighted) {
+            long days = DateUtils.pastDays(date);
+            if (days > -3) {
+                return 10000D;
+            }
+            double avgViews = getAvgViews(date, views);
+            double avgComments = getAvgComments(date, comments);
+            return ((days * dateWeighted) + (avgViews * viewWeighted) + (avgComments * commentWeighted)) / (dateWeighted + viewWeighted + commentWeighted);
+        }
+
+        public Double getAvgViews(Date date, Long views) {
+            long days = DateUtils.pastDays(date);
+            return (double) ((float) views / (float) (-days));
+        }
+
+        public Double getAvgComments(Date date, Long comments) {
+            long days = DateUtils.pastDays(date);
+            return (double) ((float) comments / (float) (-days));
+        }
     }
 }

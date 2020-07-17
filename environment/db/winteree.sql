@@ -371,7 +371,7 @@ CREATE TABLE `winteree_core_log` (
   `update_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_uuid` (`uuid`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=5563 DEFAULT CHARSET=utf8mb4 COMMENT='日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=5626 DEFAULT CHARSET=utf8mb4 COMMENT='日志表';
 
 -- ----------------------------
 -- Records of winteree_core_log
@@ -407,7 +407,7 @@ CREATE TABLE `winteree_core_menu` (
   UNIQUE KEY `uk_uuid` (`uuid`) USING HASH,
   KEY `idx_parent_id` (`parent_uuid`),
   KEY `idx_del_flag` (`is_delete`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COMMENT='菜单表';
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb4 COMMENT='菜单表';
 
 -- ----------------------------
 -- Records of winteree_core_menu
@@ -482,6 +482,17 @@ INSERT INTO `winteree_core_menu` VALUES (67, '36b6a872-e505-4964-b041-f382ef654d
 INSERT INTO `winteree_core_menu` VALUES (68, '36b6a872-e505-4964-b041-f382ef654d87', 'e04bdf6f-4523-4f25-ad9f-546e992b3125', '文章标签修改权限', 0, '', '', '', 1, 0, 'platf:cmstag:update', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-28 15:34:54', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-28 15:34:54', '', 0, 0, '');
 INSERT INTO `winteree_core_menu` VALUES (69, '36b6a872-e505-4964-b041-f382ef654d87', '7d996a93-dc8e-456b-bf49-5ca447a83eb7', '文章标签删除权限', 0, '', '', '', 1, 0, 'platf:cmstag:delete', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-28 15:35:16', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-28 15:35:16', '', 0, 0, '');
 INSERT INTO `winteree_core_menu` VALUES (70, '36103ee9-6f0d-438b-9c5a-667bcc8e7a89', '61bd3d32-04ab-40ee-95b3-5fc3834f51a9', '公开文件上传权限', 0, '', '', '', 1, 0, 'platf:publicfile:upload', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-01 10:34:08', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-01 10:34:08', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (71, '01f46395-ebfa-4d9b-8620-6d7f466ed035', '22b3c7d1-9240-4674-ad7c-5e94e2c95a22', '站点菜单管理', 0, '', '', 'mdi-microsoft-xbox-controller-menu', 1, 1, '', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:58:45', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:58:45', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (72, '22b3c7d1-9240-4674-ad7c-5e94e2c95a22', '84d41972-ff03-4761-9e0f-39b12e23dcb0', '添加菜单（CMS系统）', 0, '', '', '', 1, 0, 'platf:cmsmenu:add', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:59:06', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:59:06', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (73, '22b3c7d1-9240-4674-ad7c-5e94e2c95a22', 'cb43411b-dcf2-46d3-adb9-1d44deaaaeff', '修改菜单（CMS系统）', 0, '', '', '', 1, 0, 'platf:cmsmenu:update', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:59:24', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:59:24', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (74, '22b3c7d1-9240-4674-ad7c-5e94e2c95a22', 'f1d1725f-d170-44cd-a43a-b95b44854b2d', '删除菜单（CMS系统）', 0, '', '', '', 1, 0, 'platf:cmsmenu:delete', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:59:40', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 16:59:40', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (75, '99406120-183c-4029-a992-1c707aba5ba2', 'f5c113e0-73b5-4524-87c0-8cc15c31f219', '定时任务管理', 0, '', '', 'mdi-timer', 1, 1, '', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:02:28', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:02:28', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (76, 'f5c113e0-73b5-4524-87c0-8cc15c31f219', '38de382e-4b8d-4286-9b52-0dc5c162a1e6', '获取定时任务列表', 0, '', '', '', 1, 0, 'platf:task:view', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:03:01', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:03:01', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (77, 'f5c113e0-73b5-4524-87c0-8cc15c31f219', '4eacc35d-e2dd-463e-bf98-56301205d7d3', '保存/修改定时任务', 0, '', '', '', 1, 0, 'platf:task:save', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:03:25', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:03:25', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (78, 'f5c113e0-73b5-4524-87c0-8cc15c31f219', '5071378b-96f1-43ad-9447-f5bf3d335175', '手动触发定时任务', 0, '', '', '', 1, 0, 'platf:task:exec', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:03:48', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:03:48', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (79, 'f5c113e0-73b5-4524-87c0-8cc15c31f219', 'ce05d3d1-fa05-4905-b64c-fef5822e28e6', '暂停定时任务', 0, '', '', '', 1, 0, 'platf:task:pause', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:04:06', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:04:06', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (80, 'f5c113e0-73b5-4524-87c0-8cc15c31f219', '29e984b0-0b1d-4f87-accf-c2e011396746', '恢复定时任务', 0, '', '', '', 1, 0, 'platf:task:resume', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:04:22', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:04:22', '', 0, 0, '');
+INSERT INTO `winteree_core_menu` VALUES (81, 'f5c113e0-73b5-4524-87c0-8cc15c31f219', '3272df13-ba90-4bc1-a07e-2ecaf74de05a', '删除定时任务', 0, '', '', '', 1, 0, 'platf:task:delete', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:04:39', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-07-17 17:04:39', '', 0, 0, '');
 COMMIT;
 
 -- ----------------------------
@@ -527,6 +538,271 @@ INSERT INTO `winteree_core_organization` VALUES (5, '1106dc4a-4a15-434e-b78d-282
 INSERT INTO `winteree_core_organization` VALUES (6, 'f33269f4-88ba-4cd0-8379-e5f7de67e6f7', 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', 'ed9ee135-029d-42d9-8a1c-b9a43a8c55ea', 2, '演示公司A的部门2', '大师傅', '1001', '任霏', '13001000000', '123', 'i@renfei.net', '任霏', '任霏', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-22 11:29:54', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-22 11:32:42', '', '0');
 INSERT INTO `winteree_core_organization` VALUES (7, 'a450e2d5-bdd8-4be9-8908-3b87d1301f68', 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', '0087b758-a13a-41b3-910f-cf606dcb907e', 2, '演示部门3', '', '', '任霏', '', '', '', '', '', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-22 11:36:22', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-22 11:36:22', '', '0');
 INSERT INTO `winteree_core_organization` VALUES (8, 'e7426d64-28bd-432b-b027-33b05af95b75', 'BC21F895-63DA-4E94-9D9E-D4CD2DCFB189', '1106dc4a-4a15-434e-b78d-282a3bcffc71', 2, '子级部门22', '', '', '任霏', '', '', '', '', '', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-22 11:36:58', '9369919A-F95E-44CF-AB0A-6BCD1D933403', '2020-06-22 11:39:59', '', '0');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_blob_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_blob_triggers`;
+CREATE TABLE `winteree_core_qrtz_blob_triggers` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `TRIGGER_NAME` varchar(190) NOT NULL,
+  `TRIGGER_GROUP` varchar(190) NOT NULL,
+  `BLOB_DATA` blob,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  KEY `SCHED_NAME` (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  CONSTRAINT `winteree_core_qrtz_blob_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`) REFERENCES `winteree_core_qrtz_triggers` (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_blob_triggers
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_calendars
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_calendars`;
+CREATE TABLE `winteree_core_qrtz_calendars` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `CALENDAR_NAME` varchar(190) NOT NULL,
+  `CALENDAR` blob NOT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`CALENDAR_NAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_calendars
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_cron_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_cron_triggers`;
+CREATE TABLE `winteree_core_qrtz_cron_triggers` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `TRIGGER_NAME` varchar(190) NOT NULL,
+  `TRIGGER_GROUP` varchar(190) NOT NULL,
+  `CRON_EXPRESSION` varchar(120) NOT NULL,
+  `TIME_ZONE_ID` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  CONSTRAINT `winteree_core_qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`) REFERENCES `winteree_core_qrtz_triggers` (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_cron_triggers
+-- ----------------------------
+BEGIN;
+INSERT INTO `winteree_core_qrtz_cron_triggers` VALUES ('WinterEEScheduler', 'triggerUpdatePostPageRankJob', 'CMS', '0 0 3 * * ?', 'Asia/Shanghai');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_fired_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_fired_triggers`;
+CREATE TABLE `winteree_core_qrtz_fired_triggers` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `ENTRY_ID` varchar(95) NOT NULL,
+  `TRIGGER_NAME` varchar(190) NOT NULL,
+  `TRIGGER_GROUP` varchar(190) NOT NULL,
+  `INSTANCE_NAME` varchar(190) NOT NULL,
+  `FIRED_TIME` bigint(13) NOT NULL,
+  `SCHED_TIME` bigint(13) NOT NULL,
+  `PRIORITY` int(11) NOT NULL,
+  `STATE` varchar(16) NOT NULL,
+  `JOB_NAME` varchar(190) DEFAULT NULL,
+  `JOB_GROUP` varchar(190) DEFAULT NULL,
+  `IS_NONCONCURRENT` varchar(1) DEFAULT NULL,
+  `REQUESTS_RECOVERY` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`ENTRY_ID`),
+  KEY `IDX_QRTZ_FT_TRIG_INST_NAME` (`SCHED_NAME`,`INSTANCE_NAME`),
+  KEY `IDX_QRTZ_FT_INST_JOB_REQ_RCVRY` (`SCHED_NAME`,`INSTANCE_NAME`,`REQUESTS_RECOVERY`),
+  KEY `IDX_QRTZ_FT_J_G` (`SCHED_NAME`,`JOB_NAME`,`JOB_GROUP`),
+  KEY `IDX_QRTZ_FT_JG` (`SCHED_NAME`,`JOB_GROUP`),
+  KEY `IDX_QRTZ_FT_T_G` (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  KEY `IDX_QRTZ_FT_TG` (`SCHED_NAME`,`TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_fired_triggers
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_job_details
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_job_details`;
+CREATE TABLE `winteree_core_qrtz_job_details` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `JOB_NAME` varchar(190) NOT NULL,
+  `JOB_GROUP` varchar(190) NOT NULL,
+  `DESCRIPTION` varchar(250) DEFAULT NULL,
+  `JOB_CLASS_NAME` varchar(250) NOT NULL,
+  `IS_DURABLE` varchar(1) NOT NULL,
+  `IS_NONCONCURRENT` varchar(1) NOT NULL,
+  `IS_UPDATE_DATA` varchar(1) NOT NULL,
+  `REQUESTS_RECOVERY` varchar(1) NOT NULL,
+  `JOB_DATA` blob,
+  PRIMARY KEY (`SCHED_NAME`,`JOB_NAME`,`JOB_GROUP`),
+  KEY `IDX_QRTZ_J_REQ_RECOVERY` (`SCHED_NAME`,`REQUESTS_RECOVERY`),
+  KEY `IDX_QRTZ_J_GRP` (`SCHED_NAME`,`JOB_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_job_details
+-- ----------------------------
+BEGIN;
+INSERT INTO `winteree_core_qrtz_job_details` VALUES ('WinterEEScheduler', 'UpdatePostPageRankJob', 'CMS', '定时更新文章评级', 'com.winteree.core.task.UpdatePostPageRankJob', '0', '0', '0', '0', 0xACED0005737200156F72672E71756172747A2E4A6F62446174614D61709FB083E8BFA9B0CB020000787200266F72672E71756172747A2E7574696C732E537472696E674B65794469727479466C61674D61708208E8C3FBC55D280200015A0013616C6C6F77735472616E7369656E74446174617872001D6F72672E71756172747A2E7574696C732E4469727479466C61674D617013E62EAD28760ACE0200025A000564697274794C00036D617074000F4C6A6176612F7574696C2F4D61703B787000737200116A6176612E7574696C2E486173684D61700507DAC1C31660D103000246000A6C6F6164466163746F724900097468726573686F6C6478703F40000000000010770800000010000000007800);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_locks
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_locks`;
+CREATE TABLE `winteree_core_qrtz_locks` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `LOCK_NAME` varchar(40) NOT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`LOCK_NAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_locks
+-- ----------------------------
+BEGIN;
+INSERT INTO `winteree_core_qrtz_locks` VALUES ('WinterEEScheduler', 'STATE_ACCESS');
+INSERT INTO `winteree_core_qrtz_locks` VALUES ('WinterEEScheduler', 'TRIGGER_ACCESS');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_paused_trigger_grps
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_paused_trigger_grps`;
+CREATE TABLE `winteree_core_qrtz_paused_trigger_grps` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `TRIGGER_GROUP` varchar(190) NOT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_paused_trigger_grps
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_scheduler_state
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_scheduler_state`;
+CREATE TABLE `winteree_core_qrtz_scheduler_state` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `INSTANCE_NAME` varchar(190) NOT NULL,
+  `LAST_CHECKIN_TIME` bigint(13) NOT NULL,
+  `CHECKIN_INTERVAL` bigint(13) NOT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`INSTANCE_NAME`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_scheduler_state
+-- ----------------------------
+BEGIN;
+INSERT INTO `winteree_core_qrtz_scheduler_state` VALUES ('WinterEEScheduler', 'RenFeiMBP1594976091777', 1594976686167, 10000);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_simple_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_simple_triggers`;
+CREATE TABLE `winteree_core_qrtz_simple_triggers` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `TRIGGER_NAME` varchar(190) NOT NULL,
+  `TRIGGER_GROUP` varchar(190) NOT NULL,
+  `REPEAT_COUNT` bigint(7) NOT NULL,
+  `REPEAT_INTERVAL` bigint(12) NOT NULL,
+  `TIMES_TRIGGERED` bigint(10) NOT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  CONSTRAINT `winteree_core_qrtz_simple_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`) REFERENCES `winteree_core_qrtz_triggers` (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_simple_triggers
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_simprop_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_simprop_triggers`;
+CREATE TABLE `winteree_core_qrtz_simprop_triggers` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `TRIGGER_NAME` varchar(190) NOT NULL,
+  `TRIGGER_GROUP` varchar(190) NOT NULL,
+  `STR_PROP_1` varchar(512) DEFAULT NULL,
+  `STR_PROP_2` varchar(512) DEFAULT NULL,
+  `STR_PROP_3` varchar(512) DEFAULT NULL,
+  `INT_PROP_1` int(11) DEFAULT NULL,
+  `INT_PROP_2` int(11) DEFAULT NULL,
+  `LONG_PROP_1` bigint(20) DEFAULT NULL,
+  `LONG_PROP_2` bigint(20) DEFAULT NULL,
+  `DEC_PROP_1` decimal(13,4) DEFAULT NULL,
+  `DEC_PROP_2` decimal(13,4) DEFAULT NULL,
+  `BOOL_PROP_1` varchar(1) DEFAULT NULL,
+  `BOOL_PROP_2` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  CONSTRAINT `winteree_core_qrtz_simprop_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`) REFERENCES `winteree_core_qrtz_triggers` (`SCHED_NAME`, `TRIGGER_NAME`, `TRIGGER_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_simprop_triggers
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for winteree_core_qrtz_triggers
+-- ----------------------------
+DROP TABLE IF EXISTS `winteree_core_qrtz_triggers`;
+CREATE TABLE `winteree_core_qrtz_triggers` (
+  `SCHED_NAME` varchar(120) NOT NULL,
+  `TRIGGER_NAME` varchar(190) NOT NULL,
+  `TRIGGER_GROUP` varchar(190) NOT NULL,
+  `JOB_NAME` varchar(190) NOT NULL,
+  `JOB_GROUP` varchar(190) NOT NULL,
+  `DESCRIPTION` varchar(250) DEFAULT NULL,
+  `NEXT_FIRE_TIME` bigint(13) DEFAULT NULL,
+  `PREV_FIRE_TIME` bigint(13) DEFAULT NULL,
+  `PRIORITY` int(11) DEFAULT NULL,
+  `TRIGGER_STATE` varchar(16) NOT NULL,
+  `TRIGGER_TYPE` varchar(8) NOT NULL,
+  `START_TIME` bigint(13) NOT NULL,
+  `END_TIME` bigint(13) DEFAULT NULL,
+  `CALENDAR_NAME` varchar(190) DEFAULT NULL,
+  `MISFIRE_INSTR` smallint(2) DEFAULT NULL,
+  `JOB_DATA` blob,
+  PRIMARY KEY (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`),
+  KEY `IDX_QRTZ_T_J` (`SCHED_NAME`,`JOB_NAME`,`JOB_GROUP`),
+  KEY `IDX_QRTZ_T_JG` (`SCHED_NAME`,`JOB_GROUP`),
+  KEY `IDX_QRTZ_T_C` (`SCHED_NAME`,`CALENDAR_NAME`),
+  KEY `IDX_QRTZ_T_G` (`SCHED_NAME`,`TRIGGER_GROUP`),
+  KEY `IDX_QRTZ_T_STATE` (`SCHED_NAME`,`TRIGGER_STATE`),
+  KEY `IDX_QRTZ_T_N_STATE` (`SCHED_NAME`,`TRIGGER_NAME`,`TRIGGER_GROUP`,`TRIGGER_STATE`),
+  KEY `IDX_QRTZ_T_N_G_STATE` (`SCHED_NAME`,`TRIGGER_GROUP`,`TRIGGER_STATE`),
+  KEY `IDX_QRTZ_T_NEXT_FIRE_TIME` (`SCHED_NAME`,`NEXT_FIRE_TIME`),
+  KEY `IDX_QRTZ_T_NFT_ST` (`SCHED_NAME`,`TRIGGER_STATE`,`NEXT_FIRE_TIME`),
+  KEY `IDX_QRTZ_T_NFT_MISFIRE` (`SCHED_NAME`,`MISFIRE_INSTR`,`NEXT_FIRE_TIME`),
+  KEY `IDX_QRTZ_T_NFT_ST_MISFIRE` (`SCHED_NAME`,`MISFIRE_INSTR`,`NEXT_FIRE_TIME`,`TRIGGER_STATE`),
+  KEY `IDX_QRTZ_T_NFT_ST_MISFIRE_GRP` (`SCHED_NAME`,`MISFIRE_INSTR`,`NEXT_FIRE_TIME`,`TRIGGER_GROUP`,`TRIGGER_STATE`),
+  CONSTRAINT `winteree_core_qrtz_triggers_ibfk_1` FOREIGN KEY (`SCHED_NAME`, `JOB_NAME`, `JOB_GROUP`) REFERENCES `winteree_core_qrtz_job_details` (`SCHED_NAME`, `JOB_NAME`, `JOB_GROUP`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Records of winteree_core_qrtz_triggers
+-- ----------------------------
+BEGIN;
+INSERT INTO `winteree_core_qrtz_triggers` VALUES ('WinterEEScheduler', 'triggerUpdatePostPageRankJob', 'CMS', 'UpdatePostPageRankJob', 'CMS', NULL, 1595012400000, -1, 5, 'WAITING', 'CRON', 1594975669000, 0, NULL, 0, '');
 COMMIT;
 
 -- ----------------------------

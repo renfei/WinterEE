@@ -763,4 +763,30 @@ public class WintereeCoreServiceTest {
         Assertions.assertEquals(wintereeCoreService.deleteCmsMenu(uuid).getCode(), StateCode.OK.getCode());
     }
     //</editor-fold>
+
+    //<editor-fold desc="定时任务类的接口" defaultstate="collapsed">
+    @Test
+    @Rollback
+    @Transactional
+    public void taskTest() {
+        Assertions.assertEquals(wintereeCoreService.getTaskList(1, 10).getCode(), StateCode.OK.getCode());
+        TaskJobDTO taskJobDTO = new TaskJobDTO();
+        taskJobDTO.setJobName("TestJob");
+        taskJobDTO.setJobGroup("TestJobGroup");
+        taskJobDTO.setCronExpression("0 0 3 * * ? ");
+        taskJobDTO.setDescription("Unit Test");
+        taskJobDTO.setJobClassName("com.winteree.core.task.UnitTestJob");
+        Assertions.assertEquals(wintereeCoreService.saveTask(taskJobDTO).getCode(), StateCode.OK.getCode());
+        taskJobDTO.setJobName("NewTestJob");
+        taskJobDTO.setJobGroup("NewTestJobGroup");
+        taskJobDTO.setOldJobName("TestJob");
+        taskJobDTO.setOldJobGroup("TestJobGroup");
+        Assertions.assertEquals(wintereeCoreService.saveTask(taskJobDTO).getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.triggerJob("NewTestJob", "NewTestJobGroup").getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.pauseJob("NewTestJob", "NewTestJobGroup").getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.resumeJob("NewTestJob", "NewTestJobGroup").getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.modifyJob("NewTestJob", "NewTestJobGroup", "0 0 2 * * ? ").getCode(), StateCode.OK.getCode());
+        Assertions.assertEquals(wintereeCoreService.removeJob("NewTestJob", "NewTestJobGroup").getCode(), StateCode.OK.getCode());
+    }
+    //</editor-fold>
 }

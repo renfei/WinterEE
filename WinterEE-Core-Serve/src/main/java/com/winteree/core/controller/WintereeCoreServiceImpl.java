@@ -16,6 +16,7 @@ import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.GoogleAuthenticator;
 import net.renfei.sdk.utils.StringUtils;
+import org.quartz.SchedulerException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +55,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final RoleService roleService;
     private final CmsService cmsService;
     private final FileService fileService;
+    private final TaskService taskService;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -68,7 +70,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    OrganizationService organizationService,
                                    RoleService roleService,
                                    CmsService cmsService,
-                                   FileService fileService) {
+                                   FileService fileService,
+                                   TaskService taskService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -81,6 +84,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.roleService = roleService;
         this.cmsService = cmsService;
         this.fileService = fileService;
+        this.taskService = taskService;
     }
     //</editor-fold>
 
@@ -1613,6 +1617,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
     //</editor-fold>
 
+    //<editor-fold desc="文件类的接口" defaultstate="collapsed">
     @Override
     @PreAuthorize("hasAnyAuthority('platf:publicfile:upload')")
     @ApiOperation(value = "公开文件上传接口", notes = "该接口上传的文件将直接公共读，不做权限校验", tags = "文件类接口", response = String.class)
@@ -1695,4 +1700,117 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             }
         }
     }
+    //</editor-fold>
+
+    //<editor-fold desc="定时任务类的接口" defaultstate="collapsed">
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:task:view')")
+    @ApiOperation(value = "获取定时任务列表接口", notes = "获取定时任务列表接口", tags = "定时任务类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "页码", required = false, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "rows", value = "每页行数", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<ListData<TaskJobDTO>> getTaskList(int pages, int rows) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(taskService.getTaskList(pages, rows))
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:task:save')")
+    @ApiOperation(value = "保存定时任务接口", notes = "保存定时任务接口，包含新增和修改", tags = "定时任务类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "taskJobDTO", value = "定时任务数据传输对象", required = false, paramType = "query", dataType = "TaskJobDTO")
+    })
+    public APIResult saveTask(TaskJobDTO taskJobDTO) {
+        if (taskService.saveJob(taskJobDTO)) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message("Failure").build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:task:exec')")
+    @ApiOperation(value = "立即触发一个定时任务接口", notes = "立即触发一个定时任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult triggerJob(String jobName, String jobGroup) {
+        if (taskService.triggerJob(jobName, jobGroup)) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message("Failure").build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:task:pause')")
+    @ApiOperation(value = "暂停一个任务接口", notes = "暂停一个任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult pauseJob(String jobName, String jobGroup) {
+        if (taskService.pauseJob(jobName, jobGroup)) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message("Failure").build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:task:resume')")
+    @ApiOperation(value = "恢复一个任务接口", notes = "恢复一个任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult resumeJob(String jobName, String jobGroup) {
+        if (taskService.resumeJob(jobName, jobGroup)) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message("Failure").build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:task:delete')")
+    @ApiOperation(value = "删除一个任务接口", notes = "删除一个任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult removeJob(String jobName, String jobGroup) {
+        if (taskService.removeJob(jobName, jobGroup)) {
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message("Failure").build();
+        }
+    }
+
+    @PreAuthorize("hasAnyAuthority('platf:task:save')")
+    @ApiOperation(value = "修改某个任务的执行时间接口", notes = "修改某个任务的执行时间接口", tags = "定时任务类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "time", value = "执行时间", required = false, paramType = "query", dataType = "String")
+    })
+    @Override
+    public APIResult modifyJob(String jobName, String jobGroup, String time) {
+        try {
+            if (taskService.modifyJob(jobName, jobGroup, time)) {
+                return APIResult.success();
+            } else {
+                return APIResult.builder().code(StateCode.Failure).message("Failure").build();
+            }
+        } catch (SchedulerException e) {
+            log.error(e.getMessage(), e);
+            return APIResult.builder().code(StateCode.Failure).message("Failure").build();
+        }
+    }
+    //</editor-fold>
 }
