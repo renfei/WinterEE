@@ -14,6 +14,9 @@ import java.util.List;
  * @date : 2020-06-24 20:27
  */
 public interface CmsService {
+    static final Double DATE_WEIGHTED = 37.5D;
+    static final Double VIEW_WEIGHTED = 57.5D;
+    static final Double COMMENTHTED = 5D;
     /**
      * 获取CMS站点列表（后台管理）
      *
@@ -264,4 +267,9 @@ public interface CmsService {
      * @throws ForbiddenException
      */
     int deleteCmsMenu(String uuid) throws ForbiddenException;
+
+    /**
+     * 跟新文章评级
+     */
+    void updatePageRank();
 }

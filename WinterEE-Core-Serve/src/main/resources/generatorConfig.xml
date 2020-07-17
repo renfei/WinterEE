@@ -57,5 +57,16 @@
 <!--        <table tableName="winteree_core_cms_comments" domainObjectName="CmsCommentsDO"></table>-->
 <!--        <table tableName="winteree_core_files" domainObjectName="FilesDO"></table>-->
 <!--        <table tableName="winteree_core_cms_menu" domainObjectName="CmsMenuDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_blob_triggers" domainObjectName="QrtzBlobTriggersDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_calendars" domainObjectName="QrtzCalendarsDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_cron_triggers" domainObjectName="QrtzCronTriggersDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_fired_triggers" domainObjectName="QrtzFiredTriggersDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_job_details" domainObjectName="QrtzJobDetailsDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_locks" domainObjectName="QrtzLocksDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_paused_trigger_grps" domainObjectName="QrtzQausedTriggerGrpsDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_scheduler_state" domainObjectName="QrtzSchedulerStateDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_simple_triggers" domainObjectName="QrtzSimpleTriggersDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_simprop_triggers" domainObjectName="QrtzSimpropTriggersDO"></table>-->
+<!--        <table tableName="winteree_core_qrtz_triggers" domainObjectName="QrtzTriggersDO"></table>-->
     </context>
 </generatorConfiguration>

@@ -744,4 +744,28 @@ public interface WintereeCoreService {
 
     @PostMapping("/uploadPrivateFile")
     APIResult<String> uploadPrivateFile(MultipartFile file);
+
+    //<editor-fold desc="定时任务类的接口" defaultstate="collapsed">
+
+    @GetMapping("/task/list")
+    APIResult<ListData<TaskJobDTO>> getTaskList(@RequestParam("pages") int pages, @RequestParam("rows") int rows);
+
+    @PostMapping("/task/job")
+    APIResult saveTask(@RequestBody TaskJobDTO taskJobDTO);
+
+    @PostMapping("/task/job/trigger")
+    APIResult triggerJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
+
+    @PutMapping("/task/job/pause")
+    APIResult pauseJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
+
+    @PutMapping("/task/job/resume")
+    APIResult resumeJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
+
+    @DeleteMapping("/task/job")
+    APIResult removeJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
+
+    @PutMapping("/task/job")
+    APIResult modifyJob(@RequestParam("jobName")String jobName, @RequestParam("jobGroup") String jobGroup, @RequestParam("time") String time);
+    //</editor-fold>
 }
