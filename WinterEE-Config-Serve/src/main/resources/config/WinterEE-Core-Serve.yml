@@ -64,6 +64,11 @@ spring:
             threadsInheritContextClassLoaderOfInitializingThread: true
     #数据库方式
     job-store-type: jdbc
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
+      username: elastic
+      password: 123456
 mybatis:
   typeAliasesPackage: com.winteree.core.dao.entity
   mapperLocations: classpath*:mapper/mysql/*.xml
