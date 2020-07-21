@@ -7,6 +7,7 @@ import net.renfei.sdk.utils.Builder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,18 @@ public abstract class BaseService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String accountId = (String) authentication.getPrincipal();
             List<GrantedAuthority> grantedAuthorityList = (List<GrantedAuthority>) authentication.getAuthorities();
+            if (accountId == null) {
+                // 如果登陆用户没获取到的话
+                try {
+                    OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+                    if (oAuth2Authentication.getOAuth2Request().isApproved()) {
+                        // 但是认证通过了，那么可能是客户端模式访问的，那么给他超管的身份
+                        accountId = wintereeCoreConfig.getRootAccount();
+                    }
+                } catch (Exception exception) {
+                    return null;
+                }
+            }
             com.winteree.api.entity.AccountDTO accountDTO = accountService.getAccountById(accountId);
             if (accountDTO != null) {
                 List<String> authorities = null;
