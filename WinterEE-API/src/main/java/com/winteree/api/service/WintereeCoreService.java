@@ -791,4 +791,23 @@ public interface WintereeCoreService {
     @PutMapping("/task/job")
     APIResult modifyJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup, @RequestParam("time") String time);
     //</editor-fold>
+
+    //<editor-fold desc="行政区划类的接口" defaultstate="collapsed">
+
+    /**
+     * 根据行政代码查询行政区划数据
+     *
+     * @param code 行政代码
+     * @return RegionDTO
+     */
+    APIResult<RegionDTO> getRegionByCode(@RequestParam("code") String code);
+
+    /**
+     * 获取子级行政区划列表
+     *
+     * @param code 本级行政代码，为空时查询顶级行政区划
+     * @return List<RegionDTO>
+     */
+    APIResult<List<RegionDTO>> getChildRegion(@RequestParam("code") String code);
+    //</editor-fold>
 }
