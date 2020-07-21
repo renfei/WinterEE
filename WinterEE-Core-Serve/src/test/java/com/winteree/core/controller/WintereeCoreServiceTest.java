@@ -2,6 +2,7 @@ package com.winteree.core.controller;
 
 import com.winteree.api.entity.*;
 import com.winteree.api.service.WintereeCoreService;
+import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.RSAUtils;
@@ -21,10 +22,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * <p>Title: WintereeCoreServiceTest</p>
@@ -33,6 +31,7 @@ import java.util.UUID;
  * @author RenFei
  * @date : 2020-04-16 21:15
  */
+@Slf4j
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DisplayName("Test WintereeCoreService")
@@ -789,4 +788,29 @@ public class WintereeCoreServiceTest {
         Assertions.assertEquals(wintereeCoreService.removeJob("NewTestJob", "NewTestJobGroup").getCode(), StateCode.OK.getCode());
     }
     //</editor-fold>
+
+    //<editor-fold desc="行政区划类的接口" defaultstate="collapsed">
+    @Test
+    public void regionTest() {
+        log.info("获取北京(110000)行政区划对象");
+        APIResult<RegionDTO> regionDTOAPIResult = wintereeCoreService.getRegionByCode("110000");
+        Assertions.assertEquals(regionDTOAPIResult.getCode(), StateCode.OK.getCode());
+        log.info(regionDTOAPIResult.getData().getRegionName());
+        log.info("");
+        log.info("获取全国顶级行政区划列表：");
+        APIResult<List<RegionDTO>> apiResult = wintereeCoreService.getChildRegion("");
+        Assertions.assertEquals(regionDTOAPIResult.getCode(), StateCode.OK.getCode());
+        apiResult.getData().forEach(regionDTO -> log.info(regionDTO.getRegionName()));
+        log.info("");
+        log.info("获取河北省(130000)行政区划列表：");
+        apiResult = wintereeCoreService.getChildRegion("130000");
+        Assertions.assertEquals(regionDTOAPIResult.getCode(), StateCode.OK.getCode());
+        apiResult.getData().forEach(regionDTO -> log.info(regionDTO.getRegionName()));
+        log.info("");
+        log.info("获取河北省张家口市(130700)行政区划列表：");
+        apiResult = wintereeCoreService.getChildRegion("130700");
+        Assertions.assertEquals(regionDTOAPIResult.getCode(), StateCode.OK.getCode());
+        apiResult.getData().forEach(regionDTO -> log.info(regionDTO.getRegionName()));
+    }
+    //<editor-fold>
 }

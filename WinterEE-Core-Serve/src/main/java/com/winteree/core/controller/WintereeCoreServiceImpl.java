@@ -56,6 +56,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final CmsService cmsService;
     private final FileService fileService;
     private final TaskService taskService;
+    private final RegionService regionService;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -71,7 +72,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    RoleService roleService,
                                    CmsService cmsService,
                                    FileService fileService,
-                                   TaskService taskService) {
+                                   TaskService taskService,
+                                   RegionService regionService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -85,6 +87,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.cmsService = cmsService;
         this.fileService = fileService;
         this.taskService = taskService;
+        this.regionService = regionService;
     }
     //</editor-fold>
 
@@ -1840,5 +1843,57 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             return APIResult.builder().code(StateCode.Failure).message("Failure").build();
         }
     }
+    //</editor-fold>
+
+    //<editor-fold desc="行政区划类的接口" defaultstate="collapsed">
+
+    @Override
+    @ApiOperation(value = "获取行政区划接口", notes = "获取行政区划接口", tags = "行政区划类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code", value = "行政区划代码（6位数字）", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<RegionDTO> getRegionByCode(String code) {
+        RegionDTO regionDTO = regionService.getRegionByCode(code);
+        if (regionDTO == null) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message("未查询到指定的行政区划数据")
+                    .build();
+        } else {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(regionDTO)
+                    .build();
+        }
+    }
+
+    /**
+     * 获取子级行政区划列表
+     *
+     * @param code 本级行政代码，为空时查询顶级行政区划
+     * @return List<RegionDTO>
+     */
+    @Override
+    @ApiOperation(value = "获取子级行政区划接口", notes = "获取子级行政区划接口", tags = "行政区划类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code", value = "行政区划代码（6位数字）", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<List<RegionDTO>> getChildRegion(String code) {
+        List<RegionDTO> regionDTOS = regionService.getChildRegion(code);
+        if (regionDTOS == null) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message("未查询到指定的行政区划数据")
+                    .build();
+        } else {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(regionDTOS)
+                    .build();
+        }
+    }
+
     //</editor-fold>
 }

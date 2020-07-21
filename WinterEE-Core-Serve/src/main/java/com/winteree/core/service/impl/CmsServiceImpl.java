@@ -1017,6 +1017,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     @Override
     public void updatePageRank() {
         CmsPostsDOExample example = new CmsPostsDOExample();
+        example.createCriteria();
         int pages = 1;
         for (; ; ) {
             PageHelper.startPage(pages, 100);
@@ -1043,8 +1044,9 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     public void updateViews(CmsPostsDOWithBLOBs cmsPostsDO) {
         CmsPostsDOExample example = new CmsPostsDOExample();
         example.createCriteria().andUuidEqualTo(cmsPostsDO.getUuid());
+        cmsPostsDO.setId(null);
         cmsPostsDO.setViews(cmsPostsDO.getViews() + 1);
-        cmsPostsDOMapper.updateByExampleWithBLOBs(cmsPostsDO, example);
+        cmsPostsDOMapper.updateByExampleSelective(cmsPostsDO, example);
     }
 
     private void setPageRank(CmsPostsDOWithBLOBs cmsPostsDOWithBLOBs) {

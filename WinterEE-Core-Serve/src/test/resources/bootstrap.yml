@@ -77,7 +77,7 @@ spring:
     job-store-type: jdbc
 mybatis:
   typeAliasesPackage: com.winteree.core.dao.entity
-  mapperLocations: classpath*:mapper/*.xml
+  mapperLocations: classpath*:mapper/mysql/*.xml
   #  configuration:
   #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   #pagehelper分页插件配置
