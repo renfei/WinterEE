@@ -11,6 +11,7 @@ import com.winteree.core.dao.entity.*;
 import com.winteree.core.entity.AccountDTO;
 import com.winteree.core.service.*;
 import net.renfei.sdk.utils.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -475,6 +476,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     @Override
     public ListData<CmsPostsDTO> getCmsPostList(CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO) throws ForbiddenException, FailureException {
         CmsPostsDOExample example = new CmsPostsDOExample();
+        example.setOrderByClause("release_time DESC");
         CmsPostsDOExample.Criteria criteria = example.createCriteria();
         CmsSiteDTO cmsSiteDTO = this.getCmsSiteByUuid(cmsPostSearchCriteriaVO.getSiteUuid());
         if (cmsSiteDTO == null) {
@@ -508,6 +510,70 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         cmsPostsDTOListData.setData(cmsPostsDTOS);
         cmsPostsDTOListData.setTotal(page.getTotal());
         return cmsPostsDTOListData;
+    }
+
+    /**
+     * 根据栏目ID获取文章列表（前台）
+     *
+     * @param categoryUuid 栏目UUID
+     * @param pages        页码
+     * @param rows         每页行数
+     * @return 文章列表
+     */
+    @Override
+    public ListData<CmsPostsDTO> getCmsPostListByCategory(String categoryUuid, int pages, int rows) {
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        example.setOrderByClause("release_time DESC");
+        // 此处条件比后台要增加 发布时间判断、软删除判断
+        example.createCriteria()
+                .andCategoryUuidEqualTo(categoryUuid)
+                .andReleaseTimeLessThan(new Date())
+                .andIsDeleteEqualTo(false);
+        Page page = PageHelper.startPage(pages, rows);
+        ListData<CmsPostsDTO> cmsPostsDTOListData = new ListData<>();
+        cmsPostsDTOListData.setTotal(0L);
+        List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(example);
+        if (BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+            return cmsPostsDTOListData;
+        }
+        List<CmsPostsDTO> cmsPostsDTOS = new ArrayList<>();
+        cmsPostsDOWithBLOBs.forEach(cmsPostsWithBLOBs -> {
+            CmsPostsDTO cmsPostsDTO = convert(cmsPostsWithBLOBs);
+            List<CmsTagDTO> cmsTagDTOS = this.getTagListByPostUuid(cmsPostsWithBLOBs.getUuid());
+            if (!BeanUtils.isEmpty(cmsTagDTOS)) {
+                List<String> ids = new ArrayList<>();
+                cmsTagDTOS.forEach(tag -> ids.add(tag.getUuid()));
+                cmsPostsDTO.setTagIds(ids);
+            }
+            cmsPostsDTOS.add(cmsPostsDTO);
+        });
+        cmsPostsDTOListData.setData(cmsPostsDTOS);
+        cmsPostsDTOListData.setTotal(page.getTotal());
+        return cmsPostsDTOListData;
+    }
+
+    /**
+     * 根据文章ID获取文章详情并更新浏览量
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    @Override
+    public CmsPostsDTO getCmsPostByUuid(String uuid) {
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        // 此处条件比后台要增加 发布时间判断、软删除判断
+        example.createCriteria()
+                .andUuidEqualTo(uuid)
+                .andReleaseTimeLessThan(new Date())
+                .andIsDeleteEqualTo(false);
+        List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(example);
+        if (BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+            return null;
+        }
+        CmsPostsDOWithBLOBs cmsPostsDO = ListUtils.getOne(cmsPostsDOWithBLOBs);
+        // 更新文章浏览量
+        updateViews(cmsPostsDO);
+        return convert(cmsPostsDO);
     }
 
     /**
@@ -966,6 +1032,19 @@ public class CmsServiceImpl extends BaseService implements CmsService {
             }
         }
 
+    }
+
+    /**
+     * 更新文章浏览量
+     *
+     * @param cmsPostsDO 文章对象
+     */
+    @Async
+    public void updateViews(CmsPostsDOWithBLOBs cmsPostsDO) {
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        example.createCriteria().andUuidEqualTo(cmsPostsDO.getUuid());
+        cmsPostsDO.setViews(cmsPostsDO.getViews() + 1);
+        cmsPostsDOMapper.updateByExampleWithBLOBs(cmsPostsDO, example);
     }
 
     private void setPageRank(CmsPostsDOWithBLOBs cmsPostsDOWithBLOBs) {

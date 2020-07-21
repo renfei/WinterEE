@@ -17,6 +17,7 @@ public interface CmsService {
     static final Double DATE_WEIGHTED = 37.5D;
     static final Double VIEW_WEIGHTED = 57.5D;
     static final Double COMMENTHTED = 5D;
+
     /**
      * 获取CMS站点列表（后台管理）
      *
@@ -132,6 +133,24 @@ public interface CmsService {
      * @throws FailureException   失败异常
      */
     ListData<CmsPostsDTO> getCmsPostList(CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO) throws ForbiddenException, FailureException;
+
+    /**
+     * 根据栏目ID获取文章列表（前台）
+     *
+     * @param categoryUuid 栏目UUID
+     * @param pages        页码
+     * @param rows         每页行数
+     * @return 文章列表
+     */
+    ListData<CmsPostsDTO> getCmsPostListByCategory(String categoryUuid, int pages, int rows);
+
+    /**
+     * 根据文章ID获取文章详情并更新浏览量
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    CmsPostsDTO getCmsPostByUuid(String uuid);
 
     /**
      * 添加文章（后台管理）
