@@ -143,7 +143,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/account")
-    APIResult<ListData<AccountDTO>> getAccountList(AccountSearchCriteriaVO accountSearchCriteriaVO);
+    APIResult<ListData<AccountDTO>> getAccountList(@RequestBody AccountSearchCriteriaVO accountSearchCriteriaVO);
 
     /**
      * 添加用户
@@ -611,7 +611,7 @@ public interface WintereeCoreService {
      * @return 文章列表
      */
     @GetMapping("/cms/posts/list")
-    APIResult<ListData<CmsPostsDTO>> getCmsPostList(CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO);
+    APIResult<ListData<CmsPostsDTO>> getCmsPostList(@RequestBody CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO);
 
     /**
      * 添加文章（后台管理）
