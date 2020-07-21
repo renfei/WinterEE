@@ -1248,6 +1248,34 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
+    @ApiOperation(value = "根据栏目ID获取文章列表（前台）", notes = "根据栏目ID获取文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "categoryUuid", value = "分类UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "pages", value = "页码", required = false, paramType = "query", dataType = "int"),
+            @ApiImplicitParam(name = "rows", value = "每页行数", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<ListData<CmsPostsDTO>> getCmsPostListByCategory(String categoryUuid, int pages, int rows) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getCmsPostListByCategory(categoryUuid, pages, rows))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "根据文章ID获取文章详情并更新浏览量（前台）", notes = "根据文章ID获取文章详情并更新浏览量（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<CmsPostsDTO> getCmsPostByUuid(String uuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getCmsPostByUuid(uuid))
+                .build();
+    }
+
+    @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsposts:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @ApiOperation(value = "添加文章接口", notes = "添加文章", tags = "CMS类接口", response = String.class)
     @ApiImplicitParams({

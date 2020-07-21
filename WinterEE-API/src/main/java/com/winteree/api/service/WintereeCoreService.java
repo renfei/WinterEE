@@ -24,7 +24,8 @@ public interface WintereeCoreService {
      * @return 当没有找到所需的语言时将返回默认内容
      */
     @GetMapping("/i18n/{language}/{message}/{defaultMessage}")
-    String getMessage(@PathVariable("language") String language, @PathVariable("message") String message, @PathVariable("defaultMessage") String defaultMessage);
+    String getMessage(@PathVariable("language") String language, @PathVariable("message") String message,
+                      @PathVariable("defaultMessage") String defaultMessage);
 
     //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
 
@@ -614,6 +615,28 @@ public interface WintereeCoreService {
     APIResult<ListData<CmsPostsDTO>> getCmsPostList(@RequestBody CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO);
 
     /**
+     * 根据栏目ID获取文章列表（前台）
+     *
+     * @param categoryUuid 栏目UUID
+     * @param pages        页码
+     * @param rows         每页行数
+     * @return 文章列表
+     */
+    @GetMapping("/cms/posts/bycategory/list")
+    APIResult<ListData<CmsPostsDTO>> getCmsPostListByCategory(@RequestParam("categoryUuid") String categoryUuid,
+                                                              @RequestParam("pages") int pages,
+                                                              @RequestParam("rows") int rows);
+
+    /**
+     * 根据文章ID获取文章详情并更新浏览量
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    @GetMapping("/cms/posts/uuid")
+    APIResult<CmsPostsDTO> getCmsPostByUuid(@RequestParam("uuid") String uuid);
+
+    /**
      * 添加文章（后台管理）
      *
      * @param cmsPostsDTO 文章传输对象
@@ -766,6 +789,6 @@ public interface WintereeCoreService {
     APIResult removeJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
 
     @PutMapping("/task/job")
-    APIResult modifyJob(@RequestParam("jobName")String jobName, @RequestParam("jobGroup") String jobGroup, @RequestParam("time") String time);
+    APIResult modifyJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup, @RequestParam("time") String time);
     //</editor-fold>
 }
