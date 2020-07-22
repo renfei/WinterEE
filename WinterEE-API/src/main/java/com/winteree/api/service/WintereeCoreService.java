@@ -164,6 +164,29 @@ public interface WintereeCoreService {
      */
     @PutMapping("/account")
     APIResult updateAccount(@RequestBody AccountDTO accountDTO);
+
+    /**
+     * 发送验证码（内部接口）
+     *
+     * @param userName       手机或邮箱
+     * @param tenantUuid     租户ID
+     * @param validationType 验证码类型
+     * @return
+     */
+    @PostMapping("/inside/account/verificationCode")
+    APIResult sendVerificationCode(@RequestParam("userName") String userName,
+                                   @RequestParam("tenantUuid") String tenantUuid,
+                                   @RequestParam("validationType") String validationType);
+
+    /**
+     * 获取验证码并标记验证码为已使用状态
+     *
+     * @param userName       手机号/邮箱地址
+     * @param validationType 验证码类别
+     * @return VerificationCodeDTO
+     */
+    @GetMapping("/inside/account/verificationCode")
+    APIResult<VerificationCodeDTO> getVerificationCode(String userName, ValidationType validationType);
     //</editor-fold>
 
     //<editor-fold desc="菜单类的接口" defaultstate="collapsed">

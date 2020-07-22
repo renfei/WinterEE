@@ -20,6 +20,7 @@ public class WintereeCoreConfig {
     private Boolean enableSwagger;
     private Oauth2 oauth2;
     private Aliyun aliyun;
+    private AliyunSms aliyunSms;
     private String aliyunOssEndpoint;
     private String aliyunOssPublicBuckename;
     private String aliyunOssPrivateBuckename;
@@ -30,6 +31,7 @@ public class WintereeCoreConfig {
     private String storagePublicUrl;
     private String systemname;
     private String totpseed;
+    private String smsService;
 
     @Data
     public static class Oauth2 {
@@ -42,5 +44,11 @@ public class WintereeCoreConfig {
         private String regionId;
         private String accessKeyId;
         private String secret;
+    }
+
+    @Data
+    public static class AliyunSms{
+        private String signName;
+        private String templateCode;
     }
 }

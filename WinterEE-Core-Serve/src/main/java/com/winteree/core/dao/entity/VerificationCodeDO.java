@@ -17,9 +17,9 @@ public class VerificationCodeDO {
 
     private Date deadDate;
 
-    private Byte usable;
+    private Boolean usable;
 
-    private Byte sended;
+    private Boolean sended;
 
     private String contentText;
 
@@ -85,19 +85,19 @@ public class VerificationCodeDO {
         this.deadDate = deadDate;
     }
 
-    public Byte getUsable() {
+    public Boolean getUsable() {
         return usable;
     }
 
-    public void setUsable(Byte usable) {
+    public void setUsable(Boolean usable) {
         this.usable = usable;
     }
 
-    public Byte getSended() {
+    public Boolean getSended() {
         return sended;
     }
 
-    public void setSended(Byte sended) {
+    public void setSended(Boolean sended) {
         this.sended = sended;
     }
 

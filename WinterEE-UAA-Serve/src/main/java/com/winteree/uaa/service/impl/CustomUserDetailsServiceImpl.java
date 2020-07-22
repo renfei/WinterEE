@@ -2,12 +2,17 @@ package com.winteree.uaa.service.impl;
 
 import com.winteree.api.entity.LogSubTypeEnum;
 import com.winteree.api.entity.RunModeEnum;
+import com.winteree.api.entity.ValidationType;
+import com.winteree.api.entity.VerificationCodeDTO;
+import com.winteree.uaa.client.WintereeCoreServiceClient;
 import com.winteree.uaa.config.WintereeUaaConfig;
 import com.winteree.uaa.dao.entity.AccountDO;
 import com.winteree.uaa.service.AccountService;
 import com.winteree.uaa.service.I18nService;
 import com.winteree.uaa.service.LogService;
 import com.winteree.uaa.service.SecretKeyService;
+import net.renfei.sdk.comm.StateCode;
+import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.AESUtil;
 import net.renfei.sdk.utils.PasswordUtils;
 import org.springframework.security.authentication.DisabledException;
@@ -27,6 +32,7 @@ import java.util.Date;
  */
 @Service
 public class CustomUserDetailsServiceImpl implements UserDetailsService {
+    private final WintereeCoreServiceClient wintereeCoreServiceClient;
     private final AccountService accountService;
     private final I18nService i18NService;
     private final SecretKeyService secretKeyService;
@@ -37,11 +43,13 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
      */
     public static final int PASSWORD_ERROR_TIMES_LOCKED = 3;
 
-    public CustomUserDetailsServiceImpl(AccountService accountService,
+    public CustomUserDetailsServiceImpl(WintereeCoreServiceClient wintereeCoreServiceClient,
+                                        AccountService accountService,
                                         I18nService i18NService,
                                         SecretKeyService secretKeyService,
                                         LogService logService,
                                         WintereeUaaConfig wintereeUaaConfig) {
+        this.wintereeCoreServiceClient = wintereeCoreServiceClient;
         this.accountService = accountService;
         this.i18NService = i18NService;
         this.secretKeyService = secretKeyService;
@@ -103,7 +111,17 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
         checkAccountState(accountDO, language);
         // AES解密密码
         code = decryptPassword(code, language, keyid);
-        //TODO 验证验证码
+        // 验证验证码
+        APIResult<VerificationCodeDTO> apiResult =
+                wintereeCoreServiceClient.getVerificationCode(accountDO.getUserName(), ValidationType.SIGNUP);
+        if (!StateCode.OK.getCode().equals(apiResult.getCode()) || apiResult.getData() == null) {
+            throw new UsernameNotFoundException("验证码错误，请重新获取新的验证码");
+        }
+        if (!apiResult.getData().getVerificationCode().equals(code)) {
+            throw new UsernameNotFoundException("验证码错误，请重新获取新的验证码");
+        }
+        // 密码错误会锁定账户，为啥验证码错误不会锁定账户呢？因为密码是静态的不会变，会被暴力破解到，验证码是动态的
+        //TODO TOTP两步验证
         return getUser(accountDO);
     }
 

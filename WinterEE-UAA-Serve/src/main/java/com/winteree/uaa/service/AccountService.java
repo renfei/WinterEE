@@ -1,6 +1,8 @@
 package com.winteree.uaa.service;
 
+import com.winteree.api.entity.AccountSignUpDTO;
 import com.winteree.uaa.dao.entity.AccountDO;
+import net.renfei.sdk.entity.APIResult;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
@@ -13,6 +15,13 @@ import java.util.List;
  * @date : 2020-04-18 20:59
  */
 public interface AccountService {
+    /**
+     * 账户注册
+     *
+     * @param accountSignUpDTO 账户注册数据传输对象
+     * @return
+     */
+    APIResult signUp(AccountSignUpDTO accountSignUpDTO);
     /**
      * 根据用户名获取账号对象
      *
