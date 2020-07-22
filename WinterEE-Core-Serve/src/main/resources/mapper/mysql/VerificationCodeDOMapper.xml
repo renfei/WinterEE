@@ -9,8 +9,8 @@
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="verification_code" jdbcType="VARCHAR" property="verificationCode" />
     <result column="dead_date" jdbcType="TIMESTAMP" property="deadDate" />
-    <result column="usable" jdbcType="TINYINT" property="usable" />
-    <result column="sended" jdbcType="TINYINT" property="sended" />
+    <result column="usable" jdbcType="BIT" property="usable" />
+    <result column="sended" jdbcType="BIT" property="sended" />
     <result column="content_text" jdbcType="VARCHAR" property="contentText" />
     <result column="validation_type" jdbcType="VARCHAR" property="validationType" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -116,7 +116,7 @@
       update_time)
     values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{accountUuid,jdbcType=VARCHAR}, 
       #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{verificationCode,jdbcType=VARCHAR}, 
-      #{deadDate,jdbcType=TIMESTAMP}, #{usable,jdbcType=TINYINT}, #{sended,jdbcType=TINYINT}, 
+      #{deadDate,jdbcType=TIMESTAMP}, #{usable,jdbcType=BIT}, #{sended,jdbcType=BIT}, 
       #{contentText,jdbcType=VARCHAR}, #{validationType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP})
   </insert>
@@ -186,10 +186,10 @@
         #{deadDate,jdbcType=TIMESTAMP},
       </if>
       <if test="usable != null">
-        #{usable,jdbcType=TINYINT},
+        #{usable,jdbcType=BIT},
       </if>
       <if test="sended != null">
-        #{sended,jdbcType=TINYINT},
+        #{sended,jdbcType=BIT},
       </if>
       <if test="contentText != null">
         #{contentText,jdbcType=VARCHAR},
@@ -236,10 +236,10 @@
         dead_date = #{record.deadDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.usable != null">
-        usable = #{record.usable,jdbcType=TINYINT},
+        usable = #{record.usable,jdbcType=BIT},
       </if>
       <if test="record.sended != null">
-        sended = #{record.sended,jdbcType=TINYINT},
+        sended = #{record.sended,jdbcType=BIT},
       </if>
       <if test="record.contentText != null">
         content_text = #{record.contentText,jdbcType=VARCHAR},
@@ -267,8 +267,8 @@
       email = #{record.email,jdbcType=VARCHAR},
       verification_code = #{record.verificationCode,jdbcType=VARCHAR},
       dead_date = #{record.deadDate,jdbcType=TIMESTAMP},
-      usable = #{record.usable,jdbcType=TINYINT},
-      sended = #{record.sended,jdbcType=TINYINT},
+      usable = #{record.usable,jdbcType=BIT},
+      sended = #{record.sended,jdbcType=BIT},
       content_text = #{record.contentText,jdbcType=VARCHAR},
       validation_type = #{record.validationType,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -299,10 +299,10 @@
         dead_date = #{deadDate,jdbcType=TIMESTAMP},
       </if>
       <if test="usable != null">
-        usable = #{usable,jdbcType=TINYINT},
+        usable = #{usable,jdbcType=BIT},
       </if>
       <if test="sended != null">
-        sended = #{sended,jdbcType=TINYINT},
+        sended = #{sended,jdbcType=BIT},
       </if>
       <if test="contentText != null">
         content_text = #{contentText,jdbcType=VARCHAR},
@@ -327,8 +327,8 @@
       email = #{email,jdbcType=VARCHAR},
       verification_code = #{verificationCode,jdbcType=VARCHAR},
       dead_date = #{deadDate,jdbcType=TIMESTAMP},
-      usable = #{usable,jdbcType=TINYINT},
-      sended = #{sended,jdbcType=TINYINT},
+      usable = #{usable,jdbcType=BIT},
+      sended = #{sended,jdbcType=BIT},
       content_text = #{contentText,jdbcType=VARCHAR},
       validation_type = #{validationType,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},

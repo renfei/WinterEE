@@ -13,10 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
-import net.renfei.sdk.utils.BeanUtils;
-import net.renfei.sdk.utils.GoogleAuthenticator;
-import net.renfei.sdk.utils.StringUtils;
+import net.renfei.sdk.utils.*;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,6 +56,9 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final FileService fileService;
     private final TaskService taskService;
     private final RegionService regionService;
+    private final VerificationCodeService verificationCodeService;
+    private final EmailService emailService;
+    private final SmsService aliYunSmsService;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -73,7 +75,10 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    CmsService cmsService,
                                    FileService fileService,
                                    TaskService taskService,
-                                   RegionService regionService) {
+                                   RegionService regionService,
+                                   VerificationCodeService verificationCodeService,
+                                   EmailService emailService,
+                                   @Qualifier("aliyunSmsServiceImpl") SmsService aliYunSmsService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -88,6 +93,9 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.fileService = fileService;
         this.taskService = taskService;
         this.regionService = regionService;
+        this.verificationCodeService = verificationCodeService;
+        this.emailService = emailService;
+        this.aliYunSmsService = aliYunSmsService;
     }
     //</editor-fold>
 
@@ -343,6 +351,97 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         } catch (ForbiddenException forbiddenException) {
             return APIResult.builder().code(StateCode.Forbidden).message(forbiddenException.getMessage()).build();
         }
+    }
+
+    /**
+     * 发送验证码(内部接口)
+     *
+     * @param userName       手机或邮箱
+     * @param tenantUuid     租户ID
+     * @param validationType 验证码类型
+     * @return
+     */
+    @Override
+    @ApiOperation(value = "发送验证码", notes = "发送验证码", tags = "账户接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "手机或邮箱", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "validationType", value = "验证码类型", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult sendVerificationCode(String userName, String tenantUuid, String validationType) {
+        ValidationType validationType1 = null;
+        try {
+            validationType1 = ValidationType.valueOf(validationType);
+        } catch (Exception e) {
+            return APIResult.builder().code(StateCode.Failure).message("ValidationType Error").build();
+        }
+        // 验证码有可能是自己生成的，也可能是短信接口返回的
+        String code = StringUtils.getRandomNumber(6);
+        VerificationCodeDTO verificationCodeDTO = new VerificationCodeDTO();
+        // 调用发送服务发送验证码
+        if (StringUtils.isChinaPhone(userName)) {
+            verificationCodeDTO.setPhone(userName);
+            // 短信服务
+            if ("aliyun".equals(wintereeCoreConfig.getSmsService())) {
+                Sms sms = Builder.of(Sms::new)
+                        .with(Sms::setPhoneNumbers, userName)
+                        .with(Sms::setSignName, wintereeCoreConfig.getAliyunSms().getSignName())
+                        .with(Sms::setTemplateCode, wintereeCoreConfig.getAliyunSms().getTemplateCode())
+                        .with(Sms::setTemplateParam, "{\"code\":\"" + code + "\"}")
+                        .with(Sms::setTenantUuid, tenantUuid)
+                        .build();
+                aliYunSmsService.sendSms(sms);
+            } else {
+                log.error("短信服务配置错误，没有匹配到启用的短信服务");
+                return APIResult.builder().code(StateCode.Failure).message("请联系管理员：短信服务配置错误，没有匹配到启用的短信服务").build();
+            }
+            verificationCodeDTO.setVerificationCode(code);
+        } else if (StringUtils.isEmail(userName)) {
+            verificationCodeDTO.setEmail(userName);
+            String contentText = "您的验证码为【" + code + "】，有效期10分钟。";
+            verificationCodeDTO.setVerificationCode(code);
+            verificationCodeDTO.setContentText(contentText);
+            Email email = Builder.of(Email::new)
+                    .with(Email::setTo, userName)
+                    .with(Email::setSubject, "您的验证码邮件")
+                    .with(Email::setText, contentText)
+                    .build();
+            emailService.send(email);
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message("只有手机号和邮箱地址才能发送验证码").build();
+        }
+        // 保存验证码
+        verificationCodeDTO.setSended(true);
+        verificationCodeDTO.setValidationType(validationType1);
+        // 十分钟有效期
+        verificationCodeDTO.setDeadDate(DateUtils.nextMinutes(10));
+        if (verificationCodeService.saveVerificationCode(verificationCodeDTO) == 1) {
+            // 返回结果
+            return APIResult.success();
+        } else {
+            return APIResult.builder().code(StateCode.Failure).message("内部错误：保存验证码失败，请重试").build();
+        }
+    }
+
+    /**
+     * 获取验证码并标记验证码为已使用状态
+     *
+     * @param userName       手机号/邮箱地址
+     * @param validationType 验证码类别
+     * @return VerificationCodeDTO
+     */
+    @Override
+    @ApiOperation(value = "获取验证码并标记验证码为已使用状态", notes = "获取验证码并标记验证码为已使用状态", tags = "账户接口", response = APIResult.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "手机或邮箱", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "validationType", value = "验证码类型", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<VerificationCodeDTO> getVerificationCode(String userName, ValidationType validationType) {
+        VerificationCodeDTO verificationCodeDTO = verificationCodeService.getVerificationCode(userName, validationType);
+        if (verificationCodeDTO == null) {
+            return APIResult.builder().code(StateCode.Failure).message("获取验证码失败").build();
+        }
+        return APIResult.builder().code(StateCode.OK).message("获取验证码失败").data(verificationCodeDTO).build();
     }
     //</editor-fold>
 

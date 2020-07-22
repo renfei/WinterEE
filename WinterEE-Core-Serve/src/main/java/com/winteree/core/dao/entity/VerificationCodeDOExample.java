@@ -12,7 +12,7 @@ public class VerificationCodeDOExample {
     protected List<Criteria> oredCriteria;
 
     public VerificationCodeDOExample() {
-        oredCriteria = new ArrayList<Criteria>();
+        oredCriteria = new ArrayList<>();
     }
 
     public void setOrderByClause(String orderByClause) {
@@ -69,7 +69,7 @@ public class VerificationCodeDOExample {
 
         protected GeneratedCriteria() {
             super();
-            criteria = new ArrayList<Criterion>();
+            criteria = new ArrayList<>();
         }
 
         public boolean isValid() {
@@ -585,52 +585,52 @@ public class VerificationCodeDOExample {
             return (Criteria) this;
         }
 
-        public Criteria andUsableEqualTo(Byte value) {
+        public Criteria andUsableEqualTo(Boolean value) {
             addCriterion("usable =", value, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableNotEqualTo(Byte value) {
+        public Criteria andUsableNotEqualTo(Boolean value) {
             addCriterion("usable <>", value, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableGreaterThan(Byte value) {
+        public Criteria andUsableGreaterThan(Boolean value) {
             addCriterion("usable >", value, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableGreaterThanOrEqualTo(Byte value) {
+        public Criteria andUsableGreaterThanOrEqualTo(Boolean value) {
             addCriterion("usable >=", value, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableLessThan(Byte value) {
+        public Criteria andUsableLessThan(Boolean value) {
             addCriterion("usable <", value, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableLessThanOrEqualTo(Byte value) {
+        public Criteria andUsableLessThanOrEqualTo(Boolean value) {
             addCriterion("usable <=", value, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableIn(List<Byte> values) {
+        public Criteria andUsableIn(List<Boolean> values) {
             addCriterion("usable in", values, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableNotIn(List<Byte> values) {
+        public Criteria andUsableNotIn(List<Boolean> values) {
             addCriterion("usable not in", values, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableBetween(Byte value1, Byte value2) {
+        public Criteria andUsableBetween(Boolean value1, Boolean value2) {
             addCriterion("usable between", value1, value2, "usable");
             return (Criteria) this;
         }
 
-        public Criteria andUsableNotBetween(Byte value1, Byte value2) {
+        public Criteria andUsableNotBetween(Boolean value1, Boolean value2) {
             addCriterion("usable not between", value1, value2, "usable");
             return (Criteria) this;
         }
@@ -645,52 +645,52 @@ public class VerificationCodeDOExample {
             return (Criteria) this;
         }
 
-        public Criteria andSendedEqualTo(Byte value) {
+        public Criteria andSendedEqualTo(Boolean value) {
             addCriterion("sended =", value, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedNotEqualTo(Byte value) {
+        public Criteria andSendedNotEqualTo(Boolean value) {
             addCriterion("sended <>", value, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedGreaterThan(Byte value) {
+        public Criteria andSendedGreaterThan(Boolean value) {
             addCriterion("sended >", value, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedGreaterThanOrEqualTo(Byte value) {
+        public Criteria andSendedGreaterThanOrEqualTo(Boolean value) {
             addCriterion("sended >=", value, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedLessThan(Byte value) {
+        public Criteria andSendedLessThan(Boolean value) {
             addCriterion("sended <", value, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedLessThanOrEqualTo(Byte value) {
+        public Criteria andSendedLessThanOrEqualTo(Boolean value) {
             addCriterion("sended <=", value, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedIn(List<Byte> values) {
+        public Criteria andSendedIn(List<Boolean> values) {
             addCriterion("sended in", values, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedNotIn(List<Byte> values) {
+        public Criteria andSendedNotIn(List<Boolean> values) {
             addCriterion("sended not in", values, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedBetween(Byte value1, Byte value2) {
+        public Criteria andSendedBetween(Boolean value1, Boolean value2) {
             addCriterion("sended between", value1, value2, "sended");
             return (Criteria) this;
         }
 
-        public Criteria andSendedNotBetween(Byte value1, Byte value2) {
+        public Criteria andSendedNotBetween(Boolean value1, Boolean value2) {
             addCriterion("sended not between", value1, value2, "sended");
             return (Criteria) this;
         }
@@ -957,7 +957,6 @@ public class VerificationCodeDOExample {
     }
 
     public static class Criteria extends GeneratedCriteria {
-
         protected Criteria() {
             super();
         }
