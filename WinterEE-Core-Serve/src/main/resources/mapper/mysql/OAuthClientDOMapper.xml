@@ -15,6 +15,7 @@
     <result column="archived" jdbcType="TINYINT" property="archived" />
     <result column="trusted" jdbcType="TINYINT" property="trusted" />
     <result column="autoapprove" jdbcType="VARCHAR" property="autoapprove" />
+    <result column="tenant_uuid" jdbcType="VARCHAR" property="tenantUuid" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.winteree.core.dao.entity.OAuthClientDO">
     <result column="additional_information" jdbcType="LONGVARCHAR" property="additionalInformation" />
@@ -80,7 +81,7 @@
   <sql id="Base_Column_List">
     client_id, resource_ids, client_secret, scope, authorized_grant_types, web_server_redirect_uri, 
     authorities, access_token_validity, refresh_token_validity, create_time, archived, 
-    trusted, autoapprove
+    trusted, autoapprove, tenant_uuid
   </sql>
   <sql id="Blob_Column_List">
     additional_information
@@ -93,7 +94,7 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from winteree.oauth_client_details
+    from oauth_client_details
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -107,7 +108,7 @@
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from winteree.oauth_client_details
+    from oauth_client_details
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -120,33 +121,35 @@
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from winteree.oauth_client_details
+    from oauth_client_details
     where client_id = #{clientId,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from winteree.oauth_client_details
+    delete from oauth_client_details
     where client_id = #{clientId,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.OAuthClientDOExample">
-    delete from winteree.oauth_client_details
+    delete from oauth_client_details
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
   <insert id="insert" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
-    insert into winteree.oauth_client_details (client_id, resource_ids, client_secret, 
+    insert into oauth_client_details (client_id, resource_ids, client_secret, 
       scope, authorized_grant_types, web_server_redirect_uri, 
       authorities, access_token_validity, refresh_token_validity, 
       create_time, archived, trusted, 
-      autoapprove, additional_information)
+      autoapprove, tenant_uuid, additional_information
+      )
     values (#{clientId,jdbcType=VARCHAR}, #{resourceIds,jdbcType=VARCHAR}, #{clientSecret,jdbcType=VARCHAR}, 
       #{scope,jdbcType=VARCHAR}, #{authorizedGrantTypes,jdbcType=VARCHAR}, #{webServerRedirectUri,jdbcType=VARCHAR}, 
       #{authorities,jdbcType=VARCHAR}, #{accessTokenValidity,jdbcType=INTEGER}, #{refreshTokenValidity,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, #{archived,jdbcType=TINYINT}, #{trusted,jdbcType=TINYINT}, 
-      #{autoapprove,jdbcType=VARCHAR}, #{additionalInformation,jdbcType=LONGVARCHAR})
+      #{autoapprove,jdbcType=VARCHAR}, #{tenantUuid,jdbcType=VARCHAR}, #{additionalInformation,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
-    insert into winteree.oauth_client_details
+    insert into oauth_client_details
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="clientId != null">
         client_id,
@@ -186,6 +189,9 @@
       </if>
       <if test="autoapprove != null">
         autoapprove,
+      </if>
+      <if test="tenantUuid != null">
+        tenant_uuid,
       </if>
       <if test="additionalInformation != null">
         additional_information,
@@ -231,19 +237,22 @@
       <if test="autoapprove != null">
         #{autoapprove,jdbcType=VARCHAR},
       </if>
+      <if test="tenantUuid != null">
+        #{tenantUuid,jdbcType=VARCHAR},
+      </if>
       <if test="additionalInformation != null">
         #{additionalInformation,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.winteree.core.dao.entity.OAuthClientDOExample" resultType="java.lang.Long">
-    select count(*) from winteree.oauth_client_details
+    select count(*) from oauth_client_details
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update winteree.oauth_client_details
+    update oauth_client_details
     <set>
       <if test="record.clientId != null">
         client_id = #{record.clientId,jdbcType=VARCHAR},
@@ -284,6 +293,9 @@
       <if test="record.autoapprove != null">
         autoapprove = #{record.autoapprove,jdbcType=VARCHAR},
       </if>
+      <if test="record.tenantUuid != null">
+        tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
+      </if>
       <if test="record.additionalInformation != null">
         additional_information = #{record.additionalInformation,jdbcType=LONGVARCHAR},
       </if>
@@ -293,7 +305,7 @@
     </if>
   </update>
   <update id="updateByExampleWithBLOBs" parameterType="map">
-    update winteree.oauth_client_details
+    update oauth_client_details
     set client_id = #{record.clientId,jdbcType=VARCHAR},
       resource_ids = #{record.resourceIds,jdbcType=VARCHAR},
       client_secret = #{record.clientSecret,jdbcType=VARCHAR},
@@ -307,13 +319,14 @@
       archived = #{record.archived,jdbcType=TINYINT},
       trusted = #{record.trusted,jdbcType=TINYINT},
       autoapprove = #{record.autoapprove,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR},
       additional_information = #{record.additionalInformation,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update winteree.oauth_client_details
+    update oauth_client_details
     set client_id = #{record.clientId,jdbcType=VARCHAR},
       resource_ids = #{record.resourceIds,jdbcType=VARCHAR},
       client_secret = #{record.clientSecret,jdbcType=VARCHAR},
@@ -326,13 +339,14 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       archived = #{record.archived,jdbcType=TINYINT},
       trusted = #{record.trusted,jdbcType=TINYINT},
-      autoapprove = #{record.autoapprove,jdbcType=VARCHAR}
+      autoapprove = #{record.autoapprove,jdbcType=VARCHAR},
+      tenant_uuid = #{record.tenantUuid,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
-    update winteree.oauth_client_details
+    update oauth_client_details
     <set>
       <if test="resourceIds != null">
         resource_ids = #{resourceIds,jdbcType=VARCHAR},
@@ -370,6 +384,9 @@
       <if test="autoapprove != null">
         autoapprove = #{autoapprove,jdbcType=VARCHAR},
       </if>
+      <if test="tenantUuid != null">
+        tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
+      </if>
       <if test="additionalInformation != null">
         additional_information = #{additionalInformation,jdbcType=LONGVARCHAR},
       </if>
@@ -377,7 +394,7 @@
     where client_id = #{clientId,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
-    update winteree.oauth_client_details
+    update oauth_client_details
     set resource_ids = #{resourceIds,jdbcType=VARCHAR},
       client_secret = #{clientSecret,jdbcType=VARCHAR},
       scope = #{scope,jdbcType=VARCHAR},
@@ -390,11 +407,12 @@
       archived = #{archived,jdbcType=TINYINT},
       trusted = #{trusted,jdbcType=TINYINT},
       autoapprove = #{autoapprove,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR},
       additional_information = #{additionalInformation,jdbcType=LONGVARCHAR}
     where client_id = #{clientId,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.OAuthClientDO">
-    update winteree.oauth_client_details
+    update oauth_client_details
     set resource_ids = #{resourceIds,jdbcType=VARCHAR},
       client_secret = #{clientSecret,jdbcType=VARCHAR},
       scope = #{scope,jdbcType=VARCHAR},
@@ -406,7 +424,8 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       archived = #{archived,jdbcType=TINYINT},
       trusted = #{trusted,jdbcType=TINYINT},
-      autoapprove = #{autoapprove,jdbcType=VARCHAR}
+      autoapprove = #{autoapprove,jdbcType=VARCHAR},
+      tenant_uuid = #{tenantUuid,jdbcType=VARCHAR}
     where client_id = #{clientId,jdbcType=VARCHAR}
   </update>
 </mapper>

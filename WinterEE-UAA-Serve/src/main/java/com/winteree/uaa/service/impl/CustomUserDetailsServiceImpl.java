@@ -113,7 +113,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
         code = decryptPassword(code, language, keyid);
         // 验证验证码
         APIResult<VerificationCodeDTO> apiResult =
-                wintereeCoreServiceClient.getVerificationCode(accountDO.getUserName(), ValidationType.SIGNUP);
+                wintereeCoreServiceClient.getVerificationCode(accountDO.getUserName(), ValidationType.SIGNUP.value());
         if (!StateCode.OK.getCode().equals(apiResult.getCode()) || apiResult.getData() == null) {
             throw new UsernameNotFoundException("验证码错误，请重新获取新的验证码");
         }

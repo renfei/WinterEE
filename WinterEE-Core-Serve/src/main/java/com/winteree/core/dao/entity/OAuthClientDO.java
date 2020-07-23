@@ -29,6 +29,8 @@ public class OAuthClientDO {
 
     private String autoapprove;
 
+    private String tenantUuid;
+
     private String additionalInformation;
 
     public String getClientId() {
@@ -133,6 +135,14 @@ public class OAuthClientDO {
 
     public void setAutoapprove(String autoapprove) {
         this.autoapprove = autoapprove == null ? null : autoapprove.trim();
+    }
+
+    public String getTenantUuid() {
+        return tenantUuid;
+    }
+
+    public void setTenantUuid(String tenantUuid) {
+        this.tenantUuid = tenantUuid == null ? null : tenantUuid.trim();
     }
 
     public String getAdditionalInformation() {

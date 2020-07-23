@@ -436,8 +436,14 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "userName", value = "手机或邮箱", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "validationType", value = "验证码类型", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult<VerificationCodeDTO> getVerificationCode(String userName, ValidationType validationType) {
-        VerificationCodeDTO verificationCodeDTO = verificationCodeService.getVerificationCode(userName, validationType);
+    public APIResult<VerificationCodeDTO> getVerificationCode(String userName, String validationType) {
+        ValidationType validationType1 = null;
+        try {
+            validationType1 = ValidationType.valueOf(validationType);
+        } catch (Exception e) {
+            return APIResult.builder().code(StateCode.Failure).message("ValidationType Error").build();
+        }
+        VerificationCodeDTO verificationCodeDTO = verificationCodeService.getVerificationCode(userName, validationType1);
         if (verificationCodeDTO == null) {
             return APIResult.builder().code(StateCode.Failure).message("获取验证码失败").build();
         }

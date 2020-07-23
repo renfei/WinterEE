@@ -29,4 +29,5 @@ public class OAuthClientDTO {
     private String autoapprove;
     private String additionalInformation;
     private String lang;
+    private String tenantUuid;
 }
