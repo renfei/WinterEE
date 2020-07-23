@@ -90,7 +90,7 @@ public class AccountServiceImpl implements AccountService {
             if (BeanUtils.isEmpty(accountDOMapper.selectByExample(example))) {
                 // 验证验证码
                 APIResult<VerificationCodeDTO> apiResult =
-                        wintereeCoreServiceClient.getVerificationCode(accountDO.getUserName(), ValidationType.SIGNUP);
+                        wintereeCoreServiceClient.getVerificationCode(accountDO.getUserName(), ValidationType.SIGNUP.value());
                 if (!StateCode.OK.getCode().equals(apiResult.getCode()) || apiResult.getData() == null) {
                     return APIResult.builder().code(StateCode.Failure).message("验证码错误，请重新获取新的验证码").build();
                 }
@@ -109,7 +109,7 @@ public class AccountServiceImpl implements AccountService {
             if (BeanUtils.isEmpty(accountDOMapper.selectByExample(example))) {
                 // 验证验证码
                 APIResult<VerificationCodeDTO> apiResult =
-                        wintereeCoreServiceClient.getVerificationCode(accountDO.getUserName(), ValidationType.SIGNUP);
+                        wintereeCoreServiceClient.getVerificationCode(accountDO.getUserName(), ValidationType.SIGNUP.value());
                 if (!StateCode.OK.getCode().equals(apiResult.getCode()) || apiResult.getData() == null) {
                     return APIResult.builder().code(StateCode.Failure).message("验证码错误，请重新获取新的验证码").build();
                 }
