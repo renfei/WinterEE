@@ -12,7 +12,7 @@ public class OAuthClientDOExample {
     protected List<Criteria> oredCriteria;
 
     public OAuthClientDOExample() {
-        oredCriteria = new ArrayList<Criteria>();
+        oredCriteria = new ArrayList<>();
     }
 
     public void setOrderByClause(String orderByClause) {
@@ -69,7 +69,7 @@ public class OAuthClientDOExample {
 
         protected GeneratedCriteria() {
             super();
-            criteria = new ArrayList<Criterion>();
+            criteria = new ArrayList<>();
         }
 
         public boolean isValid() {
@@ -964,10 +964,79 @@ public class OAuthClientDOExample {
             addCriterion("autoapprove not between", value1, value2, "autoapprove");
             return (Criteria) this;
         }
+
+        public Criteria andTenantUuidIsNull() {
+            addCriterion("tenant_uuid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidIsNotNull() {
+            addCriterion("tenant_uuid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidEqualTo(String value) {
+            addCriterion("tenant_uuid =", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidNotEqualTo(String value) {
+            addCriterion("tenant_uuid <>", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidGreaterThan(String value) {
+            addCriterion("tenant_uuid >", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidGreaterThanOrEqualTo(String value) {
+            addCriterion("tenant_uuid >=", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidLessThan(String value) {
+            addCriterion("tenant_uuid <", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidLessThanOrEqualTo(String value) {
+            addCriterion("tenant_uuid <=", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidLike(String value) {
+            addCriterion("tenant_uuid like", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidNotLike(String value) {
+            addCriterion("tenant_uuid not like", value, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidIn(List<String> values) {
+            addCriterion("tenant_uuid in", values, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidNotIn(List<String> values) {
+            addCriterion("tenant_uuid not in", values, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidBetween(String value1, String value2) {
+            addCriterion("tenant_uuid between", value1, value2, "tenantUuid");
+            return (Criteria) this;
+        }
+
+        public Criteria andTenantUuidNotBetween(String value1, String value2) {
+            addCriterion("tenant_uuid not between", value1, value2, "tenantUuid");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
-
         protected Criteria() {
             super();
         }

@@ -171,6 +171,7 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
                 .with(OAuthClientDTO::setTrusted, oAuthClientDO.getTrusted())
                 .with(OAuthClientDTO::setAutoapprove, oAuthClientDO.getAutoapprove())
                 .with(OAuthClientDTO::setAdditionalInformation, oAuthClientDO.getAdditionalInformation())
+                .with(OAuthClientDTO::setTenantUuid, oAuthClientDO.getTenantUuid())
                 .build();
     }
 
@@ -189,6 +190,7 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
                 .with(OAuthClientDO::setTrusted, oAuthClientDTO.getTrusted())
                 .with(OAuthClientDO::setAutoapprove, oAuthClientDTO.getAutoapprove())
                 .with(OAuthClientDO::setAdditionalInformation, oAuthClientDTO.getAdditionalInformation())
+                .with(OAuthClientDO::setTenantUuid, oAuthClientDTO.getTenantUuid())
                 .build();
     }
 }
