@@ -10,7 +10,7 @@
 # [Password]：镜像仓库的密码
 # [Repositories Address]：镜像仓库的地址
 
-mvn clean package && \
+mvn clean package -Dmaven.test.skip=true && \
 docker build -t [Name]:[Version] . && \
 docker login --username=[User Name] --password=[Password] [Repositories Address] && \
 docker tag `docker images -q --filter reference=[Name]:[Version]` [Repositories Address][Name]:[Version] && \
