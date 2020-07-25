@@ -12,6 +12,8 @@ spring:
       fail-fast: true #如果无法到达WinterEE-Config-Serve，服务将无法运行
       password: 1234 #password of the WinterEE-Config-Serve
       username: user #username of the WinterEE-Config-Serve
+  zipkin:
+    base-url: http://localhost:9411/
 eureka:
   instance:
     prefer-ip-address: true #当应用程序注册到eureka时，它使用它的IP地址而不是它的主机名
