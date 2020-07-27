@@ -1,3 +1,5 @@
+![WinterEE Social Banner](https://cdn.renfei.net/WinterEE/winteree.jpg)
+
 ## WinterEE
 [![Actions Status](https://github.com/renfei-net/WinterEE/workflows/build/badge.svg)](https://github.com/renfei-net/WinterEE/actions)
 [![Build Status](https://api.travis-ci.com/renfei-net/WinterEE.svg?branch=master)](https://travis-ci.com/renfei-net/WinterEE)

@@ -73,3 +73,7 @@ fabric.properties
 
 # Windows
 Thumbs.db
+
+# Big File
+IPV4_DATA_*
+IPV6_DATA_*

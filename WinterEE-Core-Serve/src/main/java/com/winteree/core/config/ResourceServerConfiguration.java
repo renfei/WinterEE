@@ -76,6 +76,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/account/check/**").permitAll()
                 .antMatchers("/setting/logs/type").permitAll()
                 .antMatchers("/setting/logs/subtype").permitAll()
+                .antMatchers("/util/**").permitAll()
                 .and()
                 .authorizeRequests()
                 // 内部服务只能通过 client_id / client_secret 访问

@@ -59,6 +59,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final VerificationCodeService verificationCodeService;
     private final EmailService emailService;
     private final SmsService aliYunSmsService;
+    private final IpInfoService ipInfoService;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -78,7 +79,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    RegionService regionService,
                                    VerificationCodeService verificationCodeService,
                                    EmailService emailService,
-                                   @Qualifier("aliyunSmsServiceImpl") SmsService aliYunSmsService) {
+                                   @Qualifier("aliyunSmsServiceImpl") SmsService aliYunSmsService,
+                                   IpInfoService ipInfoService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -96,6 +98,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.verificationCodeService = verificationCodeService;
         this.emailService = emailService;
         this.aliYunSmsService = aliYunSmsService;
+        this.ipInfoService = ipInfoService;
     }
     //</editor-fold>
 
@@ -2001,4 +2004,13 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     //</editor-fold>
+
+    @Override
+    @ApiOperation(value = "查询IP信息", notes = "查询IP信息", tags = "工具类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ip", value = "IPv4地址或IPv6地址", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<IpInfoDTO> queryIpInfo(String ip) {
+        return ipInfoService.query(ip);
+    }
 }

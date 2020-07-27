@@ -144,7 +144,7 @@ public class AccountServiceImpl implements AccountService {
         accountDO.setLastName(accountDO.getLastName());
         accountDO.setFirstName(accountDO.getFirstName());
         accountDOMapper.insertSelective(accountDO);
-        return APIResult.success();
+        return APIResult.builder().code(StateCode.OK).message("OK").data(accountDO.getUuid()).build();
     }
 
     /**

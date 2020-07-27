@@ -32,6 +32,8 @@ public class WintereeCoreConfig {
     private String systemname;
     private String totpseed;
     private String smsService;
+    private String ipv4DataPath;
+    private String ipv6DataPath;
 
     @Data
     public static class Oauth2 {
