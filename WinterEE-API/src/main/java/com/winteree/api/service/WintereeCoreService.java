@@ -942,4 +942,8 @@ public interface WintereeCoreService {
     @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<RegionDTO>> getChildRegion(@RequestParam("code") String code);
     //</editor-fold>
+
+    @GetMapping("util/ipinfo/{ip}")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<IpInfoDTO> queryIpInfo(@PathVariable("ip") String ip);
 }

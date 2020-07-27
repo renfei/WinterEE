@@ -115,6 +115,13 @@ winteree:
     storagePath: /opt/upload/ #上传存储的路径
     storageUrl: http://127.0.0.1:3306/getFile?uuid= #上传文件以后返回的链接开头，访问文件时有鉴权（适用于私有文件鉴权）
     storagePublicUrl: https://cdn.renfei.net/opt/upload/ #上传文件以后返回的链接开头，公共读访问（适用于公共读文件）
+    #############################################################
+    # 由于 Github 阻止大文件提交，你可以到下面的网址下载，装载在自己的程序中
+    # https://cdn.renfei.net/WinterEE/Data/IPV4_DATA_2020_07.BIN
+    ipv4DataPath: data/IPV4_DATA_2020_07.BIN
+    # https://cdn.renfei.net/WinterEE/Data/IPV6_DATA_2020_07.BIN
+    ipv6DataPath: data/IPV6_DATA_2020_07.BIN
+    #############################################################
     oauth2:
       # openssl genrsa -out jwt.pem 2048
       # openssl rsa -in jwt.pem
