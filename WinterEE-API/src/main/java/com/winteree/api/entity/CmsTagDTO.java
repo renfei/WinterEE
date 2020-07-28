@@ -16,4 +16,5 @@ public class CmsTagDTO {
     private String zhName;
     private String uuid;
     private String describe;
+    private Long count;
 }

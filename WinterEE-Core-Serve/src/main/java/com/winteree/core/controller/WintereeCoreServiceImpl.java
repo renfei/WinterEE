@@ -1374,7 +1374,63 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据文章ID获取文章详情并更新浏览量（前台）", notes = "根据文章ID获取文章详情并更新浏览量（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取相关文章列表（前台）", notes = "获取相关文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<ListData<CmsPostsDTO>> getRelatedPostList(String uuid, int number) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getRelatedPostList(uuid, number))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "获取最热文章列表（前台）", notes = "获取最热文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<ListData<CmsPostsDTO>> getHotPostList(String siteUuid, int number) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getHotPostList(siteUuid, number))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "获取年度最热文章列表（前台）", notes = "获取年度最热文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<ListData<CmsPostsDTO>> getHotPostListByYear(String siteUuid, int number) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getHotPostListByYear(siteUuid, number))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "获取季度最热文章列表（前台）", notes = "获取季度最热文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<ListData<CmsPostsDTO>> getHotPostListByQuarter(String siteUuid, int number) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getHotPostListByQuarter(siteUuid, number))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口", response = String.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1383,6 +1439,60 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .code(StateCode.OK)
                 .message("OK")
                 .data(cmsService.getCmsPostByUuid(uuid))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "updateView", value = "是否更新浏览量", required = false, paramType = "query", dataType = "Boolean")
+    })
+    public APIResult<CmsPostsDTO> getCmsPostByUuid(String uuid, Boolean updateView) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getCmsPostByUuid(uuid, updateView))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "文章ID", required = false, paramType = "query", dataType = "Long"),
+            @ApiImplicitParam(name = "updateView", value = "是否更新浏览量", required = false, paramType = "query", dataType = "Boolean")
+    })
+    public APIResult<CmsPostsDTO> getCmsPostByLongId(Long id, Boolean updateView) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getCmsPostByLongId(id, updateView))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "文章点赞（前台）", notes = "文章点赞（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "文章ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult thumbsUpPost(String uuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.thumbsUpPost(uuid))
+                .build();
+    }
+
+    @Override
+    @ApiOperation(value = "文章点踩（前台）", notes = "文章点踩（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "文章ID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult thumbsDownPost(String uuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.thumbsDownPost(uuid))
                 .build();
     }
 
@@ -1490,6 +1600,19 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                     .message(forbiddenException.getMessage())
                     .build();
         }
+    }
+
+    @Override
+    @ApiOperation(value = "获取所有标签列表以及文章数量（前台）", notes = "获取所有标签列表以及文章数量（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<List<CmsTagDTO>> getAllTagAndCount(String siteUuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getAllTagAndCount(siteUuid))
+                .build();
     }
 
     @Override
