@@ -733,14 +733,86 @@ public interface WintereeCoreService {
                                                               @RequestParam("rows") int rows);
 
     /**
+     * 获取相关文章
+     *
+     * @param uuid   文章UUID
+     * @param number 获取的数量
+     * @return 相关文章列表
+     */
+    @GetMapping("/cms/posts/related/list")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<ListData<CmsPostsDTO>> getRelatedPostList(@RequestParam("uuid") String uuid,
+                                                        @RequestParam("number") int number);
+
+    @GetMapping("/cms/posts/hot/list")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<ListData<CmsPostsDTO>> getHotPostList(@RequestParam("siteUuid") String siteUuid,
+                                                    @RequestParam("number") int number);
+
+    @GetMapping("/cms/posts/hot/year")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<ListData<CmsPostsDTO>> getHotPostListByYear(@RequestParam("siteUuid") String siteUuid,
+                                                          @RequestParam("number") int number);
+
+    @GetMapping("/cms/posts/hot/quarter")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<ListData<CmsPostsDTO>> getHotPostListByQuarter(@RequestParam("siteUuid") String siteUuid,
+                                                             @RequestParam("number") int number);
+
+    /**
      * 根据文章ID获取文章详情并更新浏览量
      *
      * @param uuid 文章UUID
      * @return
      */
-    @GetMapping("/cms/posts/uuid")
+    @GetMapping("/cms/PostByUuid")
     @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsPostsDTO> getCmsPostByUuid(@RequestParam("uuid") String uuid);
+
+    /**
+     * 根据文章ID获取文章详情并更新浏览量
+     *
+     * @param uuid       文章UUID
+     * @param updateView 是否更新浏览量
+     * @return
+     */
+    @GetMapping("/cms/posts/{uuid}")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<CmsPostsDTO> getCmsPostByUuid(@PathVariable("uuid") String uuid,
+                                            @RequestParam("updateView") Boolean updateView);
+
+    /**
+     * 根据文章ID获取文章详情
+     *
+     * @param id         文章主键ID
+     * @param updateView 是否更新浏览量
+     * @return
+     */
+    @GetMapping("/cms/PostByLongId")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<CmsPostsDTO> getCmsPostByLongId(@RequestParam("id") Long id,
+                                              @RequestParam("updateView") Boolean updateView);
+
+    /**
+     * 点赞
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    @GetMapping("/cms/posts/thumbsUp")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult thumbsUpPost(@RequestParam("uuid") String uuid);
+
+    /**
+     * 点踩
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    @GetMapping("/cms/posts/thumbsDown")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult thumbsDownPost(@RequestParam("uuid") String uuid);
+
 
     /**
      * 添加文章（后台管理）
@@ -785,6 +857,16 @@ public interface WintereeCoreService {
     APIResult<ListData<CmsTagDTO>> getTagList(@RequestParam(name = "siteUuid") String siteUuid,
                                               @RequestParam(name = "pages") int pages,
                                               @RequestParam(name = "rows") int rows);
+
+    /**
+     * 获取所有标签列表以及文章数量（前台）
+     *
+     * @param siteUuid 站点ID
+     * @return
+     */
+    @GetMapping("/cms/tag/listAndCount")
+    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
+    APIResult<List<CmsTagDTO>> getAllTagAndCount(String siteUuid);
 
     /**
      * 根据UUID获取标签对象

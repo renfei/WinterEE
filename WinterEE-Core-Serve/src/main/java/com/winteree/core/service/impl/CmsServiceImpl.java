@@ -14,10 +14,8 @@ import net.renfei.sdk.utils.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title: CmsServiceImpl</p>
@@ -28,6 +26,7 @@ import java.util.UUID;
  */
 @Service
 public class CmsServiceImpl extends BaseService implements CmsService {
+    //<editor-fold desc="依赖与构造函数" defaultstate="collapsed">
     private final AccountService accountService;
     private final RoleService roleService;
     private final TenantService tenantService;
@@ -65,6 +64,9 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         this.cmsTagPostsDOMapper = cmsTagPostsDOMapper;
         this.cmsMenuDOMapper = cmsMenuDOMapper;
     }
+    //</editor-fold>
+
+    //<editor-fold desc="站点类的接口" defaultstate="collapsed">
 
     /**
      * 获取CMS站点列表（后台管理）
@@ -342,6 +344,9 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         cmsCategoryDOMapper.deleteByExample(cmsCategoryDOExample);
         return cmsSiteDOMapper.deleteByExample(example);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="分类的接口" defaultstate="collapsed">
 
     /**
      * 获取CMS系统分类列表（后台管理）
@@ -464,6 +469,9 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         }
         return cmsCategoryDOMapper.deleteByExample(example);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="文章类的接口" defaultstate="collapsed">
 
     /**
      * 根据查询条件获取文章列表（后台管理）
@@ -553,13 +561,203 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     }
 
     /**
-     * 根据文章ID获取文章详情并更新浏览量
+     * 获取相关文章
+     *
+     * @param uuid   文章UUID
+     * @param number 获取的数量
+     * @return 相关文章列表
+     */
+    @Override
+    public ListData<CmsPostsDTO> getRelatedPostList(String uuid, int number) {
+        ListData<CmsPostsDTO> cmsPostsDTOListData = new ListData<>();
+        List<CmsPostsDTO> cmsPostsDTOS = new ArrayList<>();
+        // 1、先拿到文章的标签组
+        List<CmsTagDTO> cmsTagDTOS = this.getTagListByPostUuid(uuid);
+        if (!BeanUtils.isEmpty(cmsTagDTOS)) {
+            // 2、根据标签组拿到所有文章id
+            List<String> tagIds = new ArrayList<>();
+            cmsTagDTOS.forEach(cmsTagDTO -> tagIds.add(cmsTagDTO.getUuid()));
+            CmsTagPostsDOExample cmsTagPostsDOExample = new CmsTagPostsDOExample();
+            cmsTagPostsDOExample.createCriteria()
+                    .andTagUuidIn(tagIds);
+            List<CmsTagPostsDO> cmsTagPostsDOS = cmsTagPostsDOMapper.selectByExample(cmsTagPostsDOExample);
+            if (!BeanUtils.isEmpty(cmsTagPostsDOS)) {
+                // 3、根据文章ID获得所有文章
+                List<String> postIds = new ArrayList<>();
+                cmsTagPostsDOS.forEach(cmsTagPostsDO -> postIds.add(cmsTagPostsDO.getPostUuid()));
+                CmsPostsDOExample cmsPostsDOExample = new CmsPostsDOExample();
+                cmsPostsDOExample.setDistinct(true);
+                cmsPostsDOExample.setOrderByClause("page_rank DESC,release_time DESC");
+                cmsPostsDOExample.createCriteria()
+                        .andReleaseTimeLessThan(new Date())
+                        .andIsDeleteEqualTo(false)
+                        .andUuidIn(postIds);
+                Page page = PageHelper.startPage(1, number);
+                List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(cmsPostsDOExample);
+                if (!BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+                    cmsPostsDOWithBLOBs.forEach(cmsPostsDO -> cmsPostsDTOS.add(convert(cmsPostsDO)));
+                    cmsPostsDTOListData.setData(cmsPostsDTOS);
+                    cmsPostsDTOListData.setTotal(page.getTotal());
+                    return cmsPostsDTOListData;
+                }
+            }
+        }
+        // 兜底，如果上面没有return出去，就使用下面的这个
+        CmsPostsDOExample cmsPostsDOExample = new CmsPostsDOExample();
+        cmsPostsDOExample.setDistinct(true);
+        cmsPostsDOExample.setOrderByClause("page_rank DESC,release_time DESC");
+        cmsPostsDOExample.createCriteria()
+                .andReleaseTimeLessThan(new Date())
+                .andIsDeleteEqualTo(false)
+                .andUuidNotEqualTo(uuid);
+        Page page = PageHelper.startPage(1, number);
+        List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(cmsPostsDOExample);
+        if (!BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+            cmsPostsDOWithBLOBs.forEach(cmsPostsDO -> cmsPostsDTOS.add(convert(cmsPostsDO)));
+            cmsPostsDTOListData.setData(cmsPostsDTOS);
+            cmsPostsDTOListData.setTotal(page.getTotal());
+        }
+        return cmsPostsDTOListData;
+    }
+
+    /**
+     * 获取最热文章
+     *
+     * @param siteUuid 站点UUID
+     * @param number   获取数量
+     * @return
+     */
+    @Override
+    public ListData<CmsPostsDTO> getHotPostList(String siteUuid, int number) {
+        ListData<CmsPostsDTO> cmsPostsDTOS = new ListData<>();
+        CmsPostsDOExample cmsPostsDOExample = new CmsPostsDOExample();
+        cmsPostsDOExample.setDistinct(true);
+        cmsPostsDOExample.setOrderByClause("avg_views DESC,release_time DESC");
+        cmsPostsDOExample.createCriteria()
+                .andSiteUuidEqualTo(siteUuid)
+                .andReleaseTimeLessThan(new Date())
+                .andIsDeleteEqualTo(false);
+        Page page = PageHelper.startPage(1, number);
+        List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(cmsPostsDOExample);
+        cmsPostsDTOS.setTotal(page.getTotal());
+        if (!BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+            List<CmsPostsDTO> cmsPostsDTO = new ArrayList<>();
+            cmsPostsDOWithBLOBs.forEach(cmsPostsDO -> cmsPostsDTO.add(convert(cmsPostsDO)));
+            cmsPostsDTOS.setData(cmsPostsDTO);
+        }
+        return cmsPostsDTOS;
+    }
+
+    /**
+     * 获取年度最热文章
+     *
+     * @param siteUuid 站点UUID
+     * @param number   获取数量
+     * @return
+     */
+    @Override
+    public ListData<CmsPostsDTO> getHotPostListByYear(String siteUuid, int number) {
+        Date dateStart = DateUtils.parseDate(DateUtils.getYear() + "-01-01 00:00:00");
+        Date dateEnd = DateUtils.parseDate(DateUtils.getYear() + "-12-31 23:59:59");
+        ListData<CmsPostsDTO> cmsPostsDTOS = new ListData<>();
+        CmsPostsDOExample cmsPostsDOExample = new CmsPostsDOExample();
+        cmsPostsDOExample.setDistinct(true);
+        cmsPostsDOExample.setOrderByClause("avg_views DESC,release_time DESC");
+        cmsPostsDOExample.createCriteria()
+                .andSiteUuidEqualTo(siteUuid)
+                .andReleaseTimeLessThan(new Date())
+                .andReleaseTimeBetween(dateStart, dateEnd)
+                .andIsDeleteEqualTo(false);
+        Page page = PageHelper.startPage(1, number);
+        List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(cmsPostsDOExample);
+        cmsPostsDTOS.setTotal(page.getTotal());
+        if (!BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+            List<CmsPostsDTO> cmsPostsDTO = new ArrayList<>();
+            cmsPostsDOWithBLOBs.forEach(cmsPostsDO -> cmsPostsDTO.add(convert(cmsPostsDO)));
+            cmsPostsDTOS.setData(cmsPostsDTO);
+        }
+        return cmsPostsDTOS;
+    }
+
+    /**
+     * 获取季度最热文章
+     *
+     * @param siteUuid 站点UUID
+     * @param number   获取数量
+     * @return
+     */
+    @Override
+    public ListData<CmsPostsDTO> getHotPostListByQuarter(String siteUuid, int number) {
+        Date dateStart, dateEnd;
+        String month = DateUtils.getMonth();
+        switch (month) {
+            case "01":
+            case "02":
+            case "03":
+                dateStart = DateUtils.parseDate(DateUtils.getYear() + "-01-01 00:00:00");
+                dateEnd = DateUtils.parseDate(DateUtils.getYear() + "-03-31 23:59:59");
+                break;
+            case "04":
+            case "05":
+            case "06":
+                dateStart = DateUtils.parseDate(DateUtils.getYear() + "-04-01 00:00:00");
+                dateEnd = DateUtils.parseDate(DateUtils.getYear() + "-06-30 23:59:59");
+                break;
+            case "07":
+            case "08":
+            case "09":
+                dateStart = DateUtils.parseDate(DateUtils.getYear() + "-07-01 00:00:00");
+                dateEnd = DateUtils.parseDate(DateUtils.getYear() + "-09-30 23:59:59");
+                break;
+            case "10":
+            case "11":
+            case "12":
+                dateStart = DateUtils.parseDate(DateUtils.getYear() + "-10-01 00:00:00");
+                dateEnd = DateUtils.parseDate(DateUtils.getYear() + "-12-31 23:59:59");
+                break;
+            default:
+                return null;
+        }
+        ListData<CmsPostsDTO> cmsPostsDTOS = new ListData<>();
+        CmsPostsDOExample cmsPostsDOExample = new CmsPostsDOExample();
+        cmsPostsDOExample.setDistinct(true);
+        cmsPostsDOExample.setOrderByClause("avg_views DESC,release_time DESC");
+        cmsPostsDOExample.createCriteria()
+                .andSiteUuidEqualTo(siteUuid)
+                .andReleaseTimeLessThan(new Date())
+                .andReleaseTimeBetween(dateStart, dateEnd)
+                .andIsDeleteEqualTo(false);
+        Page page = PageHelper.startPage(1, number);
+        List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(cmsPostsDOExample);
+        cmsPostsDTOS.setTotal(page.getTotal());
+        if (!BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+            List<CmsPostsDTO> cmsPostsDTO = new ArrayList<>();
+            cmsPostsDOWithBLOBs.forEach(cmsPostsDO -> cmsPostsDTO.add(convert(cmsPostsDO)));
+            cmsPostsDTOS.setData(cmsPostsDTO);
+        }
+        return cmsPostsDTOS;
+    }
+
+    /**
+     * 根据文章ID获取文章详情
      *
      * @param uuid 文章UUID
      * @return
      */
     @Override
     public CmsPostsDTO getCmsPostByUuid(String uuid) {
+        return getCmsPostByUuid(uuid, false);
+    }
+
+    /**
+     * 根据文章ID获取文章详情
+     *
+     * @param uuid        文章UUID
+     * @param updateViews 是否更新浏览量
+     * @return
+     */
+    @Override
+    public CmsPostsDTO getCmsPostByUuid(String uuid, boolean updateViews) {
         CmsPostsDOExample example = new CmsPostsDOExample();
         // 此处条件比后台要增加 发布时间判断、软删除判断
         example.createCriteria()
@@ -572,8 +770,75 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         }
         CmsPostsDOWithBLOBs cmsPostsDO = ListUtils.getOne(cmsPostsDOWithBLOBs);
         // 更新文章浏览量
-        updateViews(cmsPostsDO);
+        if (updateViews) {
+            updateViews(cmsPostsDO);
+        }
         return convert(cmsPostsDO);
+    }
+
+    /**
+     * 根据文章ID获取文章详情
+     *
+     * @param id        文章主键ID
+     * @param updateViews 是否更新浏览量
+     * @return
+     */
+    @Override
+    public CmsPostsDTO getCmsPostByLongId(Long id, boolean updateViews) {
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        // 此处条件比后台要增加 发布时间判断、软删除判断
+        example.createCriteria()
+                .andIdEqualTo(id)
+                .andReleaseTimeLessThan(new Date())
+                .andIsDeleteEqualTo(false);
+        List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(example);
+        if (BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+            return null;
+        }
+        CmsPostsDOWithBLOBs cmsPostsDO = ListUtils.getOne(cmsPostsDOWithBLOBs);
+        // 更新文章浏览量
+        if (updateViews) {
+            updateViews(cmsPostsDO);
+        }
+        return convert(cmsPostsDO);
+    }
+
+    /**
+     * 点赞
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    @Override
+    public int thumbsUpPost(String uuid) {
+        CmsPostsDTO cmsPostsDTO = this.getCmsPostByUuid(uuid);
+        if (cmsPostsDTO == null) {
+            return 0;
+        }
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        example.createCriteria().andUuidNotEqualTo(uuid);
+        CmsPostsDOWithBLOBs cmsPostsDO = convert(cmsPostsDTO);
+        cmsPostsDO.setThumbsUp(cmsPostsDO.getThumbsUp() + 1);
+        return cmsPostsDOMapper.updateByExampleWithBLOBs(cmsPostsDO, example);
+    }
+
+    /**
+     * 点踩
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    @Override
+    public int thumbsDownPost(String uuid) {
+        CmsPostsDTO cmsPostsDTO = this.getCmsPostByUuid(uuid);
+        if (cmsPostsDTO == null) {
+            return 0;
+        }
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        example.createCriteria().andUuidNotEqualTo(uuid);
+        CmsPostsDOWithBLOBs cmsPostsDO = convert(cmsPostsDTO);
+        cmsPostsDO.setThumbsDown(cmsPostsDO.getThumbsDown() + 1);
+        return cmsPostsDOMapper.updateByExampleWithBLOBs(cmsPostsDO, example);
     }
 
     /**
@@ -710,6 +975,9 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         cmsTagPostsDOMapper.deleteByExample(cmsTagPostsDOExample);
         return cmsPostsDOMapper.deleteByExample(example);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="标签类的接口" defaultstate="collapsed">
 
     /**
      * 获取标签列表（后台管理）
@@ -740,6 +1008,35 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         cmsTagDTOListData.setTotal(page.getTotal());
         cmsTagDTOListData.setData(cmsTagDTOS);
         return cmsTagDTOListData;
+    }
+
+    /**
+     * 获取所有标签列表以及文章数量（前台）
+     *
+     * @param siteUuid 站点ID
+     * @return
+     */
+    @Override
+    public List<CmsTagDTO> getAllTagAndCount(String siteUuid) {
+        CmsTagDOExample example = new CmsTagDOExample();
+        example.createCriteria().andSiteUuidEqualTo(siteUuid);
+        List<CmsTagDO> cmsTagDOS = cmsTagDOMapper.selectByExampleWithBLOBs(example);
+        if (BeanUtils.isEmpty(cmsTagDOS)) {
+            return null;
+        }
+        List<CmsTagDTO> cmsTagDTOS = new ArrayList<>();
+        List<CmsTagDTO> finalCmsTagDTOS = cmsTagDTOS;
+        cmsTagDOS.forEach(cmsTagDO -> finalCmsTagDTOS.add(convert(cmsTagDO)));
+        for (CmsTagDTO dto : cmsTagDTOS
+        ) {
+            CmsTagPostsDOExample cmsTagPostsDOExample = new CmsTagPostsDOExample();
+            cmsTagPostsDOExample.createCriteria().andTagUuidEqualTo(dto.getUuid());
+            Page page = PageHelper.startPage(1, 1);
+            cmsTagPostsDOMapper.selectByExample(cmsTagPostsDOExample);
+            dto.setCount(page.getTotal());
+        }
+        cmsTagDTOS = finalCmsTagDTOS.stream().sorted(Comparator.comparing(CmsTagDTO::getCount).reversed()).collect(Collectors.toList());
+        return cmsTagDTOS;
     }
 
     /**
@@ -886,6 +1183,9 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         // 删除标签
         return cmsTagDOMapper.deleteByExample(example);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="菜单类的接口" defaultstate="collapsed">
 
     /**
      * 获取CMS菜单树
@@ -1010,6 +1310,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         this.getCmsSiteByUuid(oldCmsMenu.getSiteUuid());
         return cmsMenuDOMapper.deleteByExample(example);
     }
+    //</editor-fold>
 
     /**
      * 跟新文章评级
@@ -1249,6 +1550,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
 
     private CmsPostsDTO convert(CmsPostsDOWithBLOBs cmsPostsDOWithBLOBs) {
         return Builder.of(CmsPostsDTO::new)
+                .with(CmsPostsDTO::setId, cmsPostsDOWithBLOBs.getId())
                 .with(CmsPostsDTO::setUuid, cmsPostsDOWithBLOBs.getUuid())
                 .with(CmsPostsDTO::setSiteUuid, cmsPostsDOWithBLOBs.getSiteUuid())
                 .with(CmsPostsDTO::setCategoryUuid, cmsPostsDOWithBLOBs.getCategoryUuid())
@@ -1279,6 +1581,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
 
     private CmsPostsDOWithBLOBs convert(CmsPostsDTO cmsPostsDTO) {
         return Builder.of(CmsPostsDOWithBLOBs::new)
+                .with(CmsPostsDOWithBLOBs::setId, cmsPostsDTO.getId())
                 .with(CmsPostsDOWithBLOBs::setUuid, cmsPostsDTO.getUuid())
                 .with(CmsPostsDOWithBLOBs::setSiteUuid, cmsPostsDTO.getSiteUuid())
                 .with(CmsPostsDOWithBLOBs::setCategoryUuid, cmsPostsDTO.getCategoryUuid())

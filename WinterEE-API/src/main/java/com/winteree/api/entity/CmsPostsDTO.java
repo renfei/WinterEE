@@ -16,6 +16,7 @@ import java.util.List;
  */
 @Data
 public class CmsPostsDTO {
+    private Long id;
     private String uuid;
     private String siteUuid;
     private String categoryUuid;

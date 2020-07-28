@@ -145,12 +145,82 @@ public interface CmsService {
     ListData<CmsPostsDTO> getCmsPostListByCategory(String categoryUuid, int pages, int rows);
 
     /**
-     * 根据文章ID获取文章详情并更新浏览量
+     * 获取相关文章
+     *
+     * @param uuid   文章UUID
+     * @param number 获取的数量
+     * @return 相关文章列表
+     */
+    ListData<CmsPostsDTO> getRelatedPostList(String uuid, int number);
+
+    /**
+     * 获取最热文章
+     *
+     * @param siteUuid 站点UUID
+     * @param number   获取数量
+     * @return
+     */
+    ListData<CmsPostsDTO> getHotPostList(String siteUuid, int number);
+
+    /**
+     * 获取年度最热文章
+     *
+     * @param siteUuid 站点UUID
+     * @param number   获取数量
+     * @return
+     */
+    ListData<CmsPostsDTO> getHotPostListByYear(String siteUuid, int number);
+
+    /**
+     * 获取季度最热文章
+     *
+     * @param siteUuid 站点UUID
+     * @param number   获取数量
+     * @return
+     */
+    ListData<CmsPostsDTO> getHotPostListByQuarter(String siteUuid, int number);
+
+    /**
+     * 根据文章ID获取文章详情
      *
      * @param uuid 文章UUID
      * @return
      */
     CmsPostsDTO getCmsPostByUuid(String uuid);
+
+    /**
+     * 根据文章ID获取文章详情
+     *
+     * @param uuid        文章UUID
+     * @param updateViews 是否更新浏览量
+     * @return
+     */
+    CmsPostsDTO getCmsPostByUuid(String uuid, boolean updateViews);
+
+    /**
+     * 根据文章ID获取文章详情
+     *
+     * @param id        文章主键ID
+     * @param updateViews 是否更新浏览量
+     * @return
+     */
+    CmsPostsDTO getCmsPostByLongId(Long id, boolean updateViews);
+
+    /**
+     * 点赞
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    int thumbsUpPost(String uuid);
+
+    /**
+     * 点踩
+     *
+     * @param uuid 文章UUID
+     * @return
+     */
+    int thumbsDownPost(String uuid);
 
     /**
      * 添加文章（后台管理）
@@ -191,6 +261,14 @@ public interface CmsService {
      * @throws FailureException   失败异常
      */
     ListData<CmsTagDTO> getTagList(String siteUuid, int pages, int rows) throws ForbiddenException, FailureException;
+
+    /**
+     * 获取所有标签列表以及文章数量（前台）
+     *
+     * @param siteUuid 站点ID
+     * @return
+     */
+    List<CmsTagDTO> getAllTagAndCount(String siteUuid);
 
     /**
      * 根据文章UUID获取标签列表
