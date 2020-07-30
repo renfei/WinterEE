@@ -21,6 +21,7 @@ public class WintereeCoreConfig {
     private Oauth2 oauth2;
     private Aliyun aliyun;
     private AliyunSms aliyunSms;
+    private AliyunGreen aliyunGreen;
     private String aliyunOssEndpoint;
     private String aliyunOssPublicBuckename;
     private String aliyunOssPrivateBuckename;
@@ -52,5 +53,12 @@ public class WintereeCoreConfig {
     public static class AliyunSms{
         private String signName;
         private String templateCode;
+    }
+
+    @Data
+    public static class AliyunGreen{
+        private String endpointName;
+        private String regionId;
+        private String domain;
     }
 }

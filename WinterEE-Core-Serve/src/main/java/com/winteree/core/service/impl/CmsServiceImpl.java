@@ -10,6 +10,8 @@ import com.winteree.core.dao.*;
 import com.winteree.core.dao.entity.*;
 import com.winteree.core.entity.AccountDTO;
 import com.winteree.core.service.*;
+import net.renfei.sdk.comm.StateCode;
+import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     private final CmsTagDOMapper cmsTagDOMapper;
     private final CmsTagPostsDOMapper cmsTagPostsDOMapper;
     private final CmsMenuDOMapper cmsMenuDOMapper;
+    private final AliyunGreenService aliyunGreenService;
 
     protected CmsServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                              AccountService accountService,
@@ -50,7 +53,8 @@ public class CmsServiceImpl extends BaseService implements CmsService {
                              CmsSiteDOMapper cmsSiteDOMapper,
                              CmsTagDOMapper cmsTagDOMapper,
                              CmsTagPostsDOMapper cmsTagPostsDOMapper,
-                             CmsMenuDOMapper cmsMenuDOMapper) {
+                             CmsMenuDOMapper cmsMenuDOMapper,
+                             AliyunGreenService aliyunGreenService) {
         super(wintereeCoreConfig);
         this.accountService = accountService;
         this.roleService = roleService;
@@ -63,6 +67,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         this.cmsTagDOMapper = cmsTagDOMapper;
         this.cmsTagPostsDOMapper = cmsTagPostsDOMapper;
         this.cmsMenuDOMapper = cmsMenuDOMapper;
+        this.aliyunGreenService = aliyunGreenService;
     }
     //</editor-fold>
 
@@ -779,7 +784,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     /**
      * 根据文章ID获取文章详情
      *
-     * @param id        文章主键ID
+     * @param id          文章主键ID
      * @param updateViews 是否更新浏览量
      * @return
      */
@@ -1312,6 +1317,52 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="评论类的接口" defaultstate="collapsed">
+    @Override
+    public APIResult addComment(CommentDTO commentDTO) {
+        // 先获取评论目标
+        CmsPostsDTO cmsPostsDTO = this.getCmsPostByUuid(commentDTO.getPostUuid());
+        if (cmsPostsDTO == null) {
+            // 评论目标不存在
+            return APIResult.builder().code(StateCode.Failure).message("评论目标不存在").build();
+        }
+        // 检查全局评论开关
+        CmsSiteDTO cmsSiteDTO = this.getCmsSiteByUuid(cmsPostsDTO.getSiteUuid());
+        if (cmsSiteDTO == null || !cmsSiteDTO.getIsComment()) {
+            // 全局评论禁止，或者网站不存在
+            return APIResult.builder().code(StateCode.Failure).message("禁止评论").build();
+        }
+        // 检查目标评论开关
+        if (!cmsPostsDTO.getIsComment()) {
+            // 目标禁止评论
+            return APIResult.builder().code(StateCode.Failure).message("禁止评论").build();
+        }
+        commentDTO.setUuid(UUID.randomUUID().toString().toUpperCase());
+        CmsCommentsDOWithBLOBs cmsCommentsDOWithBLOBs = convert(commentDTO);
+        cmsCommentsDOWithBLOBs.setAddtime(new Date());
+        cmsCommentsDOWithBLOBs.setIsDelete(true);
+        cmsCommentsDOWithBLOBs.setIsOwner(false);
+        cmsCommentsDOMapper.insertSelective(cmsCommentsDOWithBLOBs);
+        // 检查评论内容
+        textScan(commentDTO);
+        return APIResult.success();
+    }
+
+    @Async
+    public void textScan(CommentDTO commentDTO){
+        if(!"".equals(wintereeCoreConfig.getAliyunGreen().getRegionId())){
+            // 启用了
+            if(aliyunGreenService.textScan(commentDTO.getContent())){
+                CmsCommentsDOWithBLOBs cmsCommentsDOWithBLOBs = new CmsCommentsDOWithBLOBs();
+                cmsCommentsDOWithBLOBs.setIsDelete(false);
+                CmsCommentsDOExample example = new CmsCommentsDOExample();
+                example.createCriteria().andUuidEqualTo(commentDTO.getUuid());
+                cmsCommentsDOMapper.updateByExampleSelective(cmsCommentsDOWithBLOBs,example);
+            }
+        }
+    }
+    //</editor-fold>
+
     /**
      * 跟新文章评级
      */
@@ -1655,6 +1706,35 @@ public class CmsServiceImpl extends BaseService implements CmsService {
                 .with(CmsMenuDO::setMenuLink, cmsMenuVO.getMenuLink())
                 .with(CmsMenuDO::setMenuIcon, cmsMenuVO.getMenuIcon())
                 .with(CmsMenuDO::setIsNewWin, cmsMenuVO.getIsNewWin())
+                .build();
+    }
+
+    private CmsCommentsDOWithBLOBs convert(CommentDTO commentDTO) {
+        return Builder.of(CmsCommentsDOWithBLOBs::new)
+                .with(CmsCommentsDOWithBLOBs::setUuid, commentDTO.getUuid())
+                .with(CmsCommentsDOWithBLOBs::setAuthor, commentDTO.getAuthor())
+                .with(CmsCommentsDOWithBLOBs::setAuthorAddress, commentDTO.getAuthorAddress())
+                .with(CmsCommentsDOWithBLOBs::setAuthorEmail, commentDTO.getAuthorEmail())
+                .with(CmsCommentsDOWithBLOBs::setAuthorIp, commentDTO.getAuthorIp())
+                .with(CmsCommentsDOWithBLOBs::setAuthorUrl, commentDTO.getAuthorUrl())
+                .with(CmsCommentsDOWithBLOBs::setContent, commentDTO.getContent())
+                .with(CmsCommentsDOWithBLOBs::setPostUuid, commentDTO.getPostUuid())
+                .with(CmsCommentsDOWithBLOBs::setParentId, commentDTO.getParentId())
+                .build();
+    }
+
+    private CommentDTO convert(CmsCommentsDOWithBLOBs commentDTO) {
+        return Builder.of(CommentDTO::new)
+                .with(CommentDTO::setUuid, commentDTO.getUuid())
+                .with(CommentDTO::setAuthor, commentDTO.getAuthor())
+                .with(CommentDTO::setAuthorAddress, commentDTO.getAuthorAddress())
+                .with(CommentDTO::setAuthorEmail, commentDTO.getAuthorEmail())
+                .with(CommentDTO::setAuthorIp, commentDTO.getAuthorIp())
+                .with(CommentDTO::setAuthorUrl, commentDTO.getAuthorUrl())
+                .with(CommentDTO::setContent, commentDTO.getContent())
+                .with(CommentDTO::setPostUuid, commentDTO.getPostUuid())
+                .with(CommentDTO::setParentId, commentDTO.getParentId())
+                .with(CommentDTO::setAddtime, commentDTO.getAddtime())
                 .build();
     }
 

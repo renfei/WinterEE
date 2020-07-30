@@ -3,6 +3,7 @@ package com.winteree.core.service;
 import com.winteree.api.entity.*;
 import com.winteree.api.exception.FailureException;
 import com.winteree.api.exception.ForbiddenException;
+import net.renfei.sdk.entity.APIResult;
 
 import java.util.List;
 
@@ -364,6 +365,8 @@ public interface CmsService {
      * @throws ForbiddenException
      */
     int deleteCmsMenu(String uuid) throws ForbiddenException;
+
+    APIResult addComment(CommentDTO commentDTO);
 
     /**
      * 跟新文章评级

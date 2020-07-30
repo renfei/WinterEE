@@ -1,9 +1,7 @@
 package com.winteree.api.service;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.winteree.api.entity.*;
 import com.winteree.api.exception.FailureException;
-import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,18 +15,6 @@ import java.util.Map;
  * @author RenFei
  */
 public interface WintereeCoreService {
-    /**
-     * 默认降级方法，实现类中可以重写降级方法
-     *
-     * @return
-     */
-    default APIResult defaultFallbackMethod() {
-        System.err.println("\n核心服务不可达。\nCore Services Not Available.\n");
-        return APIResult.builder()
-                .code(StateCode.Unavailable)
-                .message("\n核心服务不可达。\nCore Services Not Available.\n")
-                .build();
-    }
 
     /**
      * i18n国际化语言翻译服务
@@ -39,7 +25,6 @@ public interface WintereeCoreService {
      * @return 当没有找到所需的语言时将返回默认内容
      */
     @GetMapping("/i18n/{language}/{message}/{defaultMessage}")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     String getMessage(@PathVariable("language") String language, @PathVariable("message") String message,
                       @PathVariable("defaultMessage") String defaultMessage);
 
@@ -51,7 +36,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/secretkey")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<String> secretKey();
 
     /**
@@ -60,7 +44,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/secretkey")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult setSecretKey(@RequestBody ReportPublicKeyVO reportPublicKeyVO);
     //</editor-fold>
 
@@ -73,7 +56,6 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/username")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     AccountDTO findAccountByUsername(@RequestParam("username") String username);
 
     /**
@@ -83,7 +65,6 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/uuid")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     AccountDTO findAccountByUuid(@RequestParam("uuid") String uuid);
 
     /**
@@ -93,7 +74,6 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/email")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     AccountDTO findAccountByEmail(@RequestParam("email") String email);
 
     /**
@@ -103,7 +83,6 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/inside/account/phone")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     AccountDTO findAccountByPhoneNumber(@RequestParam("phone") String phone);
 
     /**
@@ -113,7 +92,6 @@ public interface WintereeCoreService {
      * @return AccountDTO
      */
     @GetMapping("/account/totp")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<String> createTotp(@RequestParam("username") String username);
 
     /**
@@ -124,7 +102,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/account/check")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<String> checkAccount(@RequestParam("account") String account, @RequestParam("language") String language);
 
     /**
@@ -133,7 +110,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/account/myinfo")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<AccountDTO> getMyInfo();
 
     /**
@@ -147,7 +123,6 @@ public interface WintereeCoreService {
      * @throws FailureException 失败异常信息
      */
     @PutMapping("/account/mypassword")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult changePassword(@RequestParam("oldPassword") String oldPassword,
                              @RequestParam("newPassword") String newPassword,
                              @RequestParam("language") String language,
@@ -161,7 +136,6 @@ public interface WintereeCoreService {
      * @throws FailureException 失败异常信息
      */
     @PutMapping("/account/resetpassword")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult passwordReset(@RequestBody PasswordResetDAT passwordResetDAT);
 
     /**
@@ -171,7 +145,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/account")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<AccountDTO>> getAccountList(@RequestBody AccountSearchCriteriaVO accountSearchCriteriaVO);
 
     /**
@@ -182,7 +155,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/account")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addAccount(@RequestBody AccountDTO accountDTO);
 
     /**
@@ -192,7 +164,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/account")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateAccount(@RequestBody AccountDTO accountDTO);
 
     /**
@@ -204,7 +175,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/inside/account/verificationCode")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult sendVerificationCode(@RequestParam("userName") String userName,
                                    @RequestParam("tenantUuid") String tenantUuid,
                                    @RequestParam("validationType") String validationType);
@@ -217,7 +187,6 @@ public interface WintereeCoreService {
      * @return VerificationCodeDTO
      */
     @GetMapping("/inside/account/verificationCode")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<VerificationCodeDTO> getVerificationCode(@RequestParam("userName") String userName,
                                                        @RequestParam("validationType") String validationType);
     //</editor-fold>
@@ -230,7 +199,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/menu/tree")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<MenuVO>> getMenuTree(@RequestParam(name = "language", required = false) String language);
 
     /**
@@ -239,7 +207,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/menu/treeAndAuthority")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<MenuVO>> getMenuAndAuthorityTree(@RequestParam(name = "language", required = false) String language);
 
     /**
@@ -248,15 +215,12 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/setting/menu/tree")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<MenuVO>> getSettingMenuTree();
 
     @GetMapping("/setting/menu/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<MenuVO>> getSettingMenuList();
 
     @GetMapping("/setting/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<MenuVO> getSettingMenu(@RequestParam("uuid") String uuid);
 
     /**
@@ -264,7 +228,6 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/setting/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteSettingMenuByUuid(@RequestParam("uuid") String uuid);
 
     /**
@@ -272,7 +235,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/setting/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateSettingMenu(@RequestBody MenuVO menuVO);
 
     /**
@@ -280,7 +242,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/setting/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addSettingMenu(@RequestBody MenuVO menuVO);
     //</editor-fold>
 
@@ -293,7 +254,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/inside/log")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult log(@RequestBody LogDTO logDTO);
 
     /**
@@ -308,7 +268,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/setting/logs")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<LogDTO>> getLogList(@RequestParam("page") int page,
                                        @RequestParam("rows") int rows,
                                        @RequestParam(name = "logType", required = false) String logType,
@@ -322,7 +281,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/setting/logs/type")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<Map<String, String>>> getAllLogType(@RequestParam(name = "lang", required = false) String lang);
 
     /**
@@ -331,7 +289,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/setting/logs/subtype")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<Map<String, String>>> getAllLogSubType(@RequestParam(name = "lang", required = false) String lang);
     //</editor-fold>
 
@@ -343,7 +300,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/setting/tenantlist")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<TenantDTO>> getTenantList();
 
     /**
@@ -354,7 +310,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/setting/tenant")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<TenantDTO>> getAllTenant(@RequestParam("page") int page, @RequestParam("rows") int rows);
 
     /**
@@ -364,7 +319,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/setting/tenant")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addTenant(@RequestBody TenantDTO tenantDTO);
 
     /**
@@ -374,7 +328,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/setting/tenant")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateTenant(@RequestBody TenantDTO tenantDTO);
 
     /**
@@ -384,7 +337,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/tenant/info")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<TenantInfoDTO> getTenantInfo(@RequestParam("tenantUUID") String tenantUUID);
 
     /**
@@ -394,7 +346,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/tenant/info")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateTenantInfo(@RequestBody TenantInfoDTO tenantInfoDTO);
     //</editor-fold>
 
@@ -408,7 +359,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/setting/oauthclient")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<OAuthClientDTO>> getOAuthClientAllList(@RequestParam("page") int page, @RequestParam("rows") int rows);
 
     /**
@@ -418,7 +368,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/setting/oauthclient")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO);
 
     /**
@@ -428,7 +377,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/setting/oauthclient")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateOAuthClient(@RequestBody OAuthClientDTO oAuthClientDTO);
 
     /**
@@ -438,7 +386,6 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/setting/oauthclient")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteOAuthClient(@RequestParam("clientId") String clientId);
     //</editor-fold>
 
@@ -451,7 +398,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult getAllOrganizationTree(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
@@ -461,7 +407,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/company")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult getCompanyList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
@@ -471,7 +416,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/company/simpleList")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult getCompanySimpleList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
@@ -481,7 +425,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/myCompany")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult getMyCompanyList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
@@ -491,7 +434,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/organization/company")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addCompany(@RequestBody OrganizationVO organizationVO);
 
     /**
@@ -501,7 +443,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/organization/company")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateCompany(@RequestBody OrganizationVO organizationVO);
 
     /**
@@ -512,7 +453,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/department")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult getDepartmentList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
                                 @RequestParam(name = "companyUuid", required = false) String companyUuid);
 
@@ -524,7 +464,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/department/simpleList")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult getDepartmentSimpleList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
                                       @RequestParam(name = "companyUuid", required = false) String companyUuid);
 
@@ -535,7 +474,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/organization/department")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addDepartment(@RequestBody OrganizationVO organizationVO);
 
     /**
@@ -545,7 +483,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/organization/department")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateDepartment(@RequestBody OrganizationVO organizationVO);
     //</editor-fold>
 
@@ -558,7 +495,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/role/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult getRoleList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
@@ -568,7 +504,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/role/data")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addRole(@RequestBody RoleDTO roleDTO);
 
     /**
@@ -578,7 +513,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/role/data")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateRole(@RequestBody RoleDTO roleDTO);
 
     /**
@@ -588,7 +522,6 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/role/data")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteRole(@RequestParam("uuid") String uuid);
     //</editor-fold>
 
@@ -603,7 +536,6 @@ public interface WintereeCoreService {
      * @return 站点列表
      */
     @GetMapping("/cms/site/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsSiteDTO>> getCmsSiteList(@RequestParam(name = "tenantUuid") String tenantUuid,
                                                    @RequestParam(name = "page") int page,
                                                    @RequestParam(name = "rows") int rows);
@@ -615,7 +547,6 @@ public interface WintereeCoreService {
      * @return 站点传输对象
      */
     @GetMapping("/cms/site")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsSiteDTO> getCmsSiteByUuid(@RequestParam("uuid") String uuid);
 
     /**
@@ -625,7 +556,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/site/domain")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsSiteDTO> getCmsSiteByDomain(@RequestParam("domain") String domain);
 
     /**
@@ -635,7 +565,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/cms/site")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addCmsSite(@RequestBody CmsSiteDTO cmsSiteDTO);
 
     /**
@@ -645,7 +574,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/cms/site")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateCmsSite(@RequestBody CmsSiteDTO cmsSiteDTO);
 
     /**
@@ -655,7 +583,6 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/site")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteCmsSite(@RequestParam("uuid") String uuid);
 
     /**
@@ -665,7 +592,6 @@ public interface WintereeCoreService {
      * @return 文章分类列表
      */
     @GetMapping("/cms/category/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<CmsCategoryDTO>> getCmsCategoryList(@RequestParam("siteUuid") String siteUuid);
 
     /**
@@ -675,7 +601,6 @@ public interface WintereeCoreService {
      * @return 分类对象
      */
     @GetMapping("/cms/category")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsCategoryDTO> getCmsCategoryByUuid(@RequestParam("uuid") String uuid);
 
     /**
@@ -685,7 +610,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/cms/category")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addCmsCategory(@RequestBody CmsCategoryDTO cmsCategoryDTO);
 
     /**
@@ -695,7 +619,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/cms/category")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateCmsCategory(@RequestBody CmsCategoryDTO cmsCategoryDTO);
 
     /**
@@ -705,7 +628,6 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/category")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteCmsCategory(@RequestParam("cmsCategoryUuid") String cmsCategoryUuid);
 
     /**
@@ -715,7 +637,6 @@ public interface WintereeCoreService {
      * @return 文章列表
      */
     @GetMapping("/cms/posts/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsPostsDTO>> getCmsPostList(@RequestBody CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO);
 
     /**
@@ -727,7 +648,6 @@ public interface WintereeCoreService {
      * @return 文章列表
      */
     @GetMapping("/cms/posts/bycategory/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsPostsDTO>> getCmsPostListByCategory(@RequestParam("categoryUuid") String categoryUuid,
                                                               @RequestParam("pages") int pages,
                                                               @RequestParam("rows") int rows);
@@ -740,22 +660,18 @@ public interface WintereeCoreService {
      * @return 相关文章列表
      */
     @GetMapping("/cms/posts/related/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsPostsDTO>> getRelatedPostList(@RequestParam("uuid") String uuid,
                                                         @RequestParam("number") int number);
 
     @GetMapping("/cms/posts/hot/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsPostsDTO>> getHotPostList(@RequestParam("siteUuid") String siteUuid,
                                                     @RequestParam("number") int number);
 
     @GetMapping("/cms/posts/hot/year")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsPostsDTO>> getHotPostListByYear(@RequestParam("siteUuid") String siteUuid,
                                                           @RequestParam("number") int number);
 
     @GetMapping("/cms/posts/hot/quarter")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsPostsDTO>> getHotPostListByQuarter(@RequestParam("siteUuid") String siteUuid,
                                                              @RequestParam("number") int number);
 
@@ -766,7 +682,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/PostByUuid")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsPostsDTO> getCmsPostByUuid(@RequestParam("uuid") String uuid);
 
     /**
@@ -777,7 +692,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/posts/{uuid}")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsPostsDTO> getCmsPostByUuid(@PathVariable("uuid") String uuid,
                                             @RequestParam("updateView") Boolean updateView);
 
@@ -789,7 +703,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/PostByLongId")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsPostsDTO> getCmsPostByLongId(@RequestParam("id") Long id,
                                               @RequestParam("updateView") Boolean updateView);
 
@@ -800,7 +713,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/posts/thumbsUp")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult thumbsUpPost(@RequestParam("uuid") String uuid);
 
     /**
@@ -810,7 +722,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/posts/thumbsDown")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult thumbsDownPost(@RequestParam("uuid") String uuid);
 
 
@@ -821,7 +732,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/cms/posts")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addCmsPost(@RequestBody CmsPostsDTO cmsPostsDTO);
 
     /**
@@ -831,7 +741,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/cms/posts")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateCmsPost(@RequestBody CmsPostsDTO cmsPostsDTO);
 
     /**
@@ -841,7 +750,6 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/posts")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteCmsPost(@RequestParam("uuid") String uuid);
 
     /**
@@ -853,7 +761,6 @@ public interface WintereeCoreService {
      * @return 标签列表
      */
     @GetMapping("/cms/tag/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<CmsTagDTO>> getTagList(@RequestParam(name = "siteUuid") String siteUuid,
                                               @RequestParam(name = "pages") int pages,
                                               @RequestParam(name = "rows") int rows);
@@ -865,7 +772,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/tag/listAndCount")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<CmsTagDTO>> getAllTagAndCount(String siteUuid);
 
     /**
@@ -876,7 +782,6 @@ public interface WintereeCoreService {
      * @return 标签对象
      */
     @GetMapping("/cms/tag")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsTagDTO> getTagByUuid(@RequestParam(name = "siteUuid") String siteUuid,
                                       @RequestParam(name = "uuid") String uuid);
 
@@ -887,7 +792,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/cms/tag")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addCmsTag(@RequestBody CmsTagDTO cmsTagDTO);
 
     /**
@@ -897,7 +801,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/cms/tag")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateCmsTag(@RequestBody CmsTagDTO cmsTagDTO);
 
     /**
@@ -907,7 +810,6 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/tag")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteCmsTag(@RequestParam("uuid") String uuid);
 
     /**
@@ -918,7 +820,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/menu/tree")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<CmsMenuVO>> getCmsMenuBySiteUuidAndType(@RequestParam("siteUuid") String siteUuid,
                                                            @RequestParam("menuType") int menuType);
 
@@ -929,7 +830,6 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<CmsMenuVO> getCmsMenuByUuid(@RequestParam("uuid") String uuid);
 
     /**
@@ -939,7 +839,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PostMapping("/cms/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult addCmsMenu(@RequestBody CmsMenuVO cmsMenuVO);
 
     /**
@@ -949,7 +848,6 @@ public interface WintereeCoreService {
      * @return
      */
     @PutMapping("/cms/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult updateCmsMenu(@RequestBody CmsMenuVO cmsMenuVO);
 
     /**
@@ -959,46 +857,39 @@ public interface WintereeCoreService {
      * @return
      */
     @DeleteMapping("/cms/menu")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult deleteCmsMenu(@RequestParam("uuid") String uuid);
+
+    @PostMapping("/cms/comment")
+    APIResult addComment(@RequestBody CommentDTO commentDTO);
     //</editor-fold>
 
     @PostMapping("/uploadPublicFile")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<String> uploadPublicFile(MultipartFile file);
 
     @PostMapping("/uploadPrivateFile")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<String> uploadPrivateFile(MultipartFile file);
 
     //<editor-fold desc="定时任务类的接口" defaultstate="collapsed">
 
     @GetMapping("/task/list")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<ListData<TaskJobDTO>> getTaskList(@RequestParam("pages") int pages, @RequestParam("rows") int rows);
 
     @PostMapping("/task/job")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult saveTask(@RequestBody TaskJobDTO taskJobDTO);
 
     @PostMapping("/task/job/trigger")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult triggerJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
 
     @PutMapping("/task/job/pause")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult pauseJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
 
     @PutMapping("/task/job/resume")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult resumeJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
 
     @DeleteMapping("/task/job")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult removeJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup);
 
     @PutMapping("/task/job")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult modifyJob(@RequestParam("jobName") String jobName, @RequestParam("jobGroup") String jobGroup, @RequestParam("time") String time);
     //</editor-fold>
 
@@ -1011,7 +902,6 @@ public interface WintereeCoreService {
      * @return RegionDTO
      */
     @GetMapping("/region")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<RegionDTO> getRegionByCode(@RequestParam("code") String code);
 
     /**
@@ -1021,11 +911,9 @@ public interface WintereeCoreService {
      * @return List<RegionDTO>
      */
     @GetMapping("/region/child")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<List<RegionDTO>> getChildRegion(@RequestParam("code") String code);
     //</editor-fold>
 
     @GetMapping("util/ipinfo/{ip}")
-    @HystrixCommand(fallbackMethod = "defaultFallbackMethod")
     APIResult<IpInfoDTO> queryIpInfo(@PathVariable("ip") String ip);
 }
