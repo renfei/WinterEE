@@ -859,8 +859,41 @@ public interface WintereeCoreService {
     @DeleteMapping("/cms/menu")
     APIResult deleteCmsMenu(@RequestParam("uuid") String uuid);
 
+    /**
+     * 添加评论
+     *
+     * @param commentDTO 评论数据传输对象
+     * @return
+     */
     @PostMapping("/cms/comment")
     APIResult addComment(@RequestBody CommentDTO commentDTO);
+
+    /**
+     * 根据文章UUID获取评论树
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    @GetMapping("/cms/comment/byPostUuid")
+    APIResult<CommentDTO> getCommentByPostId(@RequestParam("postUuid") String postUuid);
+
+    /**
+     * 获取最新的评论
+     *
+     * @param size 获取数量
+     * @return
+     */
+    @GetMapping("/cms/comment/last")
+    APIResult<CommentDTO> getLastComment(@RequestParam("size") int size);
+
+    /**
+     * 根据文章UUID获取评论数量
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    @GetMapping("/cms/comment/number")
+    APIResult<Long> getCommentNumber(@RequestParam("postUuid") String postUuid);
     //</editor-fold>
 
     @PostMapping("/uploadPublicFile")

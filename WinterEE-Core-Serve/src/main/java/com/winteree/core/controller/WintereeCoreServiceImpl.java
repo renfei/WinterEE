@@ -1893,6 +1893,33 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         commentDTO.setAuthorIp(IpUtils.getIpAddress(request));
         return cmsService.addComment(commentDTO);
     }
+
+    @Override
+    @ApiOperation(value = "根据文章UUID获取评论树（CMS系统）", notes = "根据文章UUID获取评论树（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "postUuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<CommentDTO> getCommentByPostId(String postUuid) {
+        return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getCommentByPostId(postUuid)).build();
+    }
+
+    @Override
+    @ApiOperation(value = "获取最新的评论（CMS系统）", notes = "获取最新的评论（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "size", value = "获取数量", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<CommentDTO> getLastComment(int size) {
+        return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getLastComment(size)).build();
+    }
+
+    @Override
+    @ApiOperation(value = "根据文章UUID获取评论数量（CMS系统）", notes = "根据文章UUID获取评论数量（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "postUuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<Long> getCommentNumber(String postUuid) {
+        return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getCommentNumber(postUuid)).build();
+    }
     //</editor-fold>
 
     //<editor-fold desc="文件类的接口" defaultstate="collapsed">

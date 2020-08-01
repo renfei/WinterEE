@@ -1318,6 +1318,13 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     //</editor-fold>
 
     //<editor-fold desc="评论类的接口" defaultstate="collapsed">
+
+    /**
+     * 添加评论
+     *
+     * @param commentDTO 评论数据传输对象
+     * @return
+     */
     @Override
     public APIResult addComment(CommentDTO commentDTO) {
         // 先获取评论目标
@@ -1348,16 +1355,79 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         return APIResult.success();
     }
 
+    /**
+     * 根据文章UUID获取评论树
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    @Override
+    public List<CommentDTO> getCommentByPostId(String postUuid) {
+        CmsCommentsDOExample example = new CmsCommentsDOExample();
+        example.createCriteria()
+                .andPostUuidEqualTo(postUuid)
+                .andIsDeleteEqualTo(false)
+                .andParentIdIsNull();
+        List<CmsCommentsDOWithBLOBs> cmsCommentsDOWithBLOBs = cmsCommentsDOMapper.selectByExampleWithBLOBs(example);
+        if (BeanUtils.isEmpty(cmsCommentsDOWithBLOBs)) {
+            return new ArrayList<>();
+        }
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        cmsCommentsDOWithBLOBs.forEach(cmsCommentsDO -> commentDTOS.add(convert(cmsCommentsDO)));
+        getCommentByParentID(commentDTOS);
+        return commentDTOS;
+    }
+
+    /**
+     * 获取最新的评论
+     *
+     * @param size 获取数量
+     * @return
+     */
+    @Override
+    public List<CommentDTO> getLastComment(int size) {
+        CmsCommentsDOExample example = new CmsCommentsDOExample();
+        example.setOrderByClause("addtime DESC");
+        example.createCriteria()
+                .andIsDeleteEqualTo(false)
+                .andParentIdIsNull();
+        PageHelper.startPage(1, size);
+        List<CmsCommentsDOWithBLOBs> cmsCommentsDOWithBLOBs = cmsCommentsDOMapper.selectByExampleWithBLOBs(example);
+        if (BeanUtils.isEmpty(cmsCommentsDOWithBLOBs)) {
+            return new ArrayList<>();
+        }
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        cmsCommentsDOWithBLOBs.forEach(cmsCommentsDO -> commentDTOS.add(convert(cmsCommentsDO)));
+        return commentDTOS;
+    }
+
+    /**
+     * 根据文章UUID获取评论数量
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    @Override
+    public Long getCommentNumber(String postUuid) {
+        CmsCommentsDOExample example = new CmsCommentsDOExample();
+        example.createCriteria()
+                .andPostUuidEqualTo(postUuid)
+                .andIsDeleteEqualTo(false);
+        Page page = PageHelper.startPage(1, 1);
+        cmsCommentsDOMapper.selectByExampleWithBLOBs(example);
+        return page.getTotal();
+    }
+
     @Async
-    public void textScan(CommentDTO commentDTO){
-        if(!"".equals(wintereeCoreConfig.getAliyunGreen().getRegionId())){
+    public void textScan(CommentDTO commentDTO) {
+        if (!"".equals(wintereeCoreConfig.getAliyunGreen().getRegionId())) {
             // 启用了
-            if(aliyunGreenService.textScan(commentDTO.getContent())){
+            if (aliyunGreenService.textScan(commentDTO.getContent())) {
                 CmsCommentsDOWithBLOBs cmsCommentsDOWithBLOBs = new CmsCommentsDOWithBLOBs();
                 cmsCommentsDOWithBLOBs.setIsDelete(false);
                 CmsCommentsDOExample example = new CmsCommentsDOExample();
                 example.createCriteria().andUuidEqualTo(commentDTO.getUuid());
-                cmsCommentsDOMapper.updateByExampleSelective(cmsCommentsDOWithBLOBs,example);
+                cmsCommentsDOMapper.updateByExampleSelective(cmsCommentsDOWithBLOBs, example);
             }
         }
     }
@@ -1399,6 +1469,32 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         cmsPostsDO.setId(null);
         cmsPostsDO.setViews(cmsPostsDO.getViews() + 1);
         cmsPostsDOMapper.updateByExampleSelective(cmsPostsDO, example);
+    }
+
+    /**
+     * 递归查询子评论
+     *
+     * @param commentDTOS 父级评论列表
+     */
+    private void getCommentByParentID(List<CommentDTO> commentDTOS) {
+        if (commentDTOS != null && commentDTOS.size() > 0) {
+            for (CommentDTO commentDTO : commentDTOS
+            ) {
+                CmsCommentsDOExample example = new CmsCommentsDOExample();
+                example.createCriteria()
+                        .andParentIdEqualTo(commentDTO.getId());
+                List<CmsCommentsDOWithBLOBs> cmsCommentsDOWithBLOBs = cmsCommentsDOMapper.selectByExampleWithBLOBs(example);
+                if (BeanUtils.isEmpty(cmsCommentsDOWithBLOBs)) {
+                    continue;
+                }
+                List<CommentDTO> child = new ArrayList<>();
+                cmsCommentsDOWithBLOBs.forEach(cmsCommentsDO -> child.add(convert(cmsCommentsDO)));
+                if (child.size() > 0) {
+                    getCommentByParentID(child);
+                    commentDTO.setChild(child);
+                }
+            }
+        }
     }
 
     private void setPageRank(CmsPostsDOWithBLOBs cmsPostsDOWithBLOBs) {
@@ -1711,7 +1807,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
 
     private CmsCommentsDOWithBLOBs convert(CommentDTO commentDTO) {
         return Builder.of(CmsCommentsDOWithBLOBs::new)
-                .with(CmsCommentsDOWithBLOBs::setUuid, commentDTO.getUuid())
+                .with(CmsCommentsDOWithBLOBs::setId, commentDTO.getId())
                 .with(CmsCommentsDOWithBLOBs::setAuthor, commentDTO.getAuthor())
                 .with(CmsCommentsDOWithBLOBs::setAuthorAddress, commentDTO.getAuthorAddress())
                 .with(CmsCommentsDOWithBLOBs::setAuthorEmail, commentDTO.getAuthorEmail())
@@ -1725,6 +1821,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
 
     private CommentDTO convert(CmsCommentsDOWithBLOBs commentDTO) {
         return Builder.of(CommentDTO::new)
+                .with(CommentDTO::setId, commentDTO.getId())
                 .with(CommentDTO::setUuid, commentDTO.getUuid())
                 .with(CommentDTO::setAuthor, commentDTO.getAuthor())
                 .with(CommentDTO::setAuthorAddress, commentDTO.getAuthorAddress())

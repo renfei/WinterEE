@@ -14,6 +14,7 @@ import java.util.List;
  */
 @Data
 public class CommentDTO {
+    private Long id;
     private String uuid;
     private String postUuid;
     private String accountUuid;
