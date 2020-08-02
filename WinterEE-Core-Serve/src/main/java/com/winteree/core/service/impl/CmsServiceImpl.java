@@ -1385,7 +1385,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
      * @return
      */
     @Override
-    public List<CommentDTO> getLastComment(int size) {
+    public List<List<CommentDTO>> getLastComment(int size) {
         CmsCommentsDOExample example = new CmsCommentsDOExample();
         example.setOrderByClause("addtime DESC");
         example.createCriteria()
