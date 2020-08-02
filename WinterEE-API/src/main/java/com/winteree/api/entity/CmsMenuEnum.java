@@ -23,7 +23,11 @@ public enum CmsMenuEnum {
     /**
      * 页尾菜单
      */
-    END(4);
+    END(4),
+    /**
+     * 友情链接
+     */
+    LINK(5);
 
     /**
      * 菜单类型
