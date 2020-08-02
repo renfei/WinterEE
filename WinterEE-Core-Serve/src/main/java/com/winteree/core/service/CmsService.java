@@ -3,6 +3,7 @@ package com.winteree.core.service;
 import com.winteree.api.entity.*;
 import com.winteree.api.exception.FailureException;
 import com.winteree.api.exception.ForbiddenException;
+import net.renfei.sdk.entity.APIResult;
 
 import java.util.List;
 
@@ -200,7 +201,7 @@ public interface CmsService {
     /**
      * 根据文章ID获取文章详情
      *
-     * @param id        文章主键ID
+     * @param id          文章主键ID
      * @param updateViews 是否更新浏览量
      * @return
      */
@@ -364,6 +365,38 @@ public interface CmsService {
      * @throws ForbiddenException
      */
     int deleteCmsMenu(String uuid) throws ForbiddenException;
+
+    /**
+     * 添加评论
+     *
+     * @param commentDTO 评论数据传输对象
+     * @return
+     */
+    APIResult addComment(CommentDTO commentDTO);
+
+    /**
+     * 根据文章UUID获取评论树
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    List<CommentDTO> getCommentByPostId(String postUuid);
+
+    /**
+     * 获取最新的评论
+     *
+     * @param size 获取数量
+     * @return
+     */
+    List<CommentDTO> getLastComment(int size);
+
+    /**
+     * 根据文章UUID获取评论数量
+     *
+     * @param postUuid 文章UUID
+     * @return
+     */
+    Long getCommentNumber(String postUuid);
 
     /**
      * 跟新文章评级

@@ -15,6 +15,7 @@ import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
 import net.renfei.sdk.utils.*;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -60,6 +62,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final EmailService emailService;
     private final SmsService aliYunSmsService;
     private final IpInfoService ipInfoService;
+    @Autowired
+    private HttpServletRequest request;
     //</editor-fold>
 
     //<editor-fold desc="构造函数" defaultstate="collapsed">
@@ -1876,6 +1880,45 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                     .message(forbiddenException.getMessage())
                     .build();
         }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="评论类的接口" defaultstate="collapsed">
+    @Override
+    @ApiOperation(value = "评论（CMS系统）", notes = "评论（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commentDTO", value = "菜单UUID", required = false, paramType = "query", dataType = "CommentDTO")
+    })
+    public APIResult addComment(CommentDTO commentDTO) {
+        commentDTO.setAuthorIp(IpUtils.getIpAddress(request));
+        return cmsService.addComment(commentDTO);
+    }
+
+    @Override
+    @ApiOperation(value = "根据文章UUID获取评论树（CMS系统）", notes = "根据文章UUID获取评论树（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "postUuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<CommentDTO> getCommentByPostId(String postUuid) {
+        return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getCommentByPostId(postUuid)).build();
+    }
+
+    @Override
+    @ApiOperation(value = "获取最新的评论（CMS系统）", notes = "获取最新的评论（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "size", value = "获取数量", required = false, paramType = "query", dataType = "int")
+    })
+    public APIResult<CommentDTO> getLastComment(int size) {
+        return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getLastComment(size)).build();
+    }
+
+    @Override
+    @ApiOperation(value = "根据文章UUID获取评论数量（CMS系统）", notes = "根据文章UUID获取评论数量（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "postUuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<Long> getCommentNumber(String postUuid) {
+        return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getCommentNumber(postUuid)).build();
     }
     //</editor-fold>
 
