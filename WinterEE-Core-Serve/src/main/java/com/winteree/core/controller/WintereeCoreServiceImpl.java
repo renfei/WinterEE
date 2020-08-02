@@ -1908,7 +1908,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiImplicitParams({
             @ApiImplicitParam(name = "size", value = "获取数量", required = false, paramType = "query", dataType = "int")
     })
-    public APIResult<CommentDTO> getLastComment(int size) {
+    public APIResult<List<CommentDTO>> getLastComment(int size) {
         return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getLastComment(size)).build();
     }
 

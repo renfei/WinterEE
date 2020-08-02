@@ -388,7 +388,7 @@ public interface CmsService {
      * @param size 获取数量
      * @return
      */
-    List<CommentDTO> getLastComment(int size);
+    List<List<CommentDTO>> getLastComment(int size);
 
     /**
      * 根据文章UUID获取评论数量

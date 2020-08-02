@@ -884,7 +884,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/comment/last")
-    APIResult<CommentDTO> getLastComment(@RequestParam("size") int size);
+    APIResult<List<CommentDTO>> getLastComment(@RequestParam("size") int size);
 
     /**
      * 根据文章UUID获取评论数量
