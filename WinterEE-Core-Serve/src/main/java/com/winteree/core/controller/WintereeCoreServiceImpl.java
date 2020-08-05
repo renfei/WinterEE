@@ -62,6 +62,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final EmailService emailService;
     private final SmsService aliYunSmsService;
     private final IpInfoService ipInfoService;
+    private final LicenseService licenseService;
     @Autowired
     private HttpServletRequest request;
     //</editor-fold>
@@ -84,7 +85,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    VerificationCodeService verificationCodeService,
                                    EmailService emailService,
                                    @Qualifier("aliyunSmsServiceImpl") SmsService aliYunSmsService,
-                                   IpInfoService ipInfoService) {
+                                   IpInfoService ipInfoService, LicenseService licenseService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -103,6 +104,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.emailService = emailService;
         this.aliYunSmsService = aliYunSmsService;
         this.ipInfoService = ipInfoService;
+        this.licenseService = licenseService;
     }
     //</editor-fold>
 
@@ -1881,6 +1883,96 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                     .build();
         }
     }
+
+    @Override
+    @ApiOperation(value = "获取CMS自定义页面（前台）", notes = "获取CMS自定义页面（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "页面ID", required = false, paramType = "query", dataType = "Long")
+    })
+    public APIResult<CmsPageDTO> getCmsPageById(Long id) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getCmsPageById(id))
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmspage:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "获取CMS自定义页面（CMS系统）", notes = "获取CMS自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "uuid", value = "页面UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<CmsPageDTO> getCmsPageByUuid(String siteUuid, String uuid) {
+        try {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(cmsService.getCmsPageByUuid(siteUuid, uuid))
+                    .build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmspage:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "删除自定义页面（CMS系统）", notes = "删除自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "uuid", value = "页面UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult deleteCmsPage(String siteUuid, String uuid) {
+        try {
+            cmsService.deleteCmsPage(siteUuid, uuid);
+            return APIResult.success();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmspage:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "更新自定义页面（CMS系统）", notes = "更新自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cmsPageDTO", value = "自定义页面数据传输对象", required = false, paramType = "query", dataType = "CmsPageDTO")
+    })
+    public APIResult updateCmsPage(CmsPageDTO cmsPageDTO) {
+        try {
+            cmsService.updateCmsPage(cmsPageDTO);
+            return APIResult.success();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmspage:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "添加自定义页面（CMS系统）", notes = "添加自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cmsPageDTO", value = "自定义页面数据传输对象", required = false, paramType = "query", dataType = "CmsPageDTO")
+    })
+    public APIResult addCmsPage(CmsPageDTO cmsPageDTO) {
+        try {
+            cmsService.addCmsPage(cmsPageDTO);
+            return APIResult.success();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="评论类的接口" defaultstate="collapsed">
@@ -2178,5 +2270,11 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     })
     public APIResult<IpInfoDTO> queryIpInfo(String ip) {
         return ipInfoService.query(ip);
+    }
+
+    @Override
+    @ApiOperation(value = "获取授权信息", notes = "获取授权信息", tags = "工具类接口", response = String.class)
+    public APIResult<LicenseDTO> getLicense() {
+        return APIResult.builder().code(StateCode.OK).message("OK").data(licenseService.getLicense()).build();
     }
 }

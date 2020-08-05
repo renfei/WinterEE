@@ -813,4 +813,10 @@ public class WintereeCoreServiceTest {
         apiResult.getData().forEach(regionDTO -> log.info(regionDTO.getRegionName()));
     }
     //<editor-fold>
+
+    @Test
+    public void getLicense() {
+        APIResult<LicenseDTO> apiResult = wintereeCoreService.getLicense();
+        Assertions.assertEquals(apiResult.getCode(), StateCode.OK.getCode());
+    }
 }
