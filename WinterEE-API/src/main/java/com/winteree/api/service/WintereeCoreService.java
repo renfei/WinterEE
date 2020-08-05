@@ -859,6 +859,21 @@ public interface WintereeCoreService {
     @DeleteMapping("/cms/menu")
     APIResult deleteCmsMenu(@RequestParam("uuid") String uuid);
 
+    @GetMapping("/cms/page/{id}")
+    APIResult<CmsPageDTO> getCmsPageById(@PathVariable("id") Long id);
+
+    @GetMapping("/cms/page/uuid")
+    APIResult<CmsPageDTO> getCmsPageByUuid(@RequestParam("siteUuid") String siteUuid, @RequestParam("uuid") String uuid);
+
+    @DeleteMapping("/cms/page/uuid")
+    APIResult deleteCmsPage(@RequestParam("siteUuid") String siteUuid, @RequestParam("uuid") String uuid);
+
+    @PutMapping("/cms/page")
+    APIResult updateCmsPage(@RequestBody CmsPageDTO cmsPageDTO);
+
+    @PostMapping("/cms/page")
+    APIResult addCmsPage(@RequestBody CmsPageDTO cmsPageDTO);
+
     /**
      * 添加评论
      *
@@ -947,6 +962,9 @@ public interface WintereeCoreService {
     APIResult<List<RegionDTO>> getChildRegion(@RequestParam("code") String code);
     //</editor-fold>
 
-    @GetMapping("util/ipinfo/{ip}")
+    @GetMapping("/util/ipinfo/{ip}")
     APIResult<IpInfoDTO> queryIpInfo(@PathVariable("ip") String ip);
+
+    @GetMapping("/inside/license")
+    APIResult<LicenseDTO> getLicense();
 }

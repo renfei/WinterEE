@@ -101,6 +101,7 @@ feign:
     enabled: true
 winteree:
   core:
+    systemSerialNumber: F65432E5-8891-421F-98BC-7057A84E3C52
     runMode: dev
     smsService: aliyun
     rootAccount: 9369919A-F95E-44CF-AB0A-6BCD1D933403

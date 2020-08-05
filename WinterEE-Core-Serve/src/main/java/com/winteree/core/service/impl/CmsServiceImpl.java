@@ -41,6 +41,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     private final CmsTagPostsDOMapper cmsTagPostsDOMapper;
     private final CmsMenuDOMapper cmsMenuDOMapper;
     private final AliyunGreenService aliyunGreenService;
+    private final CmsPageDOMapper cmsPageDOMapper;
 
     protected CmsServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                              AccountService accountService,
@@ -54,7 +55,8 @@ public class CmsServiceImpl extends BaseService implements CmsService {
                              CmsTagDOMapper cmsTagDOMapper,
                              CmsTagPostsDOMapper cmsTagPostsDOMapper,
                              CmsMenuDOMapper cmsMenuDOMapper,
-                             AliyunGreenService aliyunGreenService) {
+                             AliyunGreenService aliyunGreenService,
+                             CmsPageDOMapper cmsPageDOMapper) {
         super(wintereeCoreConfig);
         this.accountService = accountService;
         this.roleService = roleService;
@@ -68,6 +70,7 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         this.cmsTagPostsDOMapper = cmsTagPostsDOMapper;
         this.cmsMenuDOMapper = cmsMenuDOMapper;
         this.aliyunGreenService = aliyunGreenService;
+        this.cmsPageDOMapper = cmsPageDOMapper;
     }
     //</editor-fold>
 
@@ -1433,6 +1436,138 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     }
     //</editor-fold>
 
+    //<editor-fold desc="页面类的接口" defaultstate="collapsed">
+
+    /**
+     * 添加页面
+     *
+     * @param cmsPageDTO 页面传输对象
+     * @return int
+     * @throws ForbiddenException
+     */
+    @Override
+    public int addCmsPage(CmsPageDTO cmsPageDTO) throws ForbiddenException {
+        this.getCmsSiteByUuid(cmsPageDTO.getSiteUuid());
+        CmsPageDOWithBLOBs cmsPageDO = new CmsPageDOWithBLOBs();
+        cmsPageDO.setAddTime(new Date());
+        cmsPageDO.setIsDelete(false);
+        cmsPageDO.setReleaseTime(cmsPageDTO.getReleaseTime());
+        cmsPageDO.setSiteUuid(cmsPageDTO.getSiteUuid());
+        cmsPageDO.setThumbsDown(0L);
+        cmsPageDO.setThumbsUp(0L);
+        cmsPageDO.setTitle(cmsPageDTO.getTitle());
+        cmsPageDO.setUuid(UUID.randomUUID().toString().toUpperCase());
+        cmsPageDO.setViews(0L);
+        cmsPageDO.setContent(cmsPageDTO.getContent());
+        cmsPageDO.setDescribes(cmsPageDTO.getDescribes());
+        cmsPageDO.setFeaturedImage(cmsPageDTO.getFeaturedImage());
+        cmsPageDO.setKeyword(cmsPageDTO.getKeyword());
+        return cmsPageDOMapper.insertSelective(cmsPageDO);
+    }
+
+    /**
+     * 更新页面
+     *
+     * @param cmsPageDTO 页面数据传输对象
+     * @return int
+     * @throws FailureException
+     * @throws ForbiddenException
+     */
+    @Override
+    public int updateCmsPage(CmsPageDTO cmsPageDTO) throws FailureException, ForbiddenException {
+        this.getCmsSiteByUuid(cmsPageDTO.getSiteUuid());
+        CmsPageDTO oldCmsPage = this.getCmsPageByUuid(cmsPageDTO.getSiteUuid(), cmsPageDTO.getUuid());
+        if (oldCmsPage == null) {
+            throw new FailureException("要修改的页面不存在");
+        }
+        CmsPageDOExample example = new CmsPageDOExample();
+        example.createCriteria()
+                .andUuidEqualTo(cmsPageDTO.getUuid())
+                .andSiteUuidEqualTo(cmsPageDTO.getSiteUuid());
+        oldCmsPage.setContent(cmsPageDTO.getContent());
+        oldCmsPage.setDescribes(cmsPageDTO.getDescribes());
+        oldCmsPage.setFeaturedImage(cmsPageDTO.getFeaturedImage());
+        oldCmsPage.setKeyword(cmsPageDTO.getKeyword());
+        oldCmsPage.setReleaseTime(cmsPageDTO.getReleaseTime());
+        oldCmsPage.setTitle(cmsPageDTO.getTitle());
+        CmsPageDOWithBLOBs cmsPageDO = new CmsPageDOWithBLOBs();
+        cmsPageDO.setAddTime(oldCmsPage.getAddTime());
+        cmsPageDO.setIsDelete(oldCmsPage.getIsDelete());
+        cmsPageDO.setReleaseTime(oldCmsPage.getReleaseTime());
+        cmsPageDO.setSiteUuid(oldCmsPage.getSiteUuid());
+        cmsPageDO.setThumbsDown(oldCmsPage.getThumbsDown());
+        cmsPageDO.setThumbsUp(oldCmsPage.getThumbsUp());
+        cmsPageDO.setTitle(oldCmsPage.getTitle());
+        cmsPageDO.setUuid(oldCmsPage.getUuid());
+        cmsPageDO.setViews(oldCmsPage.getViews());
+        cmsPageDO.setContent(oldCmsPage.getContent());
+        cmsPageDO.setDescribes(oldCmsPage.getDescribes());
+        cmsPageDO.setFeaturedImage(oldCmsPage.getFeaturedImage());
+        cmsPageDO.setKeyword(oldCmsPage.getKeyword());
+        return cmsPageDOMapper.updateByExampleWithBLOBs(cmsPageDO, example);
+    }
+
+    /**
+     * 删除页面
+     *
+     * @param siteUuid 站点UUID
+     * @param uuid     页面UUID
+     * @return int
+     * @throws ForbiddenException
+     */
+    @Override
+    public int deleteCmsPage(String siteUuid, String uuid) throws ForbiddenException {
+        this.getCmsSiteByUuid(siteUuid);
+        CmsPageDOExample example = new CmsPageDOExample();
+        example.createCriteria()
+                .andUuidEqualTo(uuid)
+                .andSiteUuidEqualTo(siteUuid);
+        return cmsPageDOMapper.deleteByExample(example);
+    }
+
+    /**
+     * 根据站点UUID、页面UUID获取页面
+     *
+     * @param siteUuid 站点UUID
+     * @param uuid     页面UUID
+     * @return CmsPageDTO
+     * @throws ForbiddenException
+     */
+    @Override
+    public CmsPageDTO getCmsPageByUuid(String siteUuid, String uuid) throws ForbiddenException {
+        this.getCmsSiteByUuid(siteUuid);
+        CmsPageDOExample example = new CmsPageDOExample();
+        example.createCriteria()
+                .andUuidEqualTo(uuid)
+                .andSiteUuidEqualTo(siteUuid);
+        CmsPageDOWithBLOBs cmsPageDOWithBLOBs = ListUtils.getOne(cmsPageDOMapper.selectByExampleWithBLOBs(example));
+        if (BeanUtils.isEmpty(cmsPageDOWithBLOBs)) {
+            return null;
+        }
+        return convert(cmsPageDOWithBLOBs);
+    }
+
+    /**
+     * 根据ID获取CMS自定义页面页面（前台）
+     *
+     * @param id 页面的ID
+     * @return CmsPageDTO
+     */
+    @Override
+    public CmsPageDTO getCmsPageById(Long id) {
+        CmsPageDOExample example = new CmsPageDOExample();
+        example.createCriteria()
+                .andIdEqualTo(id)
+                .andReleaseTimeLessThan(new Date());
+        CmsPageDOWithBLOBs cmsPageDOWithBLOBs = ListUtils.getOne(cmsPageDOMapper.selectByExampleWithBLOBs(example));
+        if (BeanUtils.isEmpty(cmsPageDOWithBLOBs)) {
+            return null;
+        }
+        return convert(cmsPageDOWithBLOBs);
+    }
+
+    //</editor-fold>
+
     /**
      * 跟新文章评级
      */
@@ -1832,6 +1967,25 @@ public class CmsServiceImpl extends BaseService implements CmsService {
                 .with(CommentDTO::setPostUuid, commentDTO.getPostUuid())
                 .with(CommentDTO::setParentId, commentDTO.getParentId())
                 .with(CommentDTO::setAddtime, commentDTO.getAddtime())
+                .build();
+    }
+
+    private CmsPageDTO convert(CmsPageDOWithBLOBs cmsPageDO) {
+        return Builder.of(CmsPageDTO::new)
+                .with(CmsPageDTO::setId, cmsPageDO.getId())
+                .with(CmsPageDTO::setAddTime, cmsPageDO.getAddTime())
+                .with(CmsPageDTO::setContent, cmsPageDO.getContent())
+                .with(CmsPageDTO::setDescribes, cmsPageDO.getDescribes())
+                .with(CmsPageDTO::setFeaturedImage, cmsPageDO.getFeaturedImage())
+                .with(CmsPageDTO::setIsDelete, cmsPageDO.getIsDelete())
+                .with(CmsPageDTO::setKeyword, cmsPageDO.getKeyword())
+                .with(CmsPageDTO::setReleaseTime, cmsPageDO.getReleaseTime())
+                .with(CmsPageDTO::setSiteUuid, cmsPageDO.getSiteUuid())
+                .with(CmsPageDTO::setThumbsDown, cmsPageDO.getThumbsDown())
+                .with(CmsPageDTO::setThumbsUp, cmsPageDO.getThumbsUp())
+                .with(CmsPageDTO::setTitle, cmsPageDO.getTitle())
+                .with(CmsPageDTO::setUuid, cmsPageDO.getUuid())
+                .with(CmsPageDTO::setViews, cmsPageDO.getViews())
                 .build();
     }
 

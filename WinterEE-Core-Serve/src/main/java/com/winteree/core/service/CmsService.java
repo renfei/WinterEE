@@ -402,4 +402,51 @@ public interface CmsService {
      * 跟新文章评级
      */
     void updatePageRank();
+
+    /**
+     * 根据ID获取CMS自定义页面页面（前台）
+     *
+     * @param id 页面的ID
+     * @return CmsPageDTO
+     */
+    CmsPageDTO getCmsPageById(Long id);
+
+    /**
+     * 根据站点UUID、页面UUID获取页面
+     *
+     * @param siteUuid 站点UUID
+     * @param uuid     页面UUID
+     * @return CmsPageDTO
+     * @throws ForbiddenException
+     */
+    CmsPageDTO getCmsPageByUuid(String siteUuid, String uuid) throws ForbiddenException;
+
+    /**
+     * 删除页面
+     *
+     * @param siteUuid 站点UUID
+     * @param uuid     页面UUID
+     * @return int
+     * @throws ForbiddenException
+     */
+    int deleteCmsPage(String siteUuid, String uuid) throws ForbiddenException;
+
+    /**
+     * 更新页面
+     *
+     * @param cmsPageDTO 页面数据传输对象
+     * @return int
+     * @throws FailureException
+     * @throws ForbiddenException
+     */
+    int updateCmsPage(CmsPageDTO cmsPageDTO) throws FailureException, ForbiddenException;
+
+    /**
+     * 添加页面
+     *
+     * @param cmsPageDTO 页面传输对象
+     * @return int
+     * @throws ForbiddenException
+     */
+    int addCmsPage(CmsPageDTO cmsPageDTO) throws ForbiddenException;
 }
