@@ -30,10 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * WinterEE-Core-Serve 提供的服务实现
@@ -61,6 +58,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final VerificationCodeService verificationCodeService;
     private final EmailService emailService;
     private final SmsService aliYunSmsService;
+    private final AliyunOssService aliyunOssService;
     private final IpInfoService ipInfoService;
     private final LicenseService licenseService;
     @Autowired
@@ -85,7 +83,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    VerificationCodeService verificationCodeService,
                                    EmailService emailService,
                                    @Qualifier("aliyunSmsServiceImpl") SmsService aliYunSmsService,
-                                   IpInfoService ipInfoService, LicenseService licenseService) {
+                                   AliyunOssService aliyunOssService, IpInfoService ipInfoService,
+                                   LicenseService licenseService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -103,6 +102,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.verificationCodeService = verificationCodeService;
         this.emailService = emailService;
         this.aliYunSmsService = aliYunSmsService;
+        this.aliyunOssService = aliyunOssService;
         this.ipInfoService = ipInfoService;
         this.licenseService = licenseService;
     }
@@ -1261,6 +1261,32 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
+    @PreAuthorize("hasAnyAuthority('platf:cmscategory:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "根据英文名获取CMS系统站点下的分类接口", notes = "根据英文名获取CMS系统站点下的分类接口", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ename", value = "分类英文名", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<CmsCategoryDTO> getCmsCategoryByEname(String ename) {
+        try {
+            return APIResult.builder()
+                    .code(StateCode.OK)
+                    .message("OK")
+                    .data(cmsService.getCmsCategoryByEname(ename))
+                    .build();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
     @PreAuthorize("hasAnyAuthority('platf:cmscategory:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @ApiOperation(value = "添加文章分类接口", notes = "添加文章分类", tags = "CMS类接口", response = String.class)
     @ApiImplicitParams({
@@ -2276,5 +2302,70 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiOperation(value = "获取授权信息", notes = "获取授权信息", tags = "工具类接口", response = String.class)
     public APIResult<LicenseDTO> getLicense() {
         return APIResult.builder().code(StateCode.OK).message("OK").data(licenseService.getLicense()).build();
+    }
+
+    @Override
+    @ApiOperation(value = "上传文件到阿里云OSS私有桶", notes = "上传文件到阿里云OSS私有桶", tags = "工具类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "objectName", value = "文件名及路径", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult uploadPrivateFileByAliyunOss(MultipartFile file, String objectName) {
+        try {
+            aliyunOssService.uploadPrivateFile(file.getInputStream(), objectName);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return APIResult.builder().code(StateCode.Failure).message("内部服务器错误").build();
+        }
+        return APIResult.success();
+    }
+
+    @Override
+    @ApiOperation(value = "上传文件到阿里云OSS公有桶", notes = "上传文件到阿里云OSS公有桶", tags = "工具类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "objectName", value = "文件名及路径", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult uploadPubilcFileByAliyunOss(MultipartFile file, String objectName) {
+        try {
+            aliyunOssService.uploadPubilcFile(file.getInputStream(), objectName);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return APIResult.builder().code(StateCode.Failure).message("内部服务器错误").build();
+        }
+        return APIResult.success();
+    }
+
+    @Override
+    @ApiOperation(value = "上传文件到阿里云OSS", notes = "上传文件到阿里云OSS", tags = "工具类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "bucketName", value = "储存桶名称", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "objectName", value = "文件名及路径", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult putObjectByAliyunOss(String bucketName, String objectName, MultipartFile file) {
+        try {
+            aliyunOssService.putObject(bucketName, objectName, file.getInputStream());
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return APIResult.builder().code(StateCode.Failure).message("内部服务器错误").build();
+        }
+        return APIResult.success();
+    }
+
+    @Override
+    @ApiOperation(value = "获取阿里云OSS授权链接", notes = "获取阿里云OSS授权链接", tags = "工具类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "downLoadHost", value = "下载链接的域名和协议，例如：https://cdn.renfei.net", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "bucketName", value = "储存桶名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "objectName", value = "文件路径和文件名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "expiration", value = "过期时间", required = false, paramType = "query", dataType = "Date")
+    })
+    public APIResult<String> generatePresignedUrlByAliyunOss(String downLoadHost, String bucketName, String objectName, Date expiration) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(aliyunOssService.generatePresignedUrl(downLoadHost, bucketName, objectName, expiration))
+                .build();
     }
 }

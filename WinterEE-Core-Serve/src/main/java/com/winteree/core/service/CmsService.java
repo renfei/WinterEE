@@ -96,6 +96,16 @@ public interface CmsService {
     CmsCategoryDTO getCmsCategoryByUuid(String uuid) throws ForbiddenException, FailureException;
 
     /**
+     * 根据英文名称获取CMS系统站点下的分类
+     *
+     * @param ename 英文名称
+     * @return 分类对象
+     * @throws ForbiddenException 权限不足异常
+     * @throws FailureException   失败异常
+     */
+    CmsCategoryDTO getCmsCategoryByEname(String ename) throws ForbiddenException, FailureException;
+
+    /**
      * 添加文章分类（后台管理）
      *
      * @param cmsCategoryDTO 文章分类传输对象
