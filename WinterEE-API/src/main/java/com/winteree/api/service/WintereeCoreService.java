@@ -3,9 +3,11 @@ package com.winteree.api.service;
 import com.winteree.api.entity.*;
 import com.winteree.api.exception.FailureException;
 import net.renfei.sdk.entity.APIResult;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -604,6 +606,15 @@ public interface WintereeCoreService {
     APIResult<CmsCategoryDTO> getCmsCategoryByUuid(@RequestParam("uuid") String uuid);
 
     /**
+     * 根据英文名称获取CMS系统站点下的分类
+     *
+     * @param ename 英文名称
+     * @return
+     */
+    @GetMapping("/cms/category/byEname")
+    APIResult<CmsCategoryDTO> getCmsCategoryByEname(@RequestParam("ename") String ename);
+
+    /**
      * 添加文章分类（后台管理）
      *
      * @param cmsCategoryDTO 文章分类传输对象
@@ -967,4 +978,23 @@ public interface WintereeCoreService {
 
     @GetMapping("/inside/license")
     APIResult<LicenseDTO> getLicense();
+
+    @PostMapping("/inside/aliyun/oss/upload/private")
+    APIResult uploadPrivateFileByAliyunOss(@RequestBody MultipartFile file,
+                                           @RequestParam("objectName") String objectName);
+
+    @PostMapping("/inside/aliyun/oss/upload/public")
+    APIResult uploadPubilcFileByAliyunOss(@RequestBody MultipartFile file,
+                                          @RequestParam("objectName") String objectName);
+
+    @PostMapping("/inside/aliyun/oss/upload")
+    APIResult putObjectByAliyunOss(@RequestParam("bucketName") String bucketName,
+                                   @RequestParam("objectName") String objectName,
+                                   @RequestBody MultipartFile file);
+
+    @GetMapping("/inside/aliyun/oss/presigned")
+    APIResult<String> generatePresignedUrlByAliyunOss(@RequestParam("downLoadHost") String downLoadHost,
+                                                      @RequestParam("bucketName") String bucketName,
+                                                      @RequestParam("objectName") String objectName,
+                                                      @RequestParam("bucketName") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date expiration);
 }

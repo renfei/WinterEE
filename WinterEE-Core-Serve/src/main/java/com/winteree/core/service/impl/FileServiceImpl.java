@@ -1,7 +1,5 @@
 package com.winteree.core.service.impl;
 
-import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClientBuilder;
 import com.winteree.api.entity.DataScopeEnum;
 import com.winteree.api.entity.FileDTO;
 import com.winteree.api.exception.FailureException;
@@ -10,10 +8,7 @@ import com.winteree.core.dao.FilesDOMapper;
 import com.winteree.core.dao.entity.FilesDO;
 import com.winteree.core.dao.entity.FilesDOExample;
 import com.winteree.core.entity.AccountDTO;
-import com.winteree.core.service.AccountService;
-import com.winteree.core.service.BaseService;
-import com.winteree.core.service.FileService;
-import com.winteree.core.service.RoleService;
+import com.winteree.core.service.*;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.DateUtils;
@@ -24,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
 
@@ -41,15 +35,18 @@ public class FileServiceImpl extends BaseService implements FileService {
     private final AccountService accountService;
     private final RoleService roleService;
     private final FilesDOMapper filesDOMapper;
+    private final AliyunOssService aliyunOssService;
 
     protected FileServiceImpl(WintereeCoreConfig wintereeCoreConfig,
                               AccountService accountService,
                               RoleService roleService,
-                              FilesDOMapper filesDOMapper) {
+                              FilesDOMapper filesDOMapper,
+                              AliyunOssService aliyunOssService) {
         super(wintereeCoreConfig);
         this.accountService = accountService;
         this.roleService = roleService;
         this.filesDOMapper = filesDOMapper;
+        this.aliyunOssService = aliyunOssService;
     }
 
     /**
@@ -300,16 +297,8 @@ public class FileServiceImpl extends BaseService implements FileService {
      * @return
      */
     private String getAliyunOssPresignedUrl(String objectName, Date expiration) {
-        // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder()
-                .build(wintereeCoreConfig.getAliyunOssEndpoint(),
-                        wintereeCoreConfig.getAliyun().getAccessKeyId(),
-                        wintereeCoreConfig.getAliyun().getSecret());
-        // 生成以GET方法访问的签名URL，访客可以直接通过浏览器访问相关内容。
-        URL url = ossClient.generatePresignedUrl(wintereeCoreConfig.getAliyunOssPrivateBuckename(), objectName, expiration);
-        // 关闭OSSClient。
-        ossClient.shutdown();
-        return wintereeCoreConfig.getStorageOssPrivateUrl() + url.getPath() + "?" + url.getQuery();
+        return aliyunOssService.generatePresignedUrl(wintereeCoreConfig.getStorageOssPrivateUrl(),
+                wintereeCoreConfig.getAliyunOssPrivateBuckename(), objectName, expiration);
     }
 
     /**
@@ -319,14 +308,7 @@ public class FileServiceImpl extends BaseService implements FileService {
      * @param objectName
      */
     private void aliyunOssUploadPrivateFile(InputStream inputStream, String objectName) {
-        // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder()
-                .build(wintereeCoreConfig.getAliyunOssEndpoint(),
-                        wintereeCoreConfig.getAliyun().getAccessKeyId(),
-                        wintereeCoreConfig.getAliyun().getSecret());
-        ossClient.putObject(wintereeCoreConfig.getAliyunOssPrivateBuckename(), objectName, inputStream);
-        // 关闭OSSClient。
-        ossClient.shutdown();
+        aliyunOssService.uploadPrivateFile(inputStream, objectName);
     }
 
     /**
@@ -336,13 +318,6 @@ public class FileServiceImpl extends BaseService implements FileService {
      * @param objectName
      */
     private void aliyunOssUploadPubilcFile(InputStream inputStream, String objectName) {
-        // 创建OSSClient实例。
-        OSS ossClient = new OSSClientBuilder()
-                .build(wintereeCoreConfig.getAliyunOssEndpoint(),
-                        wintereeCoreConfig.getAliyun().getAccessKeyId(),
-                        wintereeCoreConfig.getAliyun().getSecret());
-        ossClient.putObject(wintereeCoreConfig.getAliyunOssPublicBuckename(), objectName, inputStream);
-        // 关闭OSSClient。
-        ossClient.shutdown();
+        aliyunOssService.uploadPubilcFile(inputStream, objectName);
     }
 }

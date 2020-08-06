@@ -405,6 +405,26 @@ public class CmsServiceImpl extends BaseService implements CmsService {
     }
 
     /**
+     * 根据英文名称获取CMS系统站点下的分类
+     *
+     * @param ename 英文名称
+     * @return 分类对象
+     * @throws ForbiddenException 权限不足异常
+     * @throws FailureException   失败异常
+     */
+    @Override
+    public CmsCategoryDTO getCmsCategoryByEname(String ename) throws ForbiddenException, FailureException {
+        CmsCategoryDOExample example = new CmsCategoryDOExample();
+        example.createCriteria().andEnNameEqualTo(ename);
+        List<CmsCategoryDO> cmsCategoryDOS = cmsCategoryDOMapper.selectByExample(example);
+        if (BeanUtils.isEmpty(cmsCategoryDOS)) {
+            return null;
+        } else {
+            return convert(ListUtils.getOne(cmsCategoryDOS));
+        }
+    }
+
+    /**
      * 添加文章分类（后台管理）
      *
      * @param cmsCategoryDTO 文章分类传输对象
