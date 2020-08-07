@@ -1607,6 +1607,26 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
+    @ApiOperation(value = "文章点赞接口", notes = "文章点赞接口", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult thumbsUpCmsPost(String uuid) {
+        cmsService.thumbsUpCmsPost(uuid);
+        return APIResult.success();
+    }
+
+    @Override
+    @ApiOperation(value = "文章点踩接口", notes = "文章点踩接口", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult thumbsDownCmsPost(String uuid) {
+        cmsService.thumbsDownCmsPost(uuid);
+        return APIResult.success();
+    }
+
+    @Override
     @PreAuthorize("hasAnyAuthority('platf:cmstag:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @ApiOperation(value = "获取标签列表接口", notes = "获取标签列表", tags = "CMS类接口", response = String.class)
     @ApiImplicitParams({

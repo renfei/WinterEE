@@ -262,6 +262,20 @@ public interface CmsService {
     int deleteCmsPost(String uuid) throws ForbiddenException, FailureException;
 
     /**
+     * 文章点赞
+     *
+     * @param uuid 文章UUID
+     */
+    void thumbsUpCmsPost(String uuid);
+
+    /**
+     * 文章点踩
+     *
+     * @param uuid 文章UUID
+     */
+    void thumbsDownCmsPost(String uuid);
+
+    /**
      * 获取标签列表（后台管理）
      *
      * @param siteUuid 站点UUID

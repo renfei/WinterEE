@@ -764,6 +764,22 @@ public interface WintereeCoreService {
     APIResult deleteCmsPost(@RequestParam("uuid") String uuid);
 
     /**
+     * 文章点赞
+     *
+     * @param uuid 文章UUID
+     */
+    @PostMapping("/cms/post/thumbsUp")
+    APIResult thumbsUpCmsPost(@RequestParam("uuid") String uuid);
+
+    /**
+     * 文章点踩
+     *
+     * @param uuid 文章UUID
+     */
+    @PostMapping("/cms/post/thumbsDown")
+    APIResult thumbsDownCmsPost(@RequestParam("uuid") String uuid);
+
+    /**
      * 获取标签列表（后台管理）
      *
      * @param siteUuid 站点UUID

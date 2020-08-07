@@ -1003,6 +1003,40 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         cmsTagPostsDOMapper.deleteByExample(cmsTagPostsDOExample);
         return cmsPostsDOMapper.deleteByExample(example);
     }
+
+    /**
+     * 文章点赞
+     *
+     * @param uuid 文章UUID
+     */
+    @Async
+    @Override
+    public void thumbsUpCmsPost(String uuid) {
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        example.createCriteria().andUuidEqualTo(uuid);
+        CmsPostsDOWithBLOBs oldCmsSiteDO = ListUtils.getOne(cmsPostsDOMapper.selectByExampleWithBLOBs(example));
+        if (oldCmsSiteDO != null) {
+            oldCmsSiteDO.setThumbsUp(oldCmsSiteDO.getThumbsUp() + 1);
+            cmsPostsDOMapper.updateByExampleSelective(oldCmsSiteDO, example);
+        }
+    }
+
+    /**
+     * 文章点踩
+     *
+     * @param uuid 文章UUID
+     */
+    @Async
+    @Override
+    public void thumbsDownCmsPost(String uuid) {
+        CmsPostsDOExample example = new CmsPostsDOExample();
+        example.createCriteria().andUuidEqualTo(uuid);
+        CmsPostsDOWithBLOBs oldCmsSiteDO = ListUtils.getOne(cmsPostsDOMapper.selectByExampleWithBLOBs(example));
+        if (oldCmsSiteDO != null) {
+            oldCmsSiteDO.setThumbsDown(oldCmsSiteDO.getThumbsDown() + 1);
+            cmsPostsDOMapper.updateByExampleSelective(oldCmsSiteDO, example);
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="标签类的接口" defaultstate="collapsed">
