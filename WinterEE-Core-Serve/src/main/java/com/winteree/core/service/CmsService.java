@@ -276,6 +276,17 @@ public interface CmsService {
     void thumbsDownCmsPost(String uuid);
 
     /**
+     * 根据标签英文名获取文章列表（前台）
+     *
+     * @param siteUuid 站点UUID
+     * @param tagEname 标签英文名
+     * @param pages    页码
+     * @param rows     每页行数
+     * @return
+     */
+    ListData<CmsPostsDTO> getCmsPostListByTagEname(String siteUuid, String tagEname, Integer pages, Integer rows);
+
+    /**
      * 获取标签列表（后台管理）
      *
      * @param siteUuid 站点UUID
@@ -313,6 +324,15 @@ public interface CmsService {
      * @throws FailureException   失败异常
      */
     CmsTagDTO getTagByUuid(String siteUuid, String uuid) throws ForbiddenException, FailureException;
+
+    /**
+     * 根据英文名称获取标签
+     *
+     * @param siteUuid 站点UUID
+     * @param ename    英文名称
+     * @return
+     */
+    CmsTagDTO getTagByEname(String siteUuid, String ename);
 
     /**
      * 添加标签

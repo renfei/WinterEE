@@ -1627,6 +1627,23 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
+    @ApiOperation(value = "根据标签英文名获取文章列表（前台）", notes = "根据标签英文名获取文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "tagEname", value = "标签英文名", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "pages", value = "页码", required = false, paramType = "query", dataType = "Integer"),
+            @ApiImplicitParam(name = "rows", value = "行数", required = false, paramType = "query", dataType = "Integer")
+    })
+    public APIResult<ListData<CmsPostsDTO>> getCmsPostListByTagEname(String siteUuid, String tagEname,
+                                                                     Integer pages, Integer rows) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getCmsPostListByTagEname(siteUuid, tagEname, pages, rows))
+                .build();
+    }
+
+    @Override
     @PreAuthorize("hasAnyAuthority('platf:cmstag:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @ApiOperation(value = "获取标签列表接口", notes = "获取标签列表", tags = "CMS类接口", response = String.class)
     @ApiImplicitParams({
@@ -1692,6 +1709,20 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                     .message(forbiddenException.getMessage())
                     .build();
         }
+    }
+
+    @Override
+    @ApiOperation(value = "根据英文名获取标签对象接口", notes = "根据英文名获取标签对象接口", tags = "CMS类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "ename", value = "英文名", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<CmsTagDTO> getTagByEname(String siteUuid, String ename) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(cmsService.getTagByEname(siteUuid, ename))
+                .build();
     }
 
     @Override

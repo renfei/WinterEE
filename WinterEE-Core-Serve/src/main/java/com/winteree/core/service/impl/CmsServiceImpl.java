@@ -1037,6 +1037,48 @@ public class CmsServiceImpl extends BaseService implements CmsService {
             cmsPostsDOMapper.updateByExampleSelective(oldCmsSiteDO, example);
         }
     }
+
+    /**
+     * 根据标签英文名获取文章列表（前台）
+     *
+     * @param siteUuid 站点UUID
+     * @param tagEname 标签英文名
+     * @param pages    页码
+     * @param rows     每页行数
+     * @return
+     */
+    @Override
+    public ListData<CmsPostsDTO> getCmsPostListByTagEname(String siteUuid, String tagEname, Integer pages, Integer rows) {
+        CmsTagDTO cmsTagDTO = this.getTagByEname(siteUuid, tagEname);
+        if (cmsTagDTO != null) {
+            CmsTagPostsDOExample example = new CmsTagPostsDOExample();
+            example.createCriteria().andTagUuidEqualTo(cmsTagDTO.getUuid());
+            List<CmsTagPostsDO> cmsTagPostsDOS = cmsTagPostsDOMapper.selectByExample(example);
+            if (BeanUtils.isEmpty(cmsTagPostsDOS)) {
+                return null;
+            }
+            List<String> ids = new ArrayList<>();
+            cmsTagPostsDOS.forEach(cmsTagPostsDO -> ids.add(cmsTagPostsDO.getPostUuid()));
+            CmsPostsDOExample cmsPostsDOExample = new CmsPostsDOExample();
+            cmsPostsDOExample.createCriteria()
+                    .andReleaseTimeLessThan(new Date())
+                    .andIsDeleteEqualTo(false)
+                    .andUuidIn(ids);
+            Page page = PageHelper.startPage(pages, rows);
+            List<CmsPostsDOWithBLOBs> cmsPostsDOWithBLOBs = cmsPostsDOMapper.selectByExampleWithBLOBs(cmsPostsDOExample);
+            if (BeanUtils.isEmpty(cmsPostsDOWithBLOBs)) {
+                return null;
+            }
+            List<CmsPostsDTO> cmsPostsDTOS = new ArrayList<>();
+            cmsPostsDOWithBLOBs.forEach(cmsPostsDOWithBLOBs1 -> cmsPostsDTOS.add(convert(cmsPostsDOWithBLOBs1)));
+            ListData<CmsPostsDTO> cmsPostsDTOListData = new ListData<>();
+            cmsPostsDTOListData.setTotal(page.getTotal());
+            cmsPostsDTOListData.setData(cmsPostsDTOS);
+            return cmsPostsDTOListData;
+        } else {
+            return null;
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="标签类的接口" defaultstate="collapsed">
@@ -1145,6 +1187,24 @@ public class CmsServiceImpl extends BaseService implements CmsService {
         }
         CmsTagDOExample example = new CmsTagDOExample();
         example.createCriteria().andSiteUuidEqualTo(siteUuid).andUuidEqualTo(uuid);
+        CmsTagDO cmsTagDO = ListUtils.getOne(cmsTagDOMapper.selectByExampleWithBLOBs(example));
+        if (cmsTagDO == null) {
+            return null;
+        }
+        return convert(cmsTagDO);
+    }
+
+    /**
+     * 根据英文名称获取标签
+     *
+     * @param siteUuid 站点UUID
+     * @param ename    英文名称
+     * @return
+     */
+    @Override
+    public CmsTagDTO getTagByEname(String siteUuid, String ename) {
+        CmsTagDOExample example = new CmsTagDOExample();
+        example.createCriteria().andSiteUuidEqualTo(siteUuid).andEnNameEqualTo(ename);
         CmsTagDO cmsTagDO = ListUtils.getOne(cmsTagDOMapper.selectByExampleWithBLOBs(example));
         if (cmsTagDO == null) {
             return null;

@@ -53,14 +53,24 @@ public class IpInfoServiceImpl extends BaseService implements IpInfoService {
         Resource[] ipv4Resources = resolver.getResources(wintereeCoreConfig.getIpv4DataPath());
         if (ipv4Resources.length > 0) {
             Resource resourceV4 = ipv4Resources[0];
-            this.ip2LocationV4 = new IP2Location();
-            this.ip2LocationV4.IPDatabasePath = resourceV4.getFile().getPath();
+            try {
+                this.ip2LocationV4 = new IP2Location();
+                this.ip2LocationV4.IPDatabasePath = resourceV4.getFile().getPath();
+            } catch (IOException ioe) {
+                log.error(ioe.getMessage(), ioe);
+                this.ip2LocationV4 = null;
+            }
         }
         Resource[] ipv6Resources = resolver.getResources(wintereeCoreConfig.getIpv6DataPath());
         if (ipv6Resources.length > 0) {
             Resource resourceV6 = ipv6Resources[0];
             this.ip2LocationV6 = new IP2Location();
-            this.ip2LocationV6.IPDatabasePath = resourceV6.getFile().getPath();
+            try {
+                this.ip2LocationV6.IPDatabasePath = resourceV6.getFile().getPath();
+            } catch (IOException ioe) {
+                log.error(ioe.getMessage(), ioe);
+                this.ip2LocationV6 = null;
+            }
         }
     }
 
@@ -74,7 +84,7 @@ public class IpInfoServiceImpl extends BaseService implements IpInfoService {
             BigInteger bIp = StringUtils.stringToBigInt(ip);
             if (BigInteger.valueOf(4294967295L).compareTo(bIp) == 1) {
                 // IPv4
-                if (this.ip2LocationV4 != null){
+                if (this.ip2LocationV4 != null) {
                     return APIResult.builder().code(StateCode.Failure).message("IPv4 is not supported").build();
                 }
                 rec = this.ip2LocationV4.IPQuery(ip);
