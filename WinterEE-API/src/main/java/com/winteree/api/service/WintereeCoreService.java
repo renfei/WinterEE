@@ -941,7 +941,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/comment/byPostUuid")
-    APIResult<CommentDTO> getCommentByPostId(@RequestParam("postUuid") String postUuid);
+    APIResult<List<CommentDTO>> getCommentByPostId(@RequestParam("postUuid") String postUuid);
 
     /**
      * 获取最新的评论
