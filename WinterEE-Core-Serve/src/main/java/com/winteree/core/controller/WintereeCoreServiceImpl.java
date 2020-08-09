@@ -2068,7 +2068,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiImplicitParams({
             @ApiImplicitParam(name = "postUuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult<CommentDTO> getCommentByPostId(String postUuid) {
+    public APIResult<List<CommentDTO>> getCommentByPostId(String postUuid) {
         return APIResult.builder().code(StateCode.OK).message("").data(cmsService.getCommentByPostId(postUuid)).build();
     }
 
