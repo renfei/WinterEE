@@ -789,8 +789,10 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms.post/byTagEname")
-    APIResult<ListData<CmsPostsDTO>> getCmsPostListByTagEname(String siteUuid, String tagEname,
-                                                              Integer pages, Integer rows);
+    APIResult<ListData<CmsPostsDTO>> getCmsPostListByTagEname(@RequestParam(name = "siteUuid") String siteUuid,
+                                                              @RequestParam(name = "tagEname") String tagEname,
+                                                              @RequestParam(name = "pages") Integer pages,
+                                                              @RequestParam(name = "rows") Integer rows);
 
     /**
      * 获取标签列表（后台管理）
