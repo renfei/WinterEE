@@ -34,7 +34,7 @@ import java.util.*;
 @Service
 public class WinterEEJdbcClientDetailsService implements ClientDetailsService, ClientRegistrationService {
     /**
-     * 在这里修改模式名 SCHEMA_NAME: winteree.
+     * TODO 在这里修改模式名 SCHEMA_NAME: winteree.
      */
     private static final String SCHEMA_NAME = "winteree.";
     private static final Log logger = LogFactory.getLog(WinterEEJdbcClientDetailsService.class);
