@@ -45,6 +45,20 @@ WinterEE-Config-Serve -> WinterEE-Eureka-Serve -> WinterEE-Core-Serve -> WinterE
 
 注意事项：在启动`WinterEE-Config-Serve -> WinterEE-Eureka-Serve`以后需要等待以下，等待WinterEE-Config-Serve的服务注册到WinterEE-Eureka-Serve中，因为服务注册发现是有心跳间隔的，不能马上立刻发现，需要等待一下，如果直接启动其他服务会因为找不到配置中心而启动失败。
 
+### 配置注意
+有一处为了适配达梦数据库时修改的地方，在「WinterEE-UAA-Serve」模块中重新实现了ClientDetailsService、ClientRegistrationService接口，就导致数据库模式名（数据库名）被写死在Java代码中，
+位置是：`/WinterEE/WinterEE-UAA-Serve/src/main/java/com/winteree/uaa/service/WinterEEJdbcClientDetailsService.java`，对应Reference：`com.winteree.uaa.service.WinterEEJdbcClientDetailsService#SCHEMA_NAME`，代码如下：
+```java
+@Service
+public class WinterEEJdbcClientDetailsService implements ClientDetailsService, ClientRegistrationService {
+    /**
+     * TODO 在这里修改模式名 SCHEMA_NAME: winteree.
+     */
+    private static final String SCHEMA_NAME = "winteree.";
+}
+```
+上方代码中`SCHEMA_NAME`写死为`winteree`需要根据你实际的数据库模式名（数据库表名）进行修改。
+
 [github]: https://github.com/renfei-net/WinterEE
 [home]:   https://winteree.renfei.net
 [bbs]:    https://bbs.renfei.net
