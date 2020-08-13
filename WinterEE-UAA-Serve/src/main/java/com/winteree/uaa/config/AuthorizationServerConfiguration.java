@@ -123,7 +123,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Bean
     public WinterEEJdbcClientDetailsService jdbcClientDetailsService(DataSource dataSource) {
-        WinterEEJdbcClientDetailsService clientDetailsService = new WinterEEJdbcClientDetailsService(dataSource);
+        WinterEEJdbcClientDetailsService clientDetailsService = new WinterEEJdbcClientDetailsService(dataSource, wintereeUaaConfig);
         clientDetailsService.setPasswordEncoder(passwordEncoder);
         return clientDetailsService;
     }

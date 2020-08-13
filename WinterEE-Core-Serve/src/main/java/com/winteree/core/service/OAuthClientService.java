@@ -22,6 +22,14 @@ public interface OAuthClientService {
     ListData<OAuthClientDTO> getOAuthClientAllList(int page, int rows) throws FailureException;
 
     /**
+     * 根据 clientId 获取OAuth客户端信息
+     *
+     * @param clientId 客户端ID
+     * @return
+     */
+    OAuthClientDTO getOAuthClientByClientId(String clientId);
+
+    /**
      * 添加OAtuh客户端
      *
      * @param oAuthClientDTO OAtuh客户端

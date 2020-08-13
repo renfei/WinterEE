@@ -1,5 +1,6 @@
 package com.winteree.uaa.service;
 
+import com.winteree.uaa.config.WintereeUaaConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -26,49 +27,35 @@ import java.util.*;
 
 /**
  * <p>Title: WinterEEJdbcClientDetailsService</p>
- * <p>Description: 在这里修改模式名:from winteree.</p>
+ * <p>Description: JDBC的了客户端服务</p>
  *
  * @author RenFei
  * @date : 2020-07-06 12:12
  */
 @Service
 public class WinterEEJdbcClientDetailsService implements ClientDetailsService, ClientRegistrationService {
-    /**
-     * TODO 在这里修改模式名 SCHEMA_NAME: winteree.
-     */
-    private static final String SCHEMA_NAME = "winteree.";
+    private final WintereeUaaConfig wintereeUaaConfig;
+    private String SCHEMA_NAME;
     private static final Log logger = LogFactory.getLog(WinterEEJdbcClientDetailsService.class);
     private WinterEEJdbcClientDetailsService.JsonMapper mapper = createJsonMapper();
     private static final String CLIENT_FIELDS_FOR_UPDATE = "resource_ids, scope, "
             + "authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, "
             + "refresh_token_validity, additional_information, autoapprove";
     private static final String CLIENT_FIELDS = "client_secret, " + CLIENT_FIELDS_FOR_UPDATE;
-    private static final String BASE_FIND_STATEMENT = "select client_id, " + CLIENT_FIELDS
-            + " from " + SCHEMA_NAME + "oauth_client_details";
-    private static final String DEFAULT_FIND_STATEMENT = BASE_FIND_STATEMENT + " order by client_id";
-    private static final String DEFAULT_SELECT_STATEMENT = BASE_FIND_STATEMENT + " where client_id = ?";
-    private static final String DEFAULT_INSERT_STATEMENT = "insert into " + SCHEMA_NAME + "oauth_client_details (" + CLIENT_FIELDS
-            + ", client_id) values (?,?,?,?,?,?,?,?,?,?,?)";
-    private static final String DEFAULT_UPDATE_STATEMENT = "update " + SCHEMA_NAME + "oauth_client_details " + "set "
-            + CLIENT_FIELDS_FOR_UPDATE.replaceAll(", ", "=?, ") + "=? where client_id = ?";
-    private static final String DEFAULT_UPDATE_SECRET_STATEMENT = "update " + SCHEMA_NAME + "oauth_client_details "
-            + "set client_secret = ? where client_id = ?";
-
-    private static final String DEFAULT_DELETE_STATEMENT = "delete from " + SCHEMA_NAME + "oauth_client_details where client_id = ?";
-
+    private String BASE_FIND_STATEMENT;
+    private String DEFAULT_FIND_STATEMENT;
+    private String DEFAULT_SELECT_STATEMENT;
+    private String DEFAULT_INSERT_STATEMENT;
+    private String DEFAULT_UPDATE_STATEMENT;
+    private String DEFAULT_UPDATE_SECRET_STATEMENT;
+    private String DEFAULT_DELETE_STATEMENT;
     private RowMapper<ClientDetails> rowMapper = new WinterEEJdbcClientDetailsService.ClientDetailsRowMapper();
-
-    private String deleteClientDetailsSql = DEFAULT_DELETE_STATEMENT;
-
-    private String findClientDetailsSql = DEFAULT_FIND_STATEMENT;
-
-    private String updateClientDetailsSql = DEFAULT_UPDATE_STATEMENT;
-
-    private String updateClientSecretSql = DEFAULT_UPDATE_SECRET_STATEMENT;
-
-    private String insertClientDetailsSql = DEFAULT_INSERT_STATEMENT;
-
-    private String selectClientDetailsSql = DEFAULT_SELECT_STATEMENT;
+    private String deleteClientDetailsSql;
+    private String findClientDetailsSql;
+    private String updateClientDetailsSql;
+    private String updateClientSecretSql;
+    private String insertClientDetailsSql;
+    private String selectClientDetailsSql;
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
@@ -76,10 +63,33 @@ public class WinterEEJdbcClientDetailsService implements ClientDetailsService, C
 
     private JdbcListFactory listFactory;
 
-    public WinterEEJdbcClientDetailsService(DataSource dataSource) {
+    public WinterEEJdbcClientDetailsService(DataSource dataSource,WintereeUaaConfig wintereeUaaConfig) {
         Assert.notNull(dataSource, "DataSource required");
+        Assert.notNull(wintereeUaaConfig, "WintereeUaaConfig required");
+        this.wintereeUaaConfig = wintereeUaaConfig;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.listFactory = new DefaultJdbcListFactory(new NamedParameterJdbcTemplate(jdbcTemplate));
+        this.SCHEMA_NAME = wintereeUaaConfig.getSchemaName();
+        if (!this.SCHEMA_NAME.endsWith(".")) {
+            this.SCHEMA_NAME = this.SCHEMA_NAME + ".";
+        }
+        this.BASE_FIND_STATEMENT = "select client_id, " + CLIENT_FIELDS
+                + " from " + SCHEMA_NAME + "oauth_client_details";
+        this.DEFAULT_FIND_STATEMENT = BASE_FIND_STATEMENT + " order by client_id";
+        this.DEFAULT_SELECT_STATEMENT = BASE_FIND_STATEMENT + " where client_id = ?";
+        this.DEFAULT_INSERT_STATEMENT = "insert into " + SCHEMA_NAME + "oauth_client_details (" + CLIENT_FIELDS
+                + ", client_id) values (?,?,?,?,?,?,?,?,?,?,?)";
+        this.DEFAULT_UPDATE_STATEMENT = "update " + SCHEMA_NAME + "oauth_client_details " + "set "
+                + CLIENT_FIELDS_FOR_UPDATE.replaceAll(", ", "=?, ") + "=? where client_id = ?";
+        this.DEFAULT_UPDATE_SECRET_STATEMENT = "update " + SCHEMA_NAME + "oauth_client_details "
+                + "set client_secret = ? where client_id = ?";
+        this.DEFAULT_DELETE_STATEMENT = "delete from " + SCHEMA_NAME + "oauth_client_details where client_id = ?";
+        this.deleteClientDetailsSql = this.DEFAULT_DELETE_STATEMENT;
+        this.findClientDetailsSql = this.DEFAULT_FIND_STATEMENT;
+        this.updateClientDetailsSql = this.DEFAULT_UPDATE_STATEMENT;
+        this.updateClientSecretSql = this.DEFAULT_UPDATE_SECRET_STATEMENT;
+        this.insertClientDetailsSql = this.DEFAULT_INSERT_STATEMENT;
+        this.selectClientDetailsSql = this.DEFAULT_SELECT_STATEMENT;
     }
 
     /**

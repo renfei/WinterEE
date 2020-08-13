@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class WintereeUaaConfig {
     private String runMode;
     private String rootAccountId;
+    private String schemaName;
     private Oauth2 oauth2;
     private Integer accessTokenValiditySeconds;
     private Integer refreshTokenValiditySeconds;
