@@ -57,6 +57,7 @@ winteree:
   uaa:
     runMode: dev
     rootAccountId: 9369919A-F95E-44CF-AB0A-6BCD1D933403 #系统超级管理员
+    schemaName: winteree #数据库模式名（数据库名）
     accessTokenValiditySeconds: 21600 # 普通令牌6小时有效期
     refreshTokenValiditySeconds: 604800 # 刷新令牌7天有效期
     oauth2:

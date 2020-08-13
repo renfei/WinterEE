@@ -15,6 +15,7 @@ import com.winteree.core.service.OAuthClientService;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.utils.BeanUtils;
 import net.renfei.sdk.utils.Builder;
+import net.renfei.sdk.utils.ListUtils;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -75,6 +76,23 @@ public class OAuthClientServiceImpl extends BaseService implements OAuthClientSe
             log.error(ex.getMessage());
             throw new FailureException("Failure");
         }
+    }
+
+    /**
+     * 根据 clientId 获取OAuth客户端信息
+     *
+     * @param clientId 客户端ID
+     * @return
+     */
+    @Override
+    public OAuthClientDTO getOAuthClientByClientId(String clientId) {
+        OAuthClientDOExample oAuthClientDOExample = new OAuthClientDOExample();
+        oAuthClientDOExample.createCriteria().andClientIdEqualTo(clientId);
+        OAuthClientDO oAuthClientDO = ListUtils.getOne(oAuthClientDOMapper.selectByExampleWithBLOBs(oAuthClientDOExample));
+        if (oAuthClientDO == null) {
+            return null;
+        }
+        return convert(oAuthClientDO);
     }
 
     /**
