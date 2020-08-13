@@ -814,7 +814,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/tag/listAndCount")
-    APIResult<List<CmsTagDTO>> getAllTagAndCount(String siteUuid);
+    APIResult<List<CmsTagDTO>> getAllTagAndCount(@RequestParam(name = "siteUuid") String siteUuid);
 
     /**
      * 根据UUID获取标签对象
