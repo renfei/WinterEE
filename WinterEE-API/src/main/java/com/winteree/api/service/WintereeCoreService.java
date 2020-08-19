@@ -88,6 +88,14 @@ public interface WintereeCoreService {
     AccountDTO findAccountByPhoneNumber(@RequestParam("phone") String phone);
 
     /**
+     * 获取超管的UUID
+     *
+     * @return
+     */
+    @GetMapping("/inside/account/root")
+    String getRootAccountUuid();
+
+    /**
      * 创建一个Totp的秘钥
      *
      * @param username 用户名
@@ -814,7 +822,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/cms/tag/listAndCount")
-    APIResult<List<CmsTagDTO>> getAllTagAndCount(String siteUuid);
+    APIResult<List<CmsTagDTO>> getAllTagAndCount(@RequestParam(name = "siteUuid") String siteUuid);
 
     /**
      * 根据UUID获取标签对象

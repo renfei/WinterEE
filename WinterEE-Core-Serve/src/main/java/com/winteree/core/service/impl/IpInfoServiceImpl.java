@@ -84,7 +84,7 @@ public class IpInfoServiceImpl extends BaseService implements IpInfoService {
             BigInteger bIp = StringUtils.stringToBigInt(ip);
             if (BigInteger.valueOf(4294967295L).compareTo(bIp) == 1) {
                 // IPv4
-                if (this.ip2LocationV4 != null) {
+                if (this.ip2LocationV4 == null) {
                     return APIResult.builder().code(StateCode.Failure).message("IPv4 is not supported").build();
                 }
                 rec = this.ip2LocationV4.IPQuery(ip);
