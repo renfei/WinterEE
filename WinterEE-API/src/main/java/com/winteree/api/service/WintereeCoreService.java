@@ -88,6 +88,14 @@ public interface WintereeCoreService {
     AccountDTO findAccountByPhoneNumber(@RequestParam("phone") String phone);
 
     /**
+     * 获取超管的UUID
+     *
+     * @return
+     */
+    @GetMapping("/inside/account/root")
+    String getRootAccountUuid();
+
+    /**
      * 创建一个Totp的秘钥
      *
      * @param username 用户名

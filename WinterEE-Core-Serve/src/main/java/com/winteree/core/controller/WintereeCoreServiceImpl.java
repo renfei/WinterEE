@@ -193,6 +193,17 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         return accountService.getAccountIdByPhone(phone);
     }
 
+    /**
+     * 获取超管的UUID
+     *
+     * @return
+     */
+    @Override
+    @ApiIgnore
+    public String getRootAccountUuid(){
+        return wintereeCoreConfig.getRootAccount();
+    }
+
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @ApiOperation(value = "创建TOTP", notes = "为账户创建一个TOTP秘钥", tags = "账户接口", response = APIResult.class)
