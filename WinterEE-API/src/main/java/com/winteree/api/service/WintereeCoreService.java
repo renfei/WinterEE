@@ -533,6 +533,15 @@ public interface WintereeCoreService {
      */
     @DeleteMapping("/role/data")
     APIResult deleteRole(@RequestParam("uuid") String uuid);
+
+    /**
+     * 获取数据权限范围（取最大值）
+     *
+     * @param accountUuid 账户UUID
+     * @return
+     */
+    @GetMapping("/role/datascope")
+    public APIResult<Integer> getDataScope(@RequestParam("accountUuid") String accountUuid);
     //</editor-fold>
 
     //<editor-fold desc="CMS类的接口" defaultstate="collapsed">
