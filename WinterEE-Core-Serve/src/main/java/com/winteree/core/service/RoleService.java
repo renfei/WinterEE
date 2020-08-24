@@ -73,6 +73,14 @@ public interface RoleService {
     DataScopeEnum getDataScope();
 
     /**
+     * 获取数据权限范围（取最大值）
+     *
+     * @param accountUuid 账户UUID
+     * @return
+     */
+    DataScopeEnum getDataScope(String accountUuid);
+
+    /**
      * 根据用户UUID获取角色列表UUID
      *
      * @param userUuid 用户UUID

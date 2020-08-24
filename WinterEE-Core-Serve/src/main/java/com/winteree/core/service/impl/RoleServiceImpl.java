@@ -404,6 +404,39 @@ public class RoleServiceImpl extends BaseService implements RoleService {
     }
 
     /**
+     * 获取数据权限范围（取最大值）
+     *
+     * @param accountUuid 账户UUID
+     * @return
+     */
+    @Override
+    public DataScopeEnum getDataScope(String accountUuid) {
+        if (wintereeCoreConfig.getRootAccount().equals(accountUuid)) {
+            // 如果是超管，直接最大权限
+            return DataScopeEnum.ALL;
+        } else {
+            List<String> roleIds = this.selectRoleUuidByUserUuid(accountUuid);
+            if (BeanUtils.isEmpty(roleIds)) {
+                return DataScopeEnum.DEPARTMENT;
+            }
+            RoleDOExample roleDOExample = new RoleDOExample();
+            roleDOExample.createCriteria().andUuidIn(roleIds);
+            List<RoleDO> roleDOS = roleDOMapper.selectByExample(roleDOExample);
+            if (BeanUtils.isEmpty(roleDOS)) {
+                return DataScopeEnum.DEPARTMENT;
+            }
+            DataScopeEnum maxDataScopeEnum = DataScopeEnum.DEPARTMENT;
+            for (RoleDO role : roleDOS
+            ) {
+                if (role.getDataScope() != null && role.getDataScope() > maxDataScopeEnum.value()) {
+                    maxDataScopeEnum = DataScopeEnum.valueOf(role.getDataScope());
+                }
+            }
+            return maxDataScopeEnum;
+        }
+    }
+
+    /**
      * 根据用户UUID获取角色列表UUID
      *
      * @param userUuid 用户UUID

@@ -200,7 +200,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @ApiIgnore
-    public String getRootAccountUuid(){
+    public String getRootAccountUuid() {
         return wintereeCoreConfig.getRootAccount();
     }
 
@@ -1091,6 +1091,20 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         } catch (ForbiddenException forbiddenException) {
             return APIResult.builder().code(StateCode.Failure).message(forbiddenException.getMessage()).build();
         }
+    }
+
+    /**
+     * 获取数据权限范围（取最大值）
+     *
+     * @return 数据权限范围
+     */
+    @Override
+    @ApiOperation(value = "获取数据权限范围（取最大值）", notes = "获取数据权限范围（取最大值）", tags = "角色类接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "accountUuid", value = "账号UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<Integer> getDataScope(String accountUuid) {
+        return APIResult.builder().code(StateCode.OK).message("OK").data(roleService.getDataScope(accountUuid)).build();
     }
     //</editor-fold>
 
