@@ -88,7 +88,7 @@
         <junit.jupiter.version>5.6.2</junit.jupiter.version>
         <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
-        <renfeisdk.version>0.0.24</renfeisdk.version>
+        <renfeisdk.version>0.0.25</renfeisdk.version>
         <lombok.version>1.18.12</lombok.version>
         <pagehelper.version>1.3.0</pagehelper.version>
         <druid.version>1.1.17</druid.version>
