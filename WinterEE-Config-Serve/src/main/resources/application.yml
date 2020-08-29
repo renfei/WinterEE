@@ -5,7 +5,7 @@ application:
 #======================================#
 
 server:
-  port: 8888
+  port: 8114
 
 #======================================#
 #========== Spring settings ===========#
@@ -60,3 +60,7 @@ endpoints:
   web:
     exposure:
       include: "*"
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
