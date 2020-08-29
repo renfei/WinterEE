@@ -38,6 +38,7 @@ public class ResourceServerConfiguration implements org.springframework.security
         http
                 .authorizeRequests()
                 .antMatchers("/oauth/**").permitAll()
+                .antMatchers("/v2/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable();
