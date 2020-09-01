@@ -99,7 +99,7 @@
         <httpclient.version>4.5.12</httpclient.version>
         <aliyun-sdk-oss.version>3.11.0</aliyun-sdk-oss.version>
         <alibaba-druid.version>1.1.23</alibaba-druid.version>
-        <oshi.version>5.2.4</oshi.version>
+        <oshi.version>5.2.5</oshi.version>
         <jna.version>5.6.0</jna.version>
     </properties>
 
