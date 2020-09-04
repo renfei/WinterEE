@@ -8,7 +8,7 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     config:
-      uri: http://localhost:8114 #where the WinterEE-Config-Serve is running
+      uri: http://localhost:8888 #where the WinterEE-Config-Serve is running
       fail-fast: true #如果无法到达WinterEE-Config-Serve，服务将无法运行
       password: 1234 #password of the WinterEE-Config-Serve
       username: user #username of the WinterEE-Config-Serve
