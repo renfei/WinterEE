@@ -18,6 +18,7 @@ public class WintereeUaaConfig {
     private String runMode;
     private String rootAccountId;
     private String schemaName;
+    private Boolean enableSwagger;
     private Oauth2 oauth2;
     private Integer accessTokenValiditySeconds;
     private Integer refreshTokenValiditySeconds;

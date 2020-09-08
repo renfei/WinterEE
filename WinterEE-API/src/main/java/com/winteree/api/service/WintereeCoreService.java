@@ -155,7 +155,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/account")
-    APIResult<ListData<AccountDTO>> getAccountList(@RequestBody AccountSearchCriteriaVO accountSearchCriteriaVO);
+    APIResult<ListData<AccountDTO>> getAccountList(AccountSearchCriteriaVO accountSearchCriteriaVO);
 
     /**
      * 添加用户
