@@ -6,6 +6,7 @@ import com.winteree.api.exception.ForbiddenException;
 import com.winteree.api.service.WintereeCoreService;
 import com.winteree.core.aop.OperationLog;
 import com.winteree.core.config.WintereeCoreConfig;
+import com.winteree.core.dao.entity.OrganizationDO;
 import com.winteree.core.service.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -823,6 +824,20 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .build();
     }
 
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:company:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "根据公司UUID获取公司", notes = "根据公司UUID获取公司", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "公司UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<OrganizationVO> getCompanyByUuid(String uuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(convert(organizationService.getCompanyByUuid(uuid)))
+                .build();
+    }
+
     /**
      * 获取公司列表接口
      *
@@ -933,6 +948,25 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         return APIResult.builder()
                 .code(StateCode.Failure)
                 .message("Failure")
+                .build();
+    }
+
+    /**
+     * 根据UUID获取部门
+     * @param uuid 部门UUID
+     * @return
+     */
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:department:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "根据UUID获取部门", notes = "根据UUID获取部门", tags = "组织机构接口", response = String.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uuid", value = "部门UUID", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<OrganizationVO> getDepartmentByUuid(String uuid) {
+        return APIResult.builder()
+                .code(StateCode.OK)
+                .message("OK")
+                .data(convert(organizationService.getDepartmentByUuid(uuid)))
                 .build();
     }
 
@@ -2443,5 +2477,30 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                 .message("OK")
                 .data(aliyunOssService.generatePresignedUrl(downLoadHost, bucketName, objectName, expiration))
                 .build();
+    }
+
+    private OrganizationVO convert(OrganizationDO organizationDO) {
+        OrganizationVO organizationVO = new OrganizationVO();
+        organizationVO.setId(organizationDO.getId());
+        organizationVO.setUuid(organizationDO.getUuid());
+        organizationVO.setTenantUuid(organizationDO.getTenantUuid());
+        organizationVO.setParentUuid(organizationDO.getParentUuid());
+        organizationVO.setOrgType(organizationDO.getOrgType());
+        organizationVO.setName(organizationDO.getName());
+        organizationVO.setAddress(organizationDO.getAddress());
+        organizationVO.setZipCode(organizationDO.getZipCode());
+        organizationVO.setMaster(organizationDO.getMaster());
+        organizationVO.setPhone(organizationDO.getPhone());
+        organizationVO.setFax(organizationDO.getFax());
+        organizationVO.setEmail(organizationDO.getEmail());
+        organizationVO.setPrimaryPerson(organizationDO.getPrimaryPerson());
+        organizationVO.setDeputyPerson(organizationDO.getDeputyPerson());
+        organizationVO.setCreateBy(organizationDO.getCreateBy());
+        organizationVO.setCreateTime(organizationDO.getCreateTime());
+        organizationVO.setUpdateBy(organizationDO.getUpdateBy());
+        organizationVO.setUpdateTime(organizationDO.getUpdateTime());
+        organizationVO.setRemarks(organizationDO.getRemarks());
+        organizationVO.setDelFlag(organizationDO.getDelFlag());
+        return organizationVO;
     }
 }

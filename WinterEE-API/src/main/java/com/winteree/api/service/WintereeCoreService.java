@@ -411,6 +411,15 @@ public interface WintereeCoreService {
     APIResult getAllOrganizationTree(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
+     * 根据公司UUID获取公司
+     *
+     * @param uuid 公司UUID
+     * @return
+     */
+    @GetMapping("/organization/company/{uuid}")
+    APIResult<OrganizationVO> getCompanyByUuid(@PathVariable("uuid") String uuid);
+
+    /**
      * 获取公司列表
      *
      * @param tenantUuid 租户ID
@@ -454,6 +463,14 @@ public interface WintereeCoreService {
      */
     @PutMapping("/organization/company")
     APIResult updateCompany(@RequestBody OrganizationVO organizationVO);
+
+    /**
+     * 根据UUID获取部门
+     * @param uuid 部门UUID
+     * @return
+     */
+    @GetMapping("/organization/department/{uuid}")
+    APIResult<OrganizationVO> getDepartmentByUuid(@PathVariable("uuid") String uuid);
 
     /**
      * 获取部门列表（树状）
