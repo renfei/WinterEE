@@ -635,6 +635,8 @@ public class AccountServiceImpl extends BaseService implements AccountService {
                     .with(com.winteree.core.entity.AccountDTO::setLockTime, accountDTO.getLockTime())
                     .with(com.winteree.core.entity.AccountDTO::setUuid, accountDTO.getUuid())
                     .with(com.winteree.core.entity.AccountDTO::setTenantUuid, accountDTO.getTenantUuid())
+                    .with(com.winteree.core.entity.AccountDTO::setOfficeUuid, accountDTO.getOfficeUuid())
+                    .with(com.winteree.core.entity.AccountDTO::setDepartmentUuid, accountDTO.getDepartmentUuid())
                     .with(com.winteree.core.entity.AccountDTO::setAuthorities, authorities)
                     .build();
         } else {
