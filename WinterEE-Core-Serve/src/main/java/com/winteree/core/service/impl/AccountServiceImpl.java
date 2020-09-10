@@ -491,6 +491,8 @@ public class AccountServiceImpl extends BaseService implements AccountService {
                 .with(AccountDTO::setUserName, accountDTO.getUserName())
                 .with(AccountDTO::setUuid, accountDTO.getUuid())
                 .with(AccountDTO::setTenantUuid, accountDTO.getTenantUuid())
+                .with(AccountDTO::setOfficeUuid, accountDTO.getOfficeUuid())
+                .with(AccountDTO::setDepartmentUuid, accountDTO.getDepartmentUuid())
                 .with(AccountDTO::setEmail, accountDTO.getEmail())
                 .with(AccountDTO::setPhone, accountDTO.getPhone())
                 .with(AccountDTO::setCreateTime, accountDTO.getCreateTime())
