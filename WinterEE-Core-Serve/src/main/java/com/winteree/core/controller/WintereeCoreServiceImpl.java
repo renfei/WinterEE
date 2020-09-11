@@ -62,6 +62,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final AliyunOssService aliyunOssService;
     private final IpInfoService ipInfoService;
     private final LicenseService licenseService;
+    private final DataBaseService dataBaseService;
     @Autowired
     private HttpServletRequest request;
     //</editor-fold>
@@ -85,7 +86,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    EmailService emailService,
                                    @Qualifier("aliyunSmsServiceImpl") SmsService aliYunSmsService,
                                    AliyunOssService aliyunOssService, IpInfoService ipInfoService,
-                                   LicenseService licenseService) {
+                                   LicenseService licenseService, DataBaseService dataBaseService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -106,6 +107,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.aliyunOssService = aliyunOssService;
         this.ipInfoService = ipInfoService;
         this.licenseService = licenseService;
+        this.dataBaseService = dataBaseService;
     }
     //</editor-fold>
 
@@ -953,6 +955,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     /**
      * 根据UUID获取部门
+     *
      * @param uuid 部门UUID
      * @return
      */
@@ -2397,6 +2400,41 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         }
     }
 
+    //</editor-fold>
+
+    //<editor-fold desc="数据库操作类的接口" defaultstate="collapsed">
+    @Override
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
+    @ApiOperation(value = "执行任意SQL语句（危险：需要自己判断SQL是否含有危险内容）",
+            notes = "执行任意SQL语句（危险：需要自己判断SQL是否含有危险内容）", tags = "数据库操作类接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sql", value = "SQL", required = false, paramType = "query", dataType = "String")
+    })
+    public APIResult<List<Map<String, String>>> execSql(String sql) {
+        return APIResult.builder().code(StateCode.OK).message("OK").data(dataBaseService.execSql(sql)).build();
+    }
+
+    @Override
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
+    @ApiOperation(value = "查询表信息", notes = "查询表信息", tags = "数据库操作类接口")
+    public APIResult<List<TableInfoDTO>> getTableInfo(String database, String tablename) {
+        return APIResult.builder().code(StateCode.OK).message("OK").data(dataBaseService.getTableInfo(database, tablename)).build();
+    }
+
+    @Override
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
+    @ApiOperation(value = "创建表", notes = "创建表", tags = "数据库操作类接口")
+    public APIResult createTable(String name, String comment, List<TableInfoDTO> tableInfoDTOS) {
+        try {
+            dataBaseService.createTable(name, comment, tableInfoDTOS);
+            return APIResult.success();
+        } catch (RuntimeException re) {
+            return APIResult.builder()
+                    .code(StateCode.Error)
+                    .message(re.getMessage())
+                    .build();
+        }
+    }
     //</editor-fold>
 
     @Override

@@ -1049,6 +1049,17 @@ public interface WintereeCoreService {
     APIResult<List<RegionDTO>> getChildRegion(@RequestParam("code") String code);
     //</editor-fold>
 
+    @GetMapping("/inside/dataBase/execSql")
+    APIResult<List<Map<String, String>>> execSql(@RequestParam("sql") String sql);
+
+    @GetMapping("/inside/dataBase/tableInfo")
+    APIResult<List<TableInfoDTO>> getTableInfo(@RequestParam("database") String database,
+                                               @RequestParam("tablename") String tablename);
+
+    @PostMapping("/inside/dataBase/createTable")
+    APIResult createTable(@RequestParam("database") String name, @RequestParam("database") String comment,
+                          @RequestBody List<TableInfoDTO> tableInfoDTOS);
+
     @GetMapping("/util/ipinfo/{ip}")
     APIResult<IpInfoDTO> queryIpInfo(@PathVariable("ip") String ip);
 
