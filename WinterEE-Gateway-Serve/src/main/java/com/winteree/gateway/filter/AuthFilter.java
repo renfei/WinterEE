@@ -88,28 +88,30 @@ public class AuthFilter extends ZuulFilter {
      */
     private void setJsonTokenByCookie(RequestContext ctx) {
         Cookie[] cookies = ctx.getRequest().getCookies();
-        for (Cookie cookie : cookies
-        ) {
-            if ("Authorization".equals(cookie.getName())) {
-                String token = cookie.getValue();
-                token = token.replace("Bearer ", "");
-                JSONObject jsonObject = JSON.parseObject(wintereeUaaServiceClient.checkToken(token));
-                if (jsonObject.getString("error") != null) {
-                    // 验证失败，直接返回
-                    return;
-                } else {
-                    // 验证成功
-                    String name = jsonObject.getString("user_name");
-                    JSONArray jsonArray = jsonObject.getJSONArray("authorities");
-                    List<String> authorities = new ArrayList<>();
-                    jsonArray.forEach(auth -> authorities.add((String) auth));
-                    Map<String, Object> jsonToken = new HashMap<>();
-                    jsonToken.put("name", name);
-                    jsonToken.put("authorities", authorities);
-                    String json_token = StringUtils.encodeUTF8StringBase64(JSON.toJSONString(jsonToken));
-                    log.info("json_token:{}", json_token);
-                    ctx.addZuulRequestHeader("json-token", json_token);
-                    return;
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies
+            ) {
+                if ("Authorization".equals(cookie.getName())) {
+                    String token = cookie.getValue();
+                    token = token.replace("Bearer ", "");
+                    JSONObject jsonObject = JSON.parseObject(wintereeUaaServiceClient.checkToken(token));
+                    if (jsonObject.getString("error") != null) {
+                        // 验证失败，直接返回
+                        return;
+                    } else {
+                        // 验证成功
+                        String name = jsonObject.getString("user_name");
+                        JSONArray jsonArray = jsonObject.getJSONArray("authorities");
+                        List<String> authorities = new ArrayList<>();
+                        jsonArray.forEach(auth -> authorities.add((String) auth));
+                        Map<String, Object> jsonToken = new HashMap<>();
+                        jsonToken.put("name", name);
+                        jsonToken.put("authorities", authorities);
+                        String json_token = StringUtils.encodeUTF8StringBase64(JSON.toJSONString(jsonToken));
+                        log.info("json_token:{}", json_token);
+                        ctx.addZuulRequestHeader("json-token", json_token);
+                        return;
+                    }
                 }
             }
         }
