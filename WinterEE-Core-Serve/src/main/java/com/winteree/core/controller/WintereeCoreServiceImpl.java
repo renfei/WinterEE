@@ -113,7 +113,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     //<editor-fold desc="i18n国际化接口" defaultstate="collapsed">
     @Override
-    @ApiOperation(value = "i18n国际化接口", notes = "将国际化标签翻译为指定的语言", tags = "国际化（i18n）", response = String.class)
+    @ApiOperation(value = "i18n国际化接口", notes = "将国际化标签翻译为指定的语言", tags = "国际化（i18n）")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "language", value = "指定的语言", required = false, paramType = "path", dataType = "String"),
             @ApiImplicitParam(name = "message", value = "国际化标签", required = false, paramType = "path", dataType = "String"),
@@ -137,7 +137,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取服务器端公钥接口", notes = "服务器端会为你生成一个服务器端的RSA(2048)公钥", tags = "秘钥交换", response = APIResult.class)
+    @ApiOperation(value = "获取服务器端公钥接口", notes = "服务器端会为你生成一个服务器端的RSA(2048)公钥", tags = "秘钥交换")
     public APIResult<String> secretKey() {
         Map<Integer, String> map = secretKeyService.secretKey();
         if (BeanUtils.isEmpty(map)) {
@@ -154,7 +154,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "上报客户端公钥接口", notes = "客户端生成RSA(1024)秘钥对，使用客户端RSA(2048)公钥加密客户端的RSA(1024)公钥，上报给服务器", tags = "秘钥交换", response = APIResult.class)
+    @ApiOperation(value = "上报客户端公钥接口", notes = "客户端生成RSA(1024)秘钥对，使用客户端RSA(2048)公钥加密客户端的RSA(1024)公钥，上报给服务器", tags = "秘钥交换")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "reportPublicKeyVO", value = "ReportPublicKeyVO对象", required = false, paramType = "body", dataType = "ReportPublicKeyVO")
     })
@@ -209,7 +209,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "创建TOTP", notes = "为账户创建一个TOTP秘钥", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "创建TOTP", notes = "为账户创建一个TOTP秘钥", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "username", value = "用户名", required = false, paramType = "query", dataType = "String")
     })
@@ -222,7 +222,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "检查用户账户是否存在和类型", notes = "检查用户输入的用户名是否存在，以及类型", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "检查用户账户是否存在和类型", notes = "检查用户输入的用户名是否存在，以及类型", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "account", value = "用户输入", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String")
@@ -280,7 +280,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改自己的密码", notes = "修改自己的密码", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "修改自己的密码", notes = "修改自己的密码", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "oldPassword", value = "旧密码", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "newPassword", value = "新密码", required = false, paramType = "query", dataType = "String"),
@@ -304,7 +304,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:account:resetpasseord') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "重置任意账户密码", notes = "重置任意账户密码", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "重置任意账户密码", notes = "重置任意账户密码", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "passwordResetDAT", value = "账户ID", required = false, paramType = "query", dataType = "PasswordResetDAT")
     })
@@ -327,7 +327,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:account:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "accountSearchCriteriaVO", value = "查询条件", required = false, paramType = "query", dataType = "AccountSearchCriteriaVO")
     })
@@ -344,7 +344,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:account:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "accountSearchCriteriaVO", value = "查询条件", required = false, paramType = "query", dataType = "AccountSearchCriteriaVO")
     })
@@ -364,7 +364,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:account:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "获取账户列表", notes = "根据查询条件获取账户列表", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "accountSearchCriteriaVO", value = "查询条件", required = false, paramType = "query", dataType = "AccountSearchCriteriaVO")
     })
@@ -385,7 +385,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      * @return
      */
     @Override
-    @ApiOperation(value = "发送验证码", notes = "发送验证码", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "发送验证码", notes = "发送验证码", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "手机或邮箱", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
@@ -454,7 +454,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      * @return VerificationCodeDTO
      */
     @Override
-    @ApiOperation(value = "获取验证码并标记验证码为已使用状态", notes = "获取验证码并标记验证码为已使用状态", tags = "账户接口", response = APIResult.class)
+    @ApiOperation(value = "获取验证码并标记验证码为已使用状态", notes = "获取验证码并标记验证码为已使用状态", tags = "账户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "手机或邮箱", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "validationType", value = "验证码类型", required = false, paramType = "query", dataType = "String")
@@ -483,7 +483,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取菜单列表", notes = "获取菜单列表，注意不是菜单管理中的查询菜单列表", tags = "菜单接口", response = APIResult.class)
+    @ApiOperation(value = "获取菜单列表", notes = "获取菜单列表，注意不是菜单管理中的查询菜单列表", tags = "菜单接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String")
     })
@@ -498,7 +498,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取菜单和权限列表", notes = "获取菜单和权限列表，注意不是菜单管理中的查询菜单列表", tags = "菜单接口", response = APIResult.class)
+    @ApiOperation(value = "获取菜单和权限列表", notes = "获取菜单和权限列表，注意不是菜单管理中的查询菜单列表", tags = "菜单接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "language", value = "语言，默认 zh-CN", required = false, paramType = "query", dataType = "String")
     })
@@ -509,7 +509,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @PreAuthorize("hasAnyAuthority('platf:menu:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @OperationLog(description = "获取系统菜单列表", type = LogSubTypeEnum.SELECT)
-    @ApiOperation(value = "获取后台设置菜单接口", notes = "获取后台设置菜单接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
+    @ApiOperation(value = "获取后台设置菜单接口", notes = "获取后台设置菜单接口，后台管理使用的", tags = "菜单接口")
     public APIResult<List<MenuVO>> getSettingMenuTree() {
         return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.getAllMenuTree()).build();
     }
@@ -522,7 +522,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @PreAuthorize("hasAnyAuthority('platf:menu:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @OperationLog(description = "获取系统菜单详情", type = LogSubTypeEnum.SELECT)
-    @ApiOperation(value = "获取后台设置菜单详情接口", notes = "获取后台设置菜单详情接口，后台管理使用的", tags = "菜单接口", response = APIResult.class)
+    @ApiOperation(value = "获取后台设置菜单详情接口", notes = "获取后台设置菜单详情接口，后台管理使用的", tags = "菜单接口")
     public APIResult<MenuVO> getSettingMenu(String uuid) {
         try {
             return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.getMenuByUuid(uuid)).build();
@@ -534,7 +534,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @PreAuthorize("hasAnyAuthority('platf:menu:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @OperationLog(description = "删除系统菜单", type = LogSubTypeEnum.DELETE)
-    @ApiOperation(value = "删除系统菜单", notes = "物理删除系统菜单，不可恢复！！", tags = "菜单接口", response = APIResult.class)
+    @ApiOperation(value = "删除系统菜单", notes = "物理删除系统菜单，不可恢复！！", tags = "菜单接口")
     public APIResult deleteSettingMenuByUuid(String uuid) {
         try {
             return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.deleteMenuByUuid(uuid)).build();
@@ -546,7 +546,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @PreAuthorize("hasAnyAuthority('platf:menu:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @OperationLog(description = "修改系统菜单", type = LogSubTypeEnum.UPDATE)
-    @ApiOperation(value = "修改系统菜单", notes = "修改更新系统菜单", tags = "菜单接口", response = APIResult.class)
+    @ApiOperation(value = "修改系统菜单", notes = "修改更新系统菜单", tags = "菜单接口")
     public APIResult updateSettingMenu(@RequestBody MenuVO menuVO) {
         try {
             return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.updateMenu(menuVO)).build();
@@ -558,7 +558,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @PreAuthorize("hasAnyAuthority('platf:menu:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @OperationLog(description = "添加系统菜单", type = LogSubTypeEnum.INSERT)
-    @ApiOperation(value = "添加系统菜单", notes = "添加系统菜单", tags = "菜单接口", response = APIResult.class)
+    @ApiOperation(value = "添加系统菜单", notes = "添加系统菜单", tags = "菜单接口")
     public APIResult addSettingMenu(@RequestBody MenuVO menuVO) {
         try {
             return APIResult.builder().code(StateCode.OK).message("OK").data(menuService.addMenu(menuVO)).build();
@@ -572,7 +572,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @Override
     @PreAuthorize("hasAnyAuthority('platf:log:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
     @OperationLog(description = "获取系统日志", type = LogSubTypeEnum.SELECT)
-    @ApiOperation(value = "获取系统日志", notes = "获取系统日志", tags = "日志接口", response = APIResult.class)
+    @ApiOperation(value = "获取系统日志", notes = "获取系统日志", tags = "日志接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "页码", required = true, paramType = "query", dataType = "Int"),
             @ApiImplicitParam(name = "rows", value = "每页行数", required = true, paramType = "query", dataType = "Int"),
@@ -642,7 +642,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取租户列表接口", notes = "获取所有租户的列表，用于切换租户", tags = "租户接口", response = String.class)
+    @ApiOperation(value = "获取租户列表接口", notes = "获取所有租户的列表，用于切换租户", tags = "租户接口")
     public APIResult<ListData<TenantDTO>> getTenantList() {
         try {
             return APIResult.builder().code(StateCode.OK).message("OK").data(tenantService.getTenantList()).build();
@@ -660,7 +660,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:tenant:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取所有租户接口", notes = "获取所有租户的列表", tags = "租户接口", response = String.class)
+    @ApiOperation(value = "获取所有租户接口", notes = "获取所有租户的列表", tags = "租户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "页数", required = false, paramType = "query", dataType = "int"),
             @ApiImplicitParam(name = "rows", value = "每页行数", required = false, paramType = "query", dataType = "int")
@@ -677,7 +677,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:tenant:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加租户接口", notes = "添加一个租户", tags = "租户接口", response = String.class)
+    @ApiOperation(value = "添加租户接口", notes = "添加一个租户", tags = "租户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantDTO", value = "租户对象", required = false, paramType = "query", dataType = "TenantDTO")
     })
@@ -697,7 +697,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:tenant:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改租户接口", notes = "修改租户数据", tags = "租户接口", response = String.class)
+    @ApiOperation(value = "修改租户接口", notes = "修改租户数据", tags = "租户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantDTO", value = "租户对象", required = false, paramType = "query", dataType = "TenantDTO")
     })
@@ -716,7 +716,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      * @return
      */
     @Override
-    @ApiOperation(value = "获取租户信息接口（开放服务，无需身份校验）", notes = "获取租户开放信息", tags = "租户接口", response = String.class)
+    @ApiOperation(value = "获取租户信息接口（开放服务，无需身份校验）", notes = "获取租户开放信息", tags = "租户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUUID", value = "租户UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -732,7 +732,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:tenantinfo:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改租户基础信息接口", notes = "修改租户基础信息", tags = "租户接口", response = String.class)
+    @ApiOperation(value = "修改租户基础信息接口", notes = "修改租户基础信息", tags = "租户接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantInfoDTO", value = "修改租户基础信息对象", required = false, paramType = "query", dataType = "TenantInfoDTO")
     })
@@ -748,7 +748,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //<editor-fold desc="OAtuh类的接口" defaultstate="collapsed">
     @Override
     @PreAuthorize("hasAnyAuthority('platf:oauth:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "查看OAtuh客户端接口", notes = "查看OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiOperation(value = "查看OAtuh客户端接口", notes = "查看OAtuh客户端接口", tags = "OAtuh客户端接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "页码", required = false, paramType = "query", dataType = "int"),
             @ApiImplicitParam(name = "rows", value = "每页容量", required = false, paramType = "query", dataType = "int")
@@ -763,7 +763,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:oauth:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加OAtuh客户端接口", notes = "添加OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiOperation(value = "添加OAtuh客户端接口", notes = "添加OAtuh客户端接口", tags = "OAtuh客户端接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "oAuthClientDTO", value = "OAtuh客户端对象", required = false, paramType = "query", dataType = "OAuthClientDTO")
     })
@@ -777,7 +777,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:oauth:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改OAtuh客户端接口", notes = "修改添加OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiOperation(value = "修改OAtuh客户端接口", notes = "修改添加OAtuh客户端接口", tags = "OAtuh客户端接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "oAuthClientDTO", value = "OAtuh客户端对象", required = false, paramType = "query", dataType = "OAuthClientDTO")
     })
@@ -791,7 +791,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:oauth:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除OAtuh客户端接口", notes = "删除OAtuh客户端接口", tags = "OAtuh客户端接口", response = String.class)
+    @ApiOperation(value = "删除OAtuh客户端接口", notes = "删除OAtuh客户端接口", tags = "OAtuh客户端接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "clientId", value = "客户端ID", required = false, paramType = "query", dataType = "String")
     })
@@ -814,7 +814,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:AllOrganization:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取整个组织架构的树接口", notes = "获取整个组织架构的树接口", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "获取整个组织架构的树接口", notes = "获取整个组织架构的树接口", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
@@ -828,7 +828,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:company:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "根据公司UUID获取公司", notes = "根据公司UUID获取公司", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "根据公司UUID获取公司", notes = "根据公司UUID获取公司", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "公司UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -848,7 +848,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:company:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取公司列表接口", notes = "获取公司列表接口", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "获取公司列表接口", notes = "获取公司列表接口", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
@@ -868,7 +868,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:company:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取公司列表（简单列表非树状）", notes = "获取公司列表（简单列表非树状）", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "获取公司列表（简单列表非树状）", notes = "获取公司列表（简单列表非树状）", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
@@ -888,7 +888,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取公司列表接口", notes = "获取公司列表接口", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "获取公司列表接口", notes = "获取公司列表接口", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
@@ -909,7 +909,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:company:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加公司接口", notes = "新增公司接口", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "添加公司接口", notes = "新增公司接口", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "organizationVO", value = "公司信息对象", required = false, paramType = "query", dataType = "OrganizationVO")
     })
@@ -935,7 +935,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:company:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "更新公司信息接口", notes = "更新公司信息接口", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "更新公司信息接口", notes = "更新公司信息接口", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "organizationVO", value = "公司信息对象", required = false, paramType = "query", dataType = "OrganizationVO")
     })
@@ -961,7 +961,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:department:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "根据UUID获取部门", notes = "根据UUID获取部门", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "根据UUID获取部门", notes = "根据UUID获取部门", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "部门UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -982,7 +982,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:department:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取部门列表（树状）", notes = "获取部门列表（树状）", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "获取部门列表（树状）", notes = "获取部门列表（树状）", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "companyUuid", value = "公司ID", required = false, paramType = "query", dataType = "String")
@@ -1004,7 +1004,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:department:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取部门列表（简单列表非树状）", notes = "获取部门列表（简单列表非树状）", tags = "组织机构接口", response = String.class)
+    @ApiOperation(value = "获取部门列表（简单列表非树状）", notes = "获取部门列表（简单列表非树状）", tags = "组织机构接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "companyUuid", value = "公司ID", required = false, paramType = "query", dataType = "String")
@@ -1058,7 +1058,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:role:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取角色列表接口", notes = "获取角色列表接口", tags = "角色类接口", response = String.class)
+    @ApiOperation(value = "获取角色列表接口", notes = "获取角色列表接口", tags = "角色类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
@@ -1078,7 +1078,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:role:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加角色接口", notes = "添加角色接口", tags = "角色类接口", response = String.class)
+    @ApiOperation(value = "添加角色接口", notes = "添加角色接口", tags = "角色类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleDTO", value = "角色数据传输对象", required = false, paramType = "query", dataType = "RoleDTO")
     })
@@ -1098,7 +1098,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:role:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改角色接口", notes = "修改角色接口", tags = "角色类接口", response = String.class)
+    @ApiOperation(value = "修改角色接口", notes = "修改角色接口", tags = "角色类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "roleDTO", value = "角色数据传输对象", required = false, paramType = "query", dataType = "RoleDTO")
     })
@@ -1118,7 +1118,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:role:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除角色接口", notes = "删除角色接口", tags = "角色类接口", response = String.class)
+    @ApiOperation(value = "删除角色接口", notes = "删除角色接口", tags = "角色类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "角色ID", required = false, paramType = "query", dataType = "String")
     })
@@ -1136,12 +1136,12 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      * @return 数据权限范围
      */
     @Override
-    @ApiOperation(value = "获取数据权限范围（取最大值）", notes = "获取数据权限范围（取最大值）", tags = "角色类接口", response = String.class)
+    @ApiOperation(value = "获取数据权限范围（取最大值）", notes = "获取数据权限范围（取最大值）", tags = "角色类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "accountUuid", value = "账号UUID", required = false, paramType = "query", dataType = "String")
     })
     public APIResult<Integer> getDataScope(String accountUuid) {
-        return APIResult.builder().code(StateCode.OK).message("OK").data(roleService.getDataScope(accountUuid)).build();
+        return APIResult.builder().code(StateCode.OK).message("OK").data(roleService.getDataScope(accountUuid).value()).build();
     }
     //</editor-fold>
 
@@ -1149,7 +1149,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmssite:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取站点列表接口", notes = "获取站点列表接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取站点列表接口", notes = "获取站点列表接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "page", value = "页码", required = false, paramType = "query", dataType = "int"),
@@ -1165,7 +1165,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmssite:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取站点信息接口", notes = "根据UUID获取站点信息接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取站点信息接口", notes = "根据UUID获取站点信息接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "站点UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1185,7 +1185,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据域名获取站点信息接口", notes = "根据域名获取站点信息", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据域名获取站点信息接口", notes = "根据域名获取站点信息", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "domain", value = "站点域名", required = false, paramType = "query", dataType = "String")
     })
@@ -1199,7 +1199,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmssite:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加站点接口", notes = "添加站点接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "添加站点接口", notes = "添加站点接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsSiteDTO", value = "站点传输对象", required = false, paramType = "query", dataType = "CmsSiteDTO")
     })
@@ -1220,7 +1220,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmssite:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改站点接口", notes = "修改站点接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "修改站点接口", notes = "修改站点接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsSiteDTO", value = "站点传输对象", required = false, paramType = "query", dataType = "CmsSiteDTO")
     })
@@ -1246,7 +1246,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmssite:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除站点接口", notes = "删除站点下所有内容", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "删除站点接口", notes = "删除站点下所有内容", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "站点UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1272,7 +1272,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmscategory:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取CMS系统分类列表接口", notes = "获取CMS系统分类列表", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取CMS系统分类列表接口", notes = "获取CMS系统分类列表", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1298,7 +1298,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmscategory:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "根据UUID获取CMS系统站点下的分类接口", notes = "根据UUID获取CMS系统站点下的分类", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据UUID获取CMS系统站点下的分类接口", notes = "根据UUID获取CMS系统站点下的分类", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "分类UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1324,7 +1324,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmscategory:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "根据英文名获取CMS系统站点下的分类接口", notes = "根据英文名获取CMS系统站点下的分类接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据英文名获取CMS系统站点下的分类接口", notes = "根据英文名获取CMS系统站点下的分类接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ename", value = "分类英文名", required = false, paramType = "query", dataType = "String")
     })
@@ -1350,7 +1350,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmscategory:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加文章分类接口", notes = "添加文章分类", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "添加文章分类接口", notes = "添加文章分类", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsCategoryDTO", value = "分类传输对象", required = false, paramType = "query", dataType = "CmsCategoryDTO")
     })
@@ -1376,7 +1376,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmscategory:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "更新文章分类接口", notes = "更新文章分类", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "更新文章分类接口", notes = "更新文章分类", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsCategoryDTO", value = "分类传输对象", required = false, paramType = "query", dataType = "CmsCategoryDTO")
     })
@@ -1402,7 +1402,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmscategory:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除文章分类接口", notes = "删除文章分类", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "删除文章分类接口", notes = "删除文章分类", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsCategoryUuid", value = "分类UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1428,7 +1428,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsposts:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "根据查询条件获取文章列表接口", notes = "根据查询条件获取文章列表", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据查询条件获取文章列表接口", notes = "根据查询条件获取文章列表", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsPostSearchCriteriaVO", value = "查询条件", required = false, paramType = "query", dataType = "CmsPostSearchCriteriaVO")
     })
@@ -1453,7 +1453,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据栏目ID获取文章列表（前台）", notes = "根据栏目ID获取文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据栏目ID获取文章列表（前台）", notes = "根据栏目ID获取文章列表（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "categoryUuid", value = "分类UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "pages", value = "页码", required = false, paramType = "query", dataType = "int"),
@@ -1468,7 +1468,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取相关文章列表（前台）", notes = "获取相关文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取相关文章列表（前台）", notes = "获取相关文章列表（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
@@ -1482,7 +1482,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取最热文章列表（前台）", notes = "获取最热文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取最热文章列表（前台）", notes = "获取最热文章列表（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
@@ -1496,7 +1496,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取年度最热文章列表（前台）", notes = "获取年度最热文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取年度最热文章列表（前台）", notes = "获取年度最热文章列表（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
@@ -1510,7 +1510,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取季度最热文章列表（前台）", notes = "获取季度最热文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取季度最热文章列表（前台）", notes = "获取季度最热文章列表（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "number", value = "获取数量", required = false, paramType = "query", dataType = "int")
@@ -1524,7 +1524,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1537,7 +1537,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "updateView", value = "是否更新浏览量", required = false, paramType = "query", dataType = "Boolean")
@@ -1551,7 +1551,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据文章ID获取文章详情（前台）", notes = "根据文章ID获取文章详情（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "文章ID", required = false, paramType = "query", dataType = "Long"),
             @ApiImplicitParam(name = "updateView", value = "是否更新浏览量", required = false, paramType = "query", dataType = "Boolean")
@@ -1565,7 +1565,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "文章点赞（前台）", notes = "文章点赞（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "文章点赞（前台）", notes = "文章点赞（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章ID", required = false, paramType = "query", dataType = "String")
     })
@@ -1578,7 +1578,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "文章点踩（前台）", notes = "文章点踩（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "文章点踩（前台）", notes = "文章点踩（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章ID", required = false, paramType = "query", dataType = "String")
     })
@@ -1592,7 +1592,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsposts:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加文章接口", notes = "添加文章", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "添加文章接口", notes = "添加文章", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsPostsDTO", value = "文章传输对象", required = false, paramType = "query", dataType = "CmsPostsDTO")
     })
@@ -1618,7 +1618,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsposts:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改文章接口", notes = "修改文章", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "修改文章接口", notes = "修改文章", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsPostsDTO", value = "文章传输对象", required = false, paramType = "query", dataType = "CmsPostsDTO")
     })
@@ -1644,7 +1644,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsposts:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除文章接口", notes = "删除文章", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "删除文章接口", notes = "删除文章", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1669,7 +1669,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "文章点赞接口", notes = "文章点赞接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "文章点赞接口", notes = "文章点赞接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1679,7 +1679,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "文章点踩接口", notes = "文章点踩接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "文章点踩接口", notes = "文章点踩接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1689,7 +1689,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据标签英文名获取文章列表（前台）", notes = "根据标签英文名获取文章列表（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据标签英文名获取文章列表（前台）", notes = "根据标签英文名获取文章列表（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "tagEname", value = "标签英文名", required = false, paramType = "query", dataType = "String"),
@@ -1707,7 +1707,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmstag:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取标签列表接口", notes = "获取标签列表", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取标签列表接口", notes = "获取标签列表", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "pages", value = "页码", required = false, paramType = "query", dataType = "int"),
@@ -1734,7 +1734,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取所有标签列表以及文章数量（前台）", notes = "获取所有标签列表以及文章数量（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取所有标签列表以及文章数量（前台）", notes = "获取所有标签列表以及文章数量（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1748,7 +1748,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmstag:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "根据UUID获取标签对象接口", notes = "根据UUID获取标签对象", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据UUID获取标签对象接口", notes = "根据UUID获取标签对象", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "uuid", value = "标签UUID", required = false, paramType = "query", dataType = "String")
@@ -1774,7 +1774,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据英文名获取标签对象接口", notes = "根据英文名获取标签对象接口", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据英文名获取标签对象接口", notes = "根据英文名获取标签对象接口", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "ename", value = "英文名", required = false, paramType = "query", dataType = "String")
@@ -1789,7 +1789,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmstag:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加标签接口", notes = "添加标签", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "添加标签接口", notes = "添加标签", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsTagDTO", value = "标签传输对象", required = false, paramType = "query", dataType = "CmsTagDTO")
     })
@@ -1815,7 +1815,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmstag:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "更新标签接口", notes = "更新标签", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "更新标签接口", notes = "更新标签", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsTagDTO", value = "标签传输对象", required = false, paramType = "query", dataType = "CmsTagDTO")
     })
@@ -1841,7 +1841,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmstag:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除标签接口", notes = "删除标签", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "删除标签接口", notes = "删除标签", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "标签UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1873,7 +1873,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      * @return
      */
     @Override
-    @ApiOperation(value = "获取CMS菜单树（CMS系统）", notes = "获取CMS菜单树（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取CMS菜单树（CMS系统）", notes = "获取CMS菜单树（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "menuType", value = "菜单类型", required = false, paramType = "query", dataType = "int")
@@ -1912,7 +1912,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      * @return
      */
     @Override
-    @ApiOperation(value = "根据CMS系统的UUID获取菜单对象（CMS系统）", notes = "根据CMS系统的UUID获取菜单对象（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据CMS系统的UUID获取菜单对象（CMS系统）", notes = "根据CMS系统的UUID获取菜单对象（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "菜单UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -1944,7 +1944,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsmenu:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加菜单（CMS系统）", notes = "添加菜单（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "添加菜单（CMS系统）", notes = "添加菜单（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsMenuVO", value = "菜单对象", required = false, paramType = "query", dataType = "CmsMenuVO")
     })
@@ -1973,7 +1973,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsmenu:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改菜单（CMS系统）", notes = "修改菜单（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "修改菜单（CMS系统）", notes = "修改菜单（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsMenuVO", value = "菜单对象", required = false, paramType = "query", dataType = "CmsMenuVO")
     })
@@ -2002,7 +2002,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmsmenu:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除菜单（CMS系统）", notes = "删除菜单（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "删除菜单（CMS系统）", notes = "删除菜单（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uuid", value = "菜单UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -2024,7 +2024,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取CMS自定义页面（前台）", notes = "获取CMS自定义页面（前台）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取CMS自定义页面（前台）", notes = "获取CMS自定义页面（前台）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "页面ID", required = false, paramType = "query", dataType = "Long")
     })
@@ -2038,7 +2038,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmspage:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取CMS自定义页面（CMS系统）", notes = "获取CMS自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取CMS自定义页面（CMS系统）", notes = "获取CMS自定义页面（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "uuid", value = "页面UUID", required = false, paramType = "query", dataType = "String")
@@ -2060,7 +2060,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmspage:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除自定义页面（CMS系统）", notes = "删除自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "删除自定义页面（CMS系统）", notes = "删除自定义页面（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "siteUuid", value = "站点UUID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "uuid", value = "页面UUID", required = false, paramType = "query", dataType = "String")
@@ -2079,7 +2079,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmspage:update') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "更新自定义页面（CMS系统）", notes = "更新自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "更新自定义页面（CMS系统）", notes = "更新自定义页面（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsPageDTO", value = "自定义页面数据传输对象", required = false, paramType = "query", dataType = "CmsPageDTO")
     })
@@ -2097,7 +2097,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:cmspage:add') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "添加自定义页面（CMS系统）", notes = "添加自定义页面（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "添加自定义页面（CMS系统）", notes = "添加自定义页面（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cmsPageDTO", value = "自定义页面数据传输对象", required = false, paramType = "query", dataType = "CmsPageDTO")
     })
@@ -2116,7 +2116,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     //<editor-fold desc="评论类的接口" defaultstate="collapsed">
     @Override
-    @ApiOperation(value = "评论（CMS系统）", notes = "评论（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "评论（CMS系统）", notes = "评论（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "commentDTO", value = "菜单UUID", required = false, paramType = "query", dataType = "CommentDTO")
     })
@@ -2126,7 +2126,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据文章UUID获取评论树（CMS系统）", notes = "根据文章UUID获取评论树（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据文章UUID获取评论树（CMS系统）", notes = "根据文章UUID获取评论树（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "postUuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -2135,7 +2135,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取最新的评论（CMS系统）", notes = "获取最新的评论（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "获取最新的评论（CMS系统）", notes = "获取最新的评论（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "size", value = "获取数量", required = false, paramType = "query", dataType = "int")
     })
@@ -2144,7 +2144,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "根据文章UUID获取评论数量（CMS系统）", notes = "根据文章UUID获取评论数量（CMS系统）", tags = "CMS类接口", response = String.class)
+    @ApiOperation(value = "根据文章UUID获取评论数量（CMS系统）", notes = "根据文章UUID获取评论数量（CMS系统）", tags = "CMS类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "postUuid", value = "文章UUID", required = false, paramType = "query", dataType = "String")
     })
@@ -2156,7 +2156,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //<editor-fold desc="文件类的接口" defaultstate="collapsed">
     @Override
     @PreAuthorize("hasAnyAuthority('platf:publicfile:upload') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "公开文件上传接口", notes = "该接口上传的文件将直接公共读，不做权限校验", tags = "文件类接口", response = String.class)
+    @ApiOperation(value = "公开文件上传接口", notes = "该接口上传的文件将直接公共读，不做权限校验", tags = "文件类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile")
     })
@@ -2183,7 +2183,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('signed') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "私有文件上传接口", notes = "该接口上传的文件获取时会做简单的校验，不会公共读", tags = "文件类接口", response = String.class)
+    @ApiOperation(value = "私有文件上传接口", notes = "该接口上传的文件获取时会做简单的校验，不会公共读", tags = "文件类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile")
     })
@@ -2241,7 +2241,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //<editor-fold desc="定时任务类的接口" defaultstate="collapsed">
     @Override
     @PreAuthorize("hasAnyAuthority('platf:task:view') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "获取定时任务列表接口", notes = "获取定时任务列表接口", tags = "定时任务类接口", response = String.class)
+    @ApiOperation(value = "获取定时任务列表接口", notes = "获取定时任务列表接口", tags = "定时任务类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "页码", required = false, paramType = "query", dataType = "int"),
             @ApiImplicitParam(name = "rows", value = "每页行数", required = false, paramType = "query", dataType = "int")
@@ -2256,7 +2256,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:task:save') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "保存定时任务接口", notes = "保存定时任务接口，包含新增和修改", tags = "定时任务类接口", response = String.class)
+    @ApiOperation(value = "保存定时任务接口", notes = "保存定时任务接口，包含新增和修改", tags = "定时任务类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "taskJobDTO", value = "定时任务数据传输对象", required = false, paramType = "query", dataType = "TaskJobDTO")
     })
@@ -2270,7 +2270,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:task:exec') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "立即触发一个定时任务接口", notes = "立即触发一个定时任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiOperation(value = "立即触发一个定时任务接口", notes = "立即触发一个定时任务接口", tags = "定时任务类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
@@ -2285,7 +2285,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:task:pause') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "暂停一个任务接口", notes = "暂停一个任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiOperation(value = "暂停一个任务接口", notes = "暂停一个任务接口", tags = "定时任务类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
@@ -2300,7 +2300,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:task:resume') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "恢复一个任务接口", notes = "恢复一个任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiOperation(value = "恢复一个任务接口", notes = "恢复一个任务接口", tags = "定时任务类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
@@ -2315,7 +2315,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @PreAuthorize("hasAnyAuthority('platf:task:delete') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "删除一个任务接口", notes = "删除一个任务接口", tags = "定时任务类接口", response = String.class)
+    @ApiOperation(value = "删除一个任务接口", notes = "删除一个任务接口", tags = "定时任务类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String")
@@ -2329,7 +2329,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @PreAuthorize("hasAnyAuthority('platf:task:save') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
-    @ApiOperation(value = "修改某个任务的执行时间接口", notes = "修改某个任务的执行时间接口", tags = "定时任务类接口", response = String.class)
+    @ApiOperation(value = "修改某个任务的执行时间接口", notes = "修改某个任务的执行时间接口", tags = "定时任务类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "jobName", value = "任务名称", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "jobGroup", value = "任务分组", required = false, paramType = "query", dataType = "String"),
@@ -2353,7 +2353,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //<editor-fold desc="行政区划类的接口" defaultstate="collapsed">
 
     @Override
-    @ApiOperation(value = "获取行政区划接口", notes = "获取行政区划接口", tags = "行政区划类接口", response = String.class)
+    @ApiOperation(value = "获取行政区划接口", notes = "获取行政区划接口", tags = "行政区划类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "行政区划代码（6位数字）", required = false, paramType = "query", dataType = "String")
     })
@@ -2380,7 +2380,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      * @return List<RegionDTO>
      */
     @Override
-    @ApiOperation(value = "获取子级行政区划接口", notes = "获取子级行政区划接口", tags = "行政区划类接口", response = String.class)
+    @ApiOperation(value = "获取子级行政区划接口", notes = "获取子级行政区划接口", tags = "行政区划类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "行政区划代码（6位数字）", required = false, paramType = "query", dataType = "String")
     })
@@ -2438,7 +2438,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //</editor-fold>
 
     @Override
-    @ApiOperation(value = "查询IP信息", notes = "查询IP信息", tags = "工具类接口", response = String.class)
+    @ApiOperation(value = "查询IP信息", notes = "查询IP信息", tags = "工具类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ip", value = "IPv4地址或IPv6地址", required = false, paramType = "query", dataType = "String")
     })
@@ -2447,13 +2447,13 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取授权信息", notes = "获取授权信息", tags = "工具类接口", response = String.class)
+    @ApiOperation(value = "获取授权信息", notes = "获取授权信息", tags = "工具类接口")
     public APIResult<LicenseDTO> getLicense() {
         return APIResult.builder().code(StateCode.OK).message("OK").data(licenseService.getLicense()).build();
     }
 
     @Override
-    @ApiOperation(value = "上传文件到阿里云OSS私有桶", notes = "上传文件到阿里云OSS私有桶", tags = "工具类接口", response = String.class)
+    @ApiOperation(value = "上传文件到阿里云OSS私有桶", notes = "上传文件到阿里云OSS私有桶", tags = "工具类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile"),
             @ApiImplicitParam(name = "objectName", value = "文件名及路径", required = false, paramType = "query", dataType = "String")
@@ -2469,7 +2469,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "上传文件到阿里云OSS公有桶", notes = "上传文件到阿里云OSS公有桶", tags = "工具类接口", response = String.class)
+    @ApiOperation(value = "上传文件到阿里云OSS公有桶", notes = "上传文件到阿里云OSS公有桶", tags = "工具类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile"),
             @ApiImplicitParam(name = "objectName", value = "文件名及路径", required = false, paramType = "query", dataType = "String")
@@ -2485,7 +2485,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "上传文件到阿里云OSS", notes = "上传文件到阿里云OSS", tags = "工具类接口", response = String.class)
+    @ApiOperation(value = "上传文件到阿里云OSS", notes = "上传文件到阿里云OSS", tags = "工具类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "bucketName", value = "储存桶名称", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile"),
@@ -2502,7 +2502,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
-    @ApiOperation(value = "获取阿里云OSS授权链接", notes = "获取阿里云OSS授权链接", tags = "工具类接口", response = String.class)
+    @ApiOperation(value = "获取阿里云OSS授权链接", notes = "获取阿里云OSS授权链接", tags = "工具类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "downLoadHost", value = "下载链接的域名和协议，例如：https://cdn.renfei.net", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "bucketName", value = "储存桶名", required = false, paramType = "query", dataType = "String"),
