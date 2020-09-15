@@ -2448,8 +2448,14 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @ApiOperation(value = "获取授权信息", notes = "获取授权信息", tags = "工具类接口")
-    public APIResult<LicenseDTO> getLicense() {
+    public APIResult<LicenseDTO> getLicenseDTO() {
         return APIResult.builder().code(StateCode.OK).message("OK").data(licenseService.getLicense()).build();
+    }
+
+    @Override
+    @ApiOperation(value = "获取授权信息", notes = "获取授权信息", tags = "工具类接口")
+    public APIResult<LicenseVO> getLicense() {
+        return APIResult.builder().code(StateCode.OK).message("OK").data(new LicenseVO(licenseService.getLicense())).build();
     }
 
     @Override

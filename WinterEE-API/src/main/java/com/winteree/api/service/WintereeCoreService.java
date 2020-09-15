@@ -1063,8 +1063,11 @@ public interface WintereeCoreService {
     @GetMapping("/util/ipinfo/{ip}")
     APIResult<IpInfoDTO> queryIpInfo(@PathVariable("ip") String ip);
 
+    @GetMapping("/inside/license")
+    APIResult<LicenseDTO> getLicenseDTO();
+
     @GetMapping("/license")
-    APIResult<LicenseDTO> getLicense();
+    APIResult<LicenseVO> getLicense();
 
     @PostMapping("/inside/aliyun/oss/upload/private")
     APIResult uploadPrivateFileByAliyunOss(@RequestBody MultipartFile file,
