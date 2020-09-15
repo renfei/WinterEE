@@ -20,6 +20,7 @@ eureka:
 
   # 实例设置
   instance:
+    hostname: eureka
     # 实例是否允许使用IP
     preferIpAddress: true
 

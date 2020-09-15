@@ -1,6 +1,7 @@
 package com.winteree.core.service;
 
 import com.alibaba.fastjson.JSON;
+import com.winteree.api.entity.LicenseVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +28,7 @@ public class LicenseServiceTest {
     @Test
     public void getLicense() {
         try {
-            System.out.println(JSON.toJSONString(licenseService.getLicense()));
+            System.out.println(JSON.toJSONString(new LicenseVO(licenseService.getLicense())));
         } catch (Throwable t) {
             t.printStackTrace();
         }

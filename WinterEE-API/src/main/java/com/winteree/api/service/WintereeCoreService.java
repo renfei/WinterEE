@@ -1063,7 +1063,7 @@ public interface WintereeCoreService {
     @GetMapping("/util/ipinfo/{ip}")
     APIResult<IpInfoDTO> queryIpInfo(@PathVariable("ip") String ip);
 
-    @GetMapping("/inside/license")
+    @GetMapping("/license")
     APIResult<LicenseDTO> getLicense();
 
     @PostMapping("/inside/aliyun/oss/upload/private")
