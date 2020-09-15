@@ -816,7 +816,7 @@ public class WintereeCoreServiceTest {
 
     @Test
     public void getLicense() {
-        APIResult<LicenseDTO> apiResult = wintereeCoreService.getLicense();
+        APIResult<LicenseVO> apiResult = wintereeCoreService.getLicense();
         Assertions.assertEquals(apiResult.getCode(), StateCode.OK.getCode());
     }
 }
