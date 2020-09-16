@@ -408,7 +408,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization")
-    APIResult getAllOrganizationTree(@RequestParam("tenantUuid") String tenantUuid);
+    APIResult<List<OrganizationVO>> getAllOrganizationTree(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 根据公司UUID获取公司
@@ -426,7 +426,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/company")
-    APIResult getCompanyList(@RequestParam("tenantUuid") String tenantUuid);
+    APIResult<List<OrganizationVO>> getCompanyList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 获取公司列表（简单列表非树状）
@@ -435,7 +435,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/company/simpleList")
-    APIResult getCompanySimpleList(@RequestParam("tenantUuid") String tenantUuid);
+    APIResult<List<OrganizationVO>> getCompanySimpleList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 获取公司列表
@@ -444,7 +444,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/myCompany")
-    APIResult getMyCompanyList(@RequestParam("tenantUuid") String tenantUuid);
+    APIResult<List<OrganizationVO>> getMyCompanyList(@RequestParam("tenantUuid") String tenantUuid);
 
     /**
      * 添加新增公司
@@ -480,7 +480,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/department")
-    APIResult getDepartmentList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
+    APIResult<List<OrganizationVO>> getDepartmentList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
                                 @RequestParam(name = "companyUuid", required = false) String companyUuid);
 
     /**
@@ -491,7 +491,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/organization/department/simpleList")
-    APIResult getDepartmentSimpleList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
+    APIResult<List<OrganizationVO>> getDepartmentSimpleList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
                                       @RequestParam(name = "companyUuid", required = false) String companyUuid);
 
     /**
