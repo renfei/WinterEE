@@ -24,7 +24,7 @@ public class LicenseVO {
         this.licenseSerialNumber = licenseDTO.getSn();
         switch (licenseDTO.getType()) {
             case DEMO:
-                this.licenseType = "演示使用版(Demo Trial Edition)";
+                this.licenseType = "演示试用版(Demo Trial Edition)";
                 break;
             case COMMERCIAL:
                 this.licenseType = "商业许可版(Commercial License Edition)";

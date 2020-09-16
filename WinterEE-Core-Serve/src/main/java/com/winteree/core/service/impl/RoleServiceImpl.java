@@ -428,7 +428,7 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             DataScopeEnum maxDataScopeEnum = DataScopeEnum.DEPARTMENT;
             for (RoleDO role : roleDOS
             ) {
-                if (role.getDataScope() != null && role.getDataScope() > maxDataScopeEnum.value()) {
+                if (role.getDataScope() != null && role.getDataScope() < maxDataScopeEnum.value()) {
                     maxDataScopeEnum = DataScopeEnum.valueOf(role.getDataScope());
                 }
             }

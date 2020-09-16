@@ -818,7 +818,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult getAllOrganizationTree(String tenantUuid) {
+    public APIResult<List<OrganizationVO>> getAllOrganizationTree(String tenantUuid) {
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message("OK")
@@ -852,7 +852,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult getCompanyList(String tenantUuid) {
+    public APIResult<List<OrganizationVO>> getCompanyList(String tenantUuid) {
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message("OK")
@@ -872,7 +872,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult getCompanySimpleList(String tenantUuid) {
+    public APIResult<List<OrganizationVO>> getCompanySimpleList(String tenantUuid) {
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message("OK")
@@ -892,7 +892,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiImplicitParams({
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult getMyCompanyList(String tenantUuid) {
+    public APIResult<List<OrganizationVO>> getMyCompanyList(String tenantUuid) {
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message("OK")
@@ -987,7 +987,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "companyUuid", value = "公司ID", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult getDepartmentList(String tenantUuid, String companyUuid) {
+    public APIResult<List<OrganizationVO>> getDepartmentList(String tenantUuid, String companyUuid) {
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message("OK")
@@ -1009,7 +1009,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID", required = false, paramType = "query", dataType = "String"),
             @ApiImplicitParam(name = "companyUuid", value = "公司ID", required = false, paramType = "query", dataType = "String")
     })
-    public APIResult getDepartmentSimpleList(String tenantUuid, String companyUuid) {
+    public APIResult<List<OrganizationVO>> getDepartmentSimpleList(String tenantUuid, String companyUuid) {
         return APIResult.builder()
                 .code(StateCode.OK)
                 .message("OK")
