@@ -48,16 +48,6 @@ public class LicenseServiceImpl extends BaseService implements LicenseService {
     @Override
     public LicenseDTO getLicense() {
         String machineCode = hardwareService.getSerialNumber();
-        log.warn(JSON.toJSONString(Builder.of(LicenseDTO::new)
-                .with(LicenseDTO::setMacCode, machineCode)
-                .with(LicenseDTO::setExpired, DateUtils.parseDate(LicenseDTO.PERMANENT_DATE))
-                .with(LicenseDTO::setState, LicenseState.NORMAL)
-                .with(LicenseDTO::setReason, "有效")
-                .with(LicenseDTO::setSn, UUID.randomUUID().toString().replace("-", "").toUpperCase())
-                .with(LicenseDTO::setType, LicenseType.COMMERCIAL)
-                .with(LicenseDTO::setName, "河北省明政厅街道档案管理系统")
-                .build()));
-
         LicenseDTO license = Builder.of(LicenseDTO::new)
                 .with(LicenseDTO::setMacCode, machineCode)
                 .with(LicenseDTO::setExpired, DateUtils.parseDate(LicenseDTO.PERMANENT_DATE))
@@ -105,6 +95,10 @@ public class LicenseServiceImpl extends BaseService implements LicenseService {
             log.error(e.getMessage(), e);
             return license;
         }
+    }
+
+    public void saveLicense(String license){
+
     }
 
     @Scheduled(cron = "0 0 0/12 * * ?")
