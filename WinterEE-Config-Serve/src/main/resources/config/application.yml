@@ -1,7 +1,7 @@
 #此配置文件将保存要在所有文件之间共享的公共配置
 eureka:
   instance:
-    prefer-ip-address: false
+    prefer-ip-address: true
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/ #注册服务器的位置

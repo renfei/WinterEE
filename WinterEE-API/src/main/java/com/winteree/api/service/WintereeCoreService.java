@@ -1069,6 +1069,12 @@ public interface WintereeCoreService {
     @GetMapping("/license")
     APIResult<LicenseVO> getLicense();
 
+    @PostMapping("/license")
+    APIResult saveLicense(@RequestBody String license);
+
+    @PostMapping("/license/file")
+    APIResult saveLicenseFile(MultipartFile file);
+
     @PostMapping("/inside/aliyun/oss/upload/private")
     APIResult uploadPrivateFileByAliyunOss(@RequestBody MultipartFile file,
                                            @RequestParam("objectName") String objectName);

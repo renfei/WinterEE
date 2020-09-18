@@ -2459,6 +2459,18 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
+    @ApiOperation(value = "上传授权信息", notes = "上传授权信息", tags = "工具类接口")
+    public APIResult saveLicense(String license) {
+        return null;
+    }
+
+    @Override
+    @ApiOperation(value = "上传授权信文件", notes = "上传授权信文件", tags = "工具类接口")
+    public APIResult saveLicenseFile(MultipartFile file) {
+        return null;
+    }
+
+    @Override
     @ApiOperation(value = "上传文件到阿里云OSS私有桶", notes = "上传文件到阿里云OSS私有桶", tags = "工具类接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = false, paramType = "query", dataType = "MultipartFile"),
