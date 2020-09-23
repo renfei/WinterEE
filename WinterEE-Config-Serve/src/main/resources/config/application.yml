@@ -14,3 +14,8 @@ security:
 spring:
   main:
     allow-bean-definition-overriding: true
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest

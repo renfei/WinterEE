@@ -1057,7 +1057,7 @@ public interface WintereeCoreService {
                                                @RequestParam("tablename") String tablename);
 
     @PostMapping("/inside/dataBase/createTable")
-    APIResult createTable(@RequestParam("database") String name, @RequestParam("database") String comment,
+    APIResult createTable(@RequestParam("name") String name, @RequestParam("comment") String comment,
                           @RequestBody List<TableInfoDTO> tableInfoDTOS);
 
     @GetMapping("/util/ipinfo/{ip}")
