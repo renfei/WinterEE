@@ -89,11 +89,13 @@ public class DataBaseServiceImpl extends BaseService implements DataBaseService 
                 sb.append(tableInfoDTO.getColumnName());
                 sb.append("` ");
                 sb.append(tableInfoDTO.getDataType());
-                sb.append("(");
-                sb.append(tableInfoDTO.getLength());
-                sb.append(")");
-                sb.append(" ");
-                sb.append("YES".equals(tableInfoDTO.getIsNullable()) ? "NULL" : "NOT NULL");
+                if(!BeanUtils.isEmpty(tableInfoDTO.getLength())){
+                    sb.append("(");
+                    sb.append(tableInfoDTO.getLength());
+                    sb.append(")");
+                    sb.append(" ");
+                }
+                sb.append("YES".equals(tableInfoDTO.getIsNullable()) ? " NULL" : " NOT NULL");
                 sb.append(" ");
                 sb.append("COMMENT '");
                 sb.append(tableInfoDTO.getColumnComment());
