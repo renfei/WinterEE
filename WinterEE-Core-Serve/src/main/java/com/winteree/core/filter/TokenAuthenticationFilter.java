@@ -3,12 +3,22 @@ package com.winteree.core.filter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.winteree.api.entity.AccountDTO;
+import com.winteree.core.dao.entity.TenantDO;
+import com.winteree.core.service.AccountService;
+import com.winteree.core.service.TenantService;
+import net.renfei.sdk.comm.StateCode;
+import net.renfei.sdk.entity.APIResult;
+import net.renfei.sdk.utils.DateUtils;
 import net.renfei.sdk.utils.StringUtils;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -16,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 
 /**
  * 将请求头中的信息转为SecurityContextHolder上下文
@@ -24,11 +36,21 @@ import java.io.IOException;
  */
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
+    private AccountService accountService;
+    private TenantService tenantService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
+        if (accountService == null) {
+            BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(httpServletRequest.getServletContext());
+            accountService = (AccountService) factory.getBean("accountService");
+        }
+        if (tenantService == null) {
+            BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(httpServletRequest.getServletContext());
+            tenantService = (TenantService) factory.getBean("tenantService");
+        }
         //解析出头中的token
         String token = httpServletRequest.getHeader("json-token");
         if (token != null) {
@@ -45,7 +67,38 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
             //将authenticationToken填充到安全上下文
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            // 判定所属租户是否到期
+            AccountDTO accountDTO = accountService.getAccountById(uuid);
+            if (accountDTO != null) {
+                TenantDO tenantDO = tenantService.getTenantDOByUUID(accountDTO.getTenantUuid());
+                if (tenantDO != null) {
+                    Date expiryDate = tenantDO.getExpiryDate();
+                    if (expiryDate == null||DateUtils.pastDays(expiryDate) > 0) {
+                        APIResult apiResult = APIResult.builder()
+                                .code(StateCode.Unavailable)
+                                .message("当前服务租约已到期，服务被暂停。请稍后再次尝试。")
+                                .build();
+                        returnJson(httpServletResponse, JSON.toJSONString(apiResult));
+                        return;
+                    }
+                }
+            }
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
+    }
+
+    private void returnJson(HttpServletResponse response, String json) {
+        PrintWriter writer = null;
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        try {
+            writer = response.getWriter();
+            writer.print(json);
+        } catch (IOException e) {
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
     }
 }
