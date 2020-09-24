@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * CoreApplication
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Repository;
 @EnableScheduling
 @EnableFeignClients
 @SpringCloudApplication
+@EnableTransactionManagement
 @EnableConfigurationProperties
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @MapperScan(basePackages = "com.winteree.core.dao", annotationClass = Repository.class)

@@ -63,6 +63,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     private final IpInfoService ipInfoService;
     private final LicenseService licenseService;
     private final DataBaseService dataBaseService;
+    private final MessageService messageService;
     @Autowired
     private HttpServletRequest request;
     //</editor-fold>
@@ -86,7 +87,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
                                    EmailService emailService,
                                    @Qualifier("aliyunSmsServiceImpl") SmsService aliYunSmsService,
                                    AliyunOssService aliyunOssService, IpInfoService ipInfoService,
-                                   LicenseService licenseService, DataBaseService dataBaseService) {
+                                   LicenseService licenseService, DataBaseService dataBaseService,
+                                   MessageService messageService) {
         this.i18nMessageService = i18nMessageService;
         this.wintereeCoreConfig = wintereeCoreConfig;
         this.accountService = accountService;
@@ -108,6 +110,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         this.ipInfoService = ipInfoService;
         this.licenseService = licenseService;
         this.dataBaseService = dataBaseService;
+        this.messageService = messageService;
     }
     //</editor-fold>
 
@@ -2432,6 +2435,55 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             return APIResult.builder()
                     .code(StateCode.Error)
                     .message(re.getMessage())
+                    .build();
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="消息服务类的接口" defaultstate="collapsed">
+    @Override
+    @ApiOperation(value = "获取我的站内消息列表", notes = "获取我的站内消息列表", tags = "消息服务类接口")
+    public APIResult<ListData<MessageVO>> getMyStationMessage(String pages, String rows) {
+        return new APIResult<>(messageService.getMyStationMessage(pages, rows));
+    }
+
+    @Override
+    @ApiOperation(value = "读取我的消息内容", notes = "读取我的消息内容", tags = "消息服务类接口")
+    public APIResult<MessageContextVO> getMyMessage(String msgUuid) {
+        return new APIResult<>(messageService.getMyMessage(msgUuid));
+    }
+
+    @Override
+    @ApiOperation(value = "给指定的用户发送消息", notes = "给指定的用户发送消息", tags = "消息服务类接口")
+    public APIResult sendP2PMessage(String receiveUuid, MessageContextVO messageContext) {
+        try {
+            messageService.sendP2PMessage(receiveUuid, messageContext);
+            return APIResult.success();
+        } catch (FailureException fe) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(fe.getMessage())
+                    .build();
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAnyAuthority('platf:message:broadcasting') or (#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve'))")
+    @ApiOperation(value = "发送消息广播", notes = "发送消息广播", tags = "消息服务类接口")
+    public APIResult sendMessageBroadcasting(MessageBroadcastingVO messageBroadcastingVO, String valueUuid) {
+        try {
+            messageService.sendMessageBroadcasting(messageBroadcastingVO.getMessageScope(),
+                    messageBroadcastingVO.getMessageType(), messageBroadcastingVO.getMessageContext(), valueUuid);
+            return APIResult.success();
+        } catch (FailureException fe) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(fe.getMessage())
+                    .build();
+        } catch (ForbiddenException fe) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(fe.getMessage())
                     .build();
         }
     }

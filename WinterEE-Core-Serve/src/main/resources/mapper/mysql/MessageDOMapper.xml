@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.winteree.core.dao.MessageDOMapper">
+  <resultMap id="BaseResultMap" type="com.winteree.core.dao.entity.MessageDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="uuid" jdbcType="VARCHAR" property="uuid" />
+    <result column="context_uuid" jdbcType="VARCHAR" property="contextUuid" />
+    <result column="msg_type" jdbcType="INTEGER" property="msgType" />
+    <result column="send_uuid" jdbcType="VARCHAR" property="sendUuid" />
+    <result column="receive_uuid" jdbcType="VARCHAR" property="receiveUuid" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="is_read" jdbcType="BIT" property="isRead" />
+    <result column="sent_date" jdbcType="TIMESTAMP" property="sentDate" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, uuid, context_uuid, msg_type, send_uuid, receive_uuid, title, is_read, sent_date
+  </sql>
+  <select id="selectByExample" parameterType="com.winteree.core.dao.entity.MessageDOExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from winteree_core_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from winteree_core_message
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from winteree_core_message
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.winteree.core.dao.entity.MessageDOExample">
+    delete from winteree_core_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.winteree.core.dao.entity.MessageDO">
+    insert into winteree_core_message (id, uuid, context_uuid, 
+      msg_type, send_uuid, receive_uuid, 
+      title, is_read, sent_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{uuid,jdbcType=VARCHAR}, #{contextUuid,jdbcType=VARCHAR}, 
+      #{msgType,jdbcType=INTEGER}, #{sendUuid,jdbcType=VARCHAR}, #{receiveUuid,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR}, #{isRead,jdbcType=BIT}, #{sentDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.winteree.core.dao.entity.MessageDO">
+    insert into winteree_core_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="contextUuid != null">
+        context_uuid,
+      </if>
+      <if test="msgType != null">
+        msg_type,
+      </if>
+      <if test="sendUuid != null">
+        send_uuid,
+      </if>
+      <if test="receiveUuid != null">
+        receive_uuid,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="isRead != null">
+        is_read,
+      </if>
+      <if test="sentDate != null">
+        sent_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="contextUuid != null">
+        #{contextUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="msgType != null">
+        #{msgType,jdbcType=INTEGER},
+      </if>
+      <if test="sendUuid != null">
+        #{sendUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveUuid != null">
+        #{receiveUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="isRead != null">
+        #{isRead,jdbcType=BIT},
+      </if>
+      <if test="sentDate != null">
+        #{sentDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.winteree.core.dao.entity.MessageDOExample" resultType="java.lang.Long">
+    select count(*) from winteree_core_message
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update winteree_core_message
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.uuid != null">
+        uuid = #{record.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contextUuid != null">
+        context_uuid = #{record.contextUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.msgType != null">
+        msg_type = #{record.msgType,jdbcType=INTEGER},
+      </if>
+      <if test="record.sendUuid != null">
+        send_uuid = #{record.sendUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.receiveUuid != null">
+        receive_uuid = #{record.receiveUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isRead != null">
+        is_read = #{record.isRead,jdbcType=BIT},
+      </if>
+      <if test="record.sentDate != null">
+        sent_date = #{record.sentDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update winteree_core_message
+    set id = #{record.id,jdbcType=BIGINT},
+      uuid = #{record.uuid,jdbcType=VARCHAR},
+      context_uuid = #{record.contextUuid,jdbcType=VARCHAR},
+      msg_type = #{record.msgType,jdbcType=INTEGER},
+      send_uuid = #{record.sendUuid,jdbcType=VARCHAR},
+      receive_uuid = #{record.receiveUuid,jdbcType=VARCHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      is_read = #{record.isRead,jdbcType=BIT},
+      sent_date = #{record.sentDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.winteree.core.dao.entity.MessageDO">
+    update winteree_core_message
+    <set>
+      <if test="uuid != null">
+        uuid = #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="contextUuid != null">
+        context_uuid = #{contextUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="msgType != null">
+        msg_type = #{msgType,jdbcType=INTEGER},
+      </if>
+      <if test="sendUuid != null">
+        send_uuid = #{sendUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveUuid != null">
+        receive_uuid = #{receiveUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="isRead != null">
+        is_read = #{isRead,jdbcType=BIT},
+      </if>
+      <if test="sentDate != null">
+        sent_date = #{sentDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.winteree.core.dao.entity.MessageDO">
+    update winteree_core_message
+    set uuid = #{uuid,jdbcType=VARCHAR},
+      context_uuid = #{contextUuid,jdbcType=VARCHAR},
+      msg_type = #{msgType,jdbcType=INTEGER},
+      send_uuid = #{sendUuid,jdbcType=VARCHAR},
+      receive_uuid = #{receiveUuid,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      is_read = #{isRead,jdbcType=BIT},
+      sent_date = #{sentDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
