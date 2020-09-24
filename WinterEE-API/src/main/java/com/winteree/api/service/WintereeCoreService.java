@@ -1060,6 +1060,20 @@ public interface WintereeCoreService {
     APIResult createTable(@RequestParam("name") String name, @RequestParam("comment") String comment,
                           @RequestBody List<TableInfoDTO> tableInfoDTOS);
 
+    @GetMapping("message/station/mymessage")
+    APIResult<ListData<MessageVO>> getMyStationMessage(@RequestParam("pages") String pages,
+                                                       @RequestParam("rows") String rows);
+
+    @GetMapping("message/station/mymessage/context")
+    APIResult<MessageContextVO> getMyMessage(@RequestParam("msgUuid") String msgUuid);
+
+    @PostMapping("message/station/message")
+    APIResult sendP2PMessage(@RequestParam("receiveUuid") String receiveUuid, @RequestBody MessageContextVO messageContext);
+
+    @PostMapping("message/station/broadcasting")
+    APIResult sendMessageBroadcasting(@RequestBody MessageBroadcastingVO messageBroadcastingVO,
+                                      @RequestParam("valueUuid") String valueUuid);
+
     @GetMapping("/util/ipinfo/{ip}")
     APIResult<IpInfoDTO> queryIpInfo(@PathVariable("ip") String ip);
 

@@ -812,7 +812,7 @@ public class WintereeCoreServiceTest {
         Assertions.assertEquals(regionDTOAPIResult.getCode(), StateCode.OK.getCode());
         apiResult.getData().forEach(regionDTO -> log.info(regionDTO.getRegionName()));
     }
-    //<editor-fold>
+    //</editor-fold>
 
     @Test
     public void getLicense() {
