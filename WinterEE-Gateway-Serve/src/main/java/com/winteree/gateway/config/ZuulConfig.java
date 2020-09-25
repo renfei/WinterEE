@@ -26,7 +26,7 @@ public class ZuulConfig {
 
     @Bean
     public AuthFilter perFilter() {
-        return new AuthFilter(wintereeUaaServiceClient);
+        return new AuthFilter(wintereeUaaServiceClient, wintereeCoreServiceClient);
     }
 
     @Bean

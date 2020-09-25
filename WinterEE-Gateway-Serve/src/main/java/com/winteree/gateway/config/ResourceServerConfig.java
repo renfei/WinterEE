@@ -76,6 +76,9 @@ public class ResourceServerConfig {
                     .antMatchers("/core/secretkey/**").permitAll()
                     .antMatchers("/setting/logs/type").permitAll()
                     .antMatchers("/setting/logs/subtype").permitAll()
+                    .antMatchers("/util/**").permitAll()
+                    .antMatchers("/region").permitAll()
+                    .antMatchers("/region/child").permitAll()
                     .antMatchers("/core/**").access("#oauth2.hasScope('WinterEE-Core-Serve')");
         }
     }

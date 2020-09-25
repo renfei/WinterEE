@@ -3,13 +3,8 @@ package com.winteree.core.filter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.winteree.api.entity.AccountDTO;
-import com.winteree.core.dao.entity.TenantDO;
 import com.winteree.core.service.AccountService;
 import com.winteree.core.service.TenantService;
-import net.renfei.sdk.comm.StateCode;
-import net.renfei.sdk.entity.APIResult;
-import net.renfei.sdk.utils.DateUtils;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.http.MediaType;
@@ -27,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
 
 /**
  * 将请求头中的信息转为SecurityContextHolder上下文
@@ -67,22 +61,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
             //将authenticationToken填充到安全上下文
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            // 判定所属租户是否到期
-            AccountDTO accountDTO = accountService.getAccountById(uuid);
-            if (accountDTO != null) {
-                TenantDO tenantDO = tenantService.getTenantDOByUUID(accountDTO.getTenantUuid());
-                if (tenantDO != null) {
-                    Date expiryDate = tenantDO.getExpiryDate();
-                    if (expiryDate == null||DateUtils.pastDays(expiryDate) > 0) {
-                        APIResult apiResult = APIResult.builder()
-                                .code(StateCode.Unavailable)
-                                .message("当前服务租约已到期，服务被暂停。请稍后再次尝试。")
-                                .build();
-                        returnJson(httpServletResponse, JSON.toJSONString(apiResult));
-                        return;
-                    }
-                }
-            }
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }

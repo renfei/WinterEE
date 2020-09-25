@@ -14,6 +14,15 @@ import com.winteree.core.dao.entity.TenantDO;
  * @date : 2020-04-26 21:22
  */
 public interface TenantService {
+
+    /**
+     * 根据UUID获取租户实体对象
+     *
+     * @param uuid
+     * @return
+     */
+    TenantDTO getTenantDTOByUUID(String uuid);
+
     ListData<TenantDTO> getTenantList() throws ForbiddenException;
 
     /**

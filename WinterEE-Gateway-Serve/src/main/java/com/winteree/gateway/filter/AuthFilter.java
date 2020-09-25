@@ -6,19 +6,26 @@ import com.alibaba.fastjson.JSONObject;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import com.winteree.api.entity.AccountDTO;
+import com.winteree.api.entity.TenantDTO;
+import com.winteree.gateway.client.WintereeCoreServiceClient;
 import com.winteree.gateway.client.WintereeUaaServiceClient;
 import lombok.extern.slf4j.Slf4j;
+import net.renfei.sdk.comm.StateCode;
+import net.renfei.sdk.entity.APIResult;
+import net.renfei.sdk.utils.DateUtils;
 import net.renfei.sdk.utils.StringUtils;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
 import javax.servlet.http.Cookie;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * @author RenFei
@@ -26,9 +33,12 @@ import java.util.Map;
 @Slf4j
 public class AuthFilter extends ZuulFilter {
     private final WintereeUaaServiceClient wintereeUaaServiceClient;
+    private final WintereeCoreServiceClient wintereeCoreServiceClient;
 
-    public AuthFilter(WintereeUaaServiceClient wintereeUaaServiceClient) {
+    public AuthFilter(WintereeUaaServiceClient wintereeUaaServiceClient,
+                      WintereeCoreServiceClient wintereeCoreServiceClient) {
         this.wintereeUaaServiceClient = wintereeUaaServiceClient;
+        this.wintereeCoreServiceClient = wintereeCoreServiceClient;
     }
 
     @Override
@@ -62,9 +72,34 @@ public class AuthFilter extends ZuulFilter {
         OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         String name = userAuthentication.getName();
-//        log.info("getCredentials:{}", JSON.toJSONString(userAuthentication.getCredentials()));
-//        log.info("getDetails:{}", JSON.toJSONString(userAuthentication.getDetails()));
-//        log.info("getPrincipal:{}", JSON.toJSONString(userAuthentication.getPrincipal()));
+        APIResult<AccountDTO> apiResult =
+                wintereeCoreServiceClient.getAccountByUuid(name);
+        if (StateCode.OK.getCode().equals(apiResult.getCode())) {
+            if (apiResult.getData() != null) {
+                AccountDTO accountDTO = apiResult.getData();
+                TenantDTO tenant =
+                        wintereeCoreServiceClient.getTenantDTO(accountDTO.getTenantUuid()).getData();
+                if (tenant != null) {
+                    // 判定所属租户是否到期
+                    Date expiryDate = tenant.getExpiryDate();
+                    if (expiryDate == null|| DateUtils.pastDays(expiryDate) > 0) {
+                        APIResult result = APIResult.builder()
+                                .code(StateCode.Unavailable)
+                                .message("当前服务租约已到期，服务被暂停。请稍后再次尝试。")
+                                .build();
+                        returnJson(ctx.getResponse(), JSON.toJSONString(result));
+                        return null;
+                    }
+                }
+            }
+        } else {
+            APIResult result = APIResult.builder()
+                    .code(StateCode.Unavailable)
+                    .message("核心服务暂时不可用，请稍后再试。")
+                    .build();
+            returnJson(ctx.getResponse(), JSON.toJSONString(result));
+            return null;
+        }
         /*
          * 组装明文token
          */
@@ -113,6 +148,21 @@ public class AuthFilter extends ZuulFilter {
                         return;
                     }
                 }
+            }
+        }
+    }
+
+    private void returnJson(HttpServletResponse response, String json) {
+        PrintWriter writer = null;
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        try {
+            writer = response.getWriter();
+            writer.print(json);
+        } catch (IOException e) {
+        } finally {
+            if (writer != null) {
+                writer.close();
             }
         }
     }

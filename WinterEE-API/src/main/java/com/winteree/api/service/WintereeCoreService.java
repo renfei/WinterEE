@@ -157,6 +157,9 @@ public interface WintereeCoreService {
     @GetMapping("/account")
     APIResult<ListData<AccountDTO>> getAccountList(AccountSearchCriteriaVO accountSearchCriteriaVO);
 
+    @GetMapping("/account/{uuid}")
+    APIResult<AccountDTO> getAccountByUuid(@PathVariable("uuid") String uuid);
+
     /**
      * 添加用户
      * 密码是在添加用户后，使用密码重置功能进行重置的
@@ -348,6 +351,14 @@ public interface WintereeCoreService {
      */
     @GetMapping("/tenant/info")
     APIResult<TenantInfoDTO> getTenantInfo(@RequestParam("tenantUUID") String tenantUUID);
+
+    /**
+     * 获取租户信息接口
+     * @param tenantUUID
+     * @return
+     */
+    @GetMapping("/tenant/dto")
+    APIResult<TenantDTO> getTenantDTO(String tenantUUID);
 
     /**
      * 修改租户基础信息
