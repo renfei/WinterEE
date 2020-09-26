@@ -39,11 +39,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         if (accountService == null) {
             BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(httpServletRequest.getServletContext());
-            accountService = (AccountService) factory.getBean("accountService");
+            accountService = (AccountService) factory.getBean("accountServiceImpl");
         }
         if (tenantService == null) {
             BeanFactory factory = WebApplicationContextUtils.getRequiredWebApplicationContext(httpServletRequest.getServletContext());
-            tenantService = (TenantService) factory.getBean("tenantService");
+            tenantService = (TenantService) factory.getBean("tenantServiceImpl");
         }
         //解析出头中的token
         String token = httpServletRequest.getHeader("json-token");
