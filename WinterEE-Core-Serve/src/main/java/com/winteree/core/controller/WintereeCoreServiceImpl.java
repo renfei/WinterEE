@@ -8,6 +8,7 @@ import com.winteree.core.aop.OperationLog;
 import com.winteree.core.config.WintereeCoreConfig;
 import com.winteree.core.dao.entity.OrganizationDO;
 import com.winteree.core.service.*;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +41,7 @@ import java.util.*;
  */
 @Slf4j
 @RestController
+@Api("WinterEE核心服务")
 public class WintereeCoreServiceImpl extends BaseController implements WintereeCoreService {
     //<editor-fold desc="依赖服务" defaultstate="collapsed">
     private final I18nMessageService i18nMessageService;
@@ -2527,9 +2529,33 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     }
 
     @Override
+    @ApiOperation(value = "获取机器硬件码", notes = "获取机器硬件码", tags = "工具类接口")
+    public APIResult<String> getMachineCode() {
+        return new APIResult<>(licenseService.getMachineCode());
+    }
+
+    @Override
     @ApiOperation(value = "上传授权信息", notes = "上传授权信息", tags = "工具类接口")
     public APIResult saveLicense(String license) {
-        return null;
+        try {
+            licenseService.saveLicense(license);
+            return APIResult.success();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder()
+                    .code(StateCode.Forbidden)
+                    .message(forbiddenException.getMessage())
+                    .build();
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        } catch (IOException ioException) {
+            return APIResult.builder()
+                    .code(StateCode.Error)
+                    .message("程序可能没有文件写入权限，License保存失败。")
+                    .build();
+        }
     }
 
     @Override

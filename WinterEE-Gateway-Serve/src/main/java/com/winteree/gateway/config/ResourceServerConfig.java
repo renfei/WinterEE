@@ -79,6 +79,7 @@ public class ResourceServerConfig {
                     .antMatchers("/util/**").permitAll()
                     .antMatchers("/region").permitAll()
                     .antMatchers("/region/child").permitAll()
+                    .antMatchers("/license/**").permitAll()
                     .antMatchers("/core/**").access("#oauth2.hasScope('WinterEE-Core-Serve')");
         }
     }

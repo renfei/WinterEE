@@ -1,6 +1,10 @@
 package com.winteree.core.service;
 
 import com.winteree.api.entity.LicenseDTO;
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
+
+import java.io.IOException;
 
 /**
  * <p>Title: LicenseService</p>
@@ -11,4 +15,8 @@ import com.winteree.api.entity.LicenseDTO;
  */
 public interface LicenseService {
     LicenseDTO getLicense();
+
+    String getMachineCode();
+
+    void saveLicense(String license) throws ForbiddenException, FailureException, IOException;
 }

@@ -354,6 +354,7 @@ public interface WintereeCoreService {
 
     /**
      * 获取租户信息接口
+     *
      * @param tenantUUID
      * @return
      */
@@ -477,6 +478,7 @@ public interface WintereeCoreService {
 
     /**
      * 根据UUID获取部门
+     *
      * @param uuid 部门UUID
      * @return
      */
@@ -492,7 +494,7 @@ public interface WintereeCoreService {
      */
     @GetMapping("/organization/department")
     APIResult<List<OrganizationVO>> getDepartmentList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
-                                @RequestParam(name = "companyUuid", required = false) String companyUuid);
+                                                      @RequestParam(name = "companyUuid", required = false) String companyUuid);
 
     /**
      * 获取部门列表（简单列表非树状）
@@ -503,7 +505,7 @@ public interface WintereeCoreService {
      */
     @GetMapping("/organization/department/simpleList")
     APIResult<List<OrganizationVO>> getDepartmentSimpleList(@RequestParam(name = "tenantUuid", required = false) String tenantUuid,
-                                      @RequestParam(name = "companyUuid", required = false) String companyUuid);
+                                                            @RequestParam(name = "companyUuid", required = false) String companyUuid);
 
     /**
      * 添加部门
@@ -1093,6 +1095,9 @@ public interface WintereeCoreService {
 
     @GetMapping("/license")
     APIResult<LicenseVO> getLicense();
+
+    @GetMapping("/license/machinecode")
+    APIResult<String> getMachineCode();
 
     @PostMapping("/license")
     APIResult saveLicense(@RequestBody String license);
