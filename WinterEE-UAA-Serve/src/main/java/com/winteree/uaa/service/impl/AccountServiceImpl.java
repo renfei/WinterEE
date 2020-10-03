@@ -215,12 +215,16 @@ public class AccountServiceImpl implements AccountService {
         } else {
             // 根据用户获得角色列表
             List<String> roles = roleService.selectRoleUuidByUserUuid(accountDO.getUuid());
-            // 根据角色列表获得菜单列表，从而获得权限列表
-            List<String> menuIds = menuService.getMenuUuidByRoleUuid(roles);
-            for (String permission : menuService.getMenuPermissionByMenuUuid(menuIds)
-            ) {
-                stringBuilder.append(permission);
-                stringBuilder.append(AUTHORITY_DELIMITERS);
+            if (!BeanUtils.isEmpty(roles)) {
+                // 根据角色列表获得菜单列表，从而获得权限列表
+                List<String> menuIds = menuService.getMenuUuidByRoleUuid(roles);
+                if (!BeanUtils.isEmpty(menuIds)) {
+                    for (String permission : menuService.getMenuPermissionByMenuUuid(menuIds)
+                    ) {
+                        stringBuilder.append(permission);
+                        stringBuilder.append(AUTHORITY_DELIMITERS);
+                    }
+                }
             }
         }
         String authority = stringBuilder.toString();
