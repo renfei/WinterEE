@@ -359,7 +359,7 @@ public interface WintereeCoreService {
      * @return
      */
     @GetMapping("/tenant/dto")
-    APIResult<TenantDTO> getTenantDTO(String tenantUUID);
+    APIResult<TenantDTO> getTenantDTO(@RequestParam("tenantUUID") String tenantUUID);
 
     /**
      * 修改租户基础信息
