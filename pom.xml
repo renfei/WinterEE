@@ -96,7 +96,7 @@
         <aliyunsdk.version>4.5.12</aliyunsdk.version>
         <aliyunsdkpush.version>3.13.5</aliyunsdkpush.version>
         <feign-httpclient.version>11.0</feign-httpclient.version>
-        <httpclient.version>4.5.12</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <aliyun-sdk-oss.version>3.11.1</aliyun-sdk-oss.version>
         <alibaba-druid.version>1.1.24</alibaba-druid.version>
         <oshi.version>5.2.5</oshi.version>
