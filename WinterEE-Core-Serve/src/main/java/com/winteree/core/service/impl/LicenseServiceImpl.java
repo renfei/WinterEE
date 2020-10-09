@@ -4,7 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.winteree.api.entity.LicenseDTO;
 import com.winteree.api.entity.LicenseState;
 import com.winteree.api.entity.LicenseType;
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
 import com.winteree.core.config.WintereeCoreConfig;
+import com.winteree.core.entity.AccountDTO;
+import com.winteree.core.service.AccountService;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.HardwareService;
 import com.winteree.core.service.LicenseService;
@@ -32,6 +36,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class LicenseServiceImpl extends BaseService implements LicenseService {
+    private final AccountService accountService;
     private final HardwareService hardwareService;
     private final static String SECRET_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAocNDieXLt3QDLibBJcyUYO" +
             "pmLW5JZfAlZRFLgPozi9X/f2zxKqRjhhgzFqOP9F9VFcfx65y1k/VUNRRwmVVzPW7k3kQOWmmyQeVvFwK6aIhl+72YHoMSnOdZ9" +
@@ -40,8 +45,9 @@ public class LicenseServiceImpl extends BaseService implements LicenseService {
             "t2+EkLBsZUsGTImOlpqL3XQIDAQAB";
 
     protected LicenseServiceImpl(WintereeCoreConfig wintereeCoreConfig,
-                                 HardwareService hardwareService) {
+                                 AccountService accountService, HardwareService hardwareService) {
         super(wintereeCoreConfig);
+        this.accountService = accountService;
         this.hardwareService = hardwareService;
     }
 
@@ -97,8 +103,41 @@ public class LicenseServiceImpl extends BaseService implements LicenseService {
         }
     }
 
-    public void saveLicense(String license){
+    @Override
+    public String getMachineCode() {
+        return hardwareService.getSerialNumber();
+    }
 
+    public void saveLicense(String license) throws ForbiddenException, FailureException, IOException {
+        AccountDTO accountDTO = getSignedUser(accountService);
+        if (wintereeCoreConfig.getRootAccount().equals(accountDTO.getUuid())) {
+            String machineCode = hardwareService.getSerialNumber();
+            LicenseDTO licenseDTO = null;
+            try {
+                String licenseJson = RSAUtils.encrypt(license, SECRET_KEY);
+                licenseDTO = JSON.parseObject(licenseJson, LicenseDTO.class);
+            } catch (Exception e) {
+                throw new FailureException("许可证不合法，请查正后重试。");
+            }
+            String date = DateUtils.formatDate(licenseDTO.getExpired(), "yyyy-MM-dd HH:mm:ss");
+            if (!LicenseDTO.PERMANENT_DATE.equals(date)) {
+                if (new Date().after(licenseDTO.getExpired())) {
+                    throw new FailureException("许可证已过期。License expired.");
+                }
+            }
+            if (!machineCode.equals(licenseDTO.getMacCode())) {
+                throw new FailureException("许可证授权的机器与当前机器不符。The machine authorized by the license does not match the current machine.");
+            }
+            File file = new File(this.getResourceBasePath() + "/license.lic");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileOutputStream fos = new FileOutputStream(file,false);
+            fos.write(license.getBytes());
+            fos.close();
+        } else {
+            throw new ForbiddenException("权限不足，只有超管可以更改License文件。");
+        }
     }
 
     @Scheduled(cron = "0 0 0/12 * * ?")

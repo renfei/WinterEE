@@ -1,5 +1,6 @@
 package com.winteree.gateway.config;
 
+import com.winteree.gateway.client.WintereeCoreServiceClient;
 import com.winteree.gateway.client.WintereeUaaServiceClient;
 import com.winteree.gateway.filter.AccessFilter;
 import com.winteree.gateway.filter.AuthFilter;
@@ -19,14 +20,17 @@ import java.util.Collections;
 @Configuration
 public class ZuulConfig {
     private final WintereeUaaServiceClient wintereeUaaServiceClient;
+    private final WintereeCoreServiceClient wintereeCoreServiceClient;
 
-    public ZuulConfig(WintereeUaaServiceClient wintereeUaaServiceClient) {
+    public ZuulConfig(WintereeUaaServiceClient wintereeUaaServiceClient,
+                      WintereeCoreServiceClient wintereeCoreServiceClient) {
         this.wintereeUaaServiceClient = wintereeUaaServiceClient;
+        this.wintereeCoreServiceClient = wintereeCoreServiceClient;
     }
 
     @Bean
     public AuthFilter perFilter() {
-        return new AuthFilter(wintereeUaaServiceClient);
+        return new AuthFilter(wintereeUaaServiceClient, wintereeCoreServiceClient);
     }
 
     @Bean

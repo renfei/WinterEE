@@ -61,6 +61,15 @@ public class TenantServiceImpl extends BaseService implements TenantService {
         this.tenantInfoDOMapper = tenantInfoDOMapper;
     }
 
+    @Override
+    public TenantDTO getTenantDTOByUUID(String uuid) {
+        TenantDO tenantDO = this.getTenantDOByUUID(uuid);
+        if (tenantDO == null) {
+            return null;
+        }
+        return convert(tenantDO);
+    }
+
     /**
      * 获取所有租户列表，需要自己管理权限
      *
