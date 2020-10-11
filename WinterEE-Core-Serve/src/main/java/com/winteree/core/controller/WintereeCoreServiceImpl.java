@@ -365,6 +365,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             return APIResult.builder().code(StateCode.OK).message("OK").data(accountService.addAccount(accountDTO)).build();
         } catch (ForbiddenException forbiddenException) {
             return APIResult.builder().code(StateCode.Forbidden).message(forbiddenException.getMessage()).build();
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
         }
     }
 
