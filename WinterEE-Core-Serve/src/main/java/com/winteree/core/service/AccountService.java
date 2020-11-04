@@ -66,6 +66,21 @@ public interface AccountService {
      */
     int passwordReset(String accountUuid, String newPassword, String language, String keyid) throws FailureException, ForbiddenException;
 
+    /**
+     * 修改指定账户的密码
+     *
+     * @param accountUuid 账户UUID
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       加密KeyID
+     * @return
+     * @throws FailureException
+     * @throws ForbiddenException
+     */
+    boolean resetPasswordByUser(String accountUuid, String oldPassword,
+                                String newPassword, String language, String keyid) throws FailureException, ForbiddenException;
+
     AccountDTO getAccountById(String uuid);
 
     AccountDTO getAccountIdByUserName(String username);

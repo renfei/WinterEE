@@ -273,9 +273,10 @@ public class RoleServiceImpl extends BaseService implements RoleService {
             oldRole.setUpdateBy(accountDTO.getUuid());
             oldRole.setUpdateTime(new Date());
             oldRole.setRemarks(roleDTO.getRemarks());
+            oldRole.setId(null);
             RoleDOExample example = new RoleDOExample();
             example.createCriteria().andUuidEqualTo(oldRole.getUuid());
-            int updateRows = roleDOMapper.updateByExample(oldRole, example);
+            int updateRows = roleDOMapper.updateByExampleSelective(oldRole, example);
             if (updateRows > 0) {
                 //先删除旧的，再添加新的
                 RoleMenuDOExample roleMenuDOExample = new RoleMenuDOExample();

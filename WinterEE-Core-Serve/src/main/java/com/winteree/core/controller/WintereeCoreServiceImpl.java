@@ -132,6 +132,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //<editor-fold desc="秘钥类的接口" defaultstate="collapsed">
     @Override
     @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult log(LogDTO logDTO) {
         try {
             logService.log(logDTO);
@@ -179,24 +180,28 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     //<editor-fold desc="账户类的接口" defaultstate="collapsed">
     @Override
     @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public AccountDTO findAccountByUsername(String username) {
         return accountService.getAccountIdByUserName(username);
     }
 
     @Override
     @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public AccountDTO findAccountByUuid(String uuid) {
         return accountService.getAccountById(uuid);
     }
 
     @Override
     @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public AccountDTO findAccountByEmail(String email) {
         return accountService.getAccountIdByEmail(email);
     }
 
     @Override
     @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public AccountDTO findAccountByPhoneNumber(String phone) {
         return accountService.getAccountIdByPhone(phone);
     }
@@ -208,6 +213,7 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
      */
     @Override
     @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public String getRootAccountUuid() {
         return wintereeCoreConfig.getRootAccount();
     }
@@ -298,6 +304,20 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         } catch (FailureException failureException) {
             return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
         }
+    }
+
+    @Override
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
+    public APIResult resetPasswordByUser(String accountUuid, String oldPassword, String newPassword, String language, String keyid) {
+        try {
+            accountService.resetPasswordByUser(accountUuid, oldPassword, newPassword, language, keyid);
+        } catch (FailureException failureException) {
+            return APIResult.builder().code(StateCode.Failure).message(failureException.getMessage()).build();
+        } catch (ForbiddenException forbiddenException) {
+            return APIResult.builder().code(StateCode.Forbidden).message(forbiddenException.getMessage()).build();
+        }
+        return APIResult.success();
     }
 
     /**
@@ -405,6 +425,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "tenantUuid", value = "租户ID"),
             @ApiImplicitParam(name = "validationType", value = "验证码类型")
     })
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult sendVerificationCode(String userName, String tenantUuid, String validationType) {
         ValidationType validationType1 = null;
         try {
@@ -473,6 +495,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "userName", value = "手机或邮箱"),
             @ApiImplicitParam(name = "validationType", value = "验证码类型")
     })
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult<VerificationCodeDTO> getVerificationCode(String userName, String validationType) {
         ValidationType validationType1 = null;
         try {
@@ -2433,18 +2457,21 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sql", value = "SQL")
     })
+    @ApiIgnore
     public APIResult<List<Map<String, String>>> execSql(String sql) {
         return APIResult.builder().code(StateCode.OK).message("OK").data(dataBaseService.execSql(sql)).build();
     }
 
     @Override
-    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     @ApiOperation(value = "查询表信息", notes = "查询表信息", tags = "数据库操作类接口")
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult<List<TableInfoDTO>> getTableInfo(String database, String tablename) {
         return APIResult.builder().code(StateCode.OK).message("OK").data(dataBaseService.getTableInfo(database, tablename)).build();
     }
 
     @Override
+    @ApiIgnore
     @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     @ApiOperation(value = "创建表", notes = "创建表", tags = "数据库操作类接口")
     public APIResult createTable(String name, String comment, List<TableInfoDTO> tableInfoDTOS) {
@@ -2520,6 +2547,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
 
     @Override
     @ApiOperation(value = "获取授权信息", notes = "获取授权信息", tags = "工具类接口")
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult<LicenseDTO> getLicenseDTO() {
         return APIResult.builder().code(StateCode.OK).message("OK").data(licenseService.getLicense()).build();
     }
@@ -2572,6 +2601,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "file", value = "文件"),
             @ApiImplicitParam(name = "objectName", value = "文件名及路径")
     })
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult uploadPrivateFileByAliyunOss(MultipartFile file, String objectName) {
         try {
             aliyunOssService.uploadPrivateFile(file.getInputStream(), objectName);
@@ -2588,6 +2619,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "file", value = "文件"),
             @ApiImplicitParam(name = "objectName", value = "文件名及路径")
     })
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult uploadPubilcFileByAliyunOss(MultipartFile file, String objectName) {
         try {
             aliyunOssService.uploadPubilcFile(file.getInputStream(), objectName);
@@ -2605,6 +2638,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "file", value = "文件"),
             @ApiImplicitParam(name = "objectName", value = "文件名及路径")
     })
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult putObjectByAliyunOss(String bucketName, String objectName, MultipartFile file) {
         try {
             aliyunOssService.putObject(bucketName, objectName, file.getInputStream());
@@ -2623,6 +2658,8 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
             @ApiImplicitParam(name = "objectName", value = "文件路径和文件名"),
             @ApiImplicitParam(name = "expiration", value = "过期时间")
     })
+    @ApiIgnore
+    @PreAuthorize("#oauth2.isClient() and #oauth2.hasScope('WinterEE-Core-Serve')")
     public APIResult<String> generatePresignedUrlByAliyunOss(String downLoadHost, String bucketName, String objectName, Date expiration) {
         return APIResult.builder()
                 .code(StateCode.OK)

@@ -139,6 +139,24 @@ public interface WintereeCoreService {
                              @RequestParam("keyid") String keyid);
 
     /**
+     * 修改密码
+     *
+     * @param accountUuid 账户UUID
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       秘钥ID
+     * @return 受影响行数
+     * @throws FailureException 失败异常信息
+     */
+    @PutMapping("/inside/account/mypassword")
+    APIResult resetPasswordByUser(@RequestParam("accountUuid") String accountUuid,
+                                  @RequestParam("oldPassword") String oldPassword,
+                                  @RequestParam("newPassword") String newPassword,
+                                  @RequestParam("language") String language,
+                                  @RequestParam("keyid") String keyid);
+
+    /**
      * 重置任意账户密码
      *
      * @param passwordResetDAT 传输对象

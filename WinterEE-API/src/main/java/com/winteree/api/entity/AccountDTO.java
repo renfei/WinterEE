@@ -41,4 +41,6 @@ public class AccountDTO {
     private List<String> authorities;
     @ApiModelProperty(value = "账户角色列表")
     private List<String> roles;
+    @ApiModelProperty(value = "密码")
+    private String passwd;
 }
