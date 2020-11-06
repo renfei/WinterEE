@@ -38,7 +38,7 @@ spring:
           search-locations: classpath:/config
         # 使用Git储存配置文件
         git:
-          uri: https://github.com/renfei-net/WinterEE.git
+          uri: https://github.com/renfei/WinterEE.git
           default-label: winteree-config
           username: ~
           password: ~
