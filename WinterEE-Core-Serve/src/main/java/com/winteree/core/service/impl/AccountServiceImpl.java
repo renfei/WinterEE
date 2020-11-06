@@ -438,6 +438,57 @@ public class AccountServiceImpl extends BaseService implements AccountService {
         }
     }
 
+    /**
+     * 修改指定账户的密码
+     *
+     * @param accountUuid 账户UUID
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @param language    语言
+     * @param keyid       加密KeyID
+     * @return
+     * @throws FailureException
+     * @throws ForbiddenException
+     */
+    public boolean resetPasswordByUser(String accountUuid, String oldPassword,
+                                       String newPassword, String language, String keyid) throws FailureException, ForbiddenException {
+        if (StringUtils.isEmpty(newPassword)) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的新密码"));
+        }
+        if (StringUtils.isEmpty(oldPassword)) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的旧密码"));
+        }
+        if (StringUtils.isEmpty(accountUuid)) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的账户UUID"));
+        }
+        AccountDTO accountDTO = this.getAccountById(accountUuid);
+        if (StringUtils.isEmpty(accountDTO)) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的账户UUID"));
+        }
+        try {
+            // AES解密密码
+            oldPassword = secretKeyService.decrypt(oldPassword, language, keyid);
+            newPassword = secretKeyService.decrypt(newPassword, language, keyid);
+        } catch (Exception exception) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.aeskeyiddoesnotexist", "密码解密失败"));
+        }
+        if (!PasswordUtils.verifyPassword(oldPassword, accountDTO.getPasswd())) {
+            throw new FailureException(i18NService.getMessage(language, "uaa.invalidusernameorpassword", "无效的旧密码"));
+        }
+        try {
+            newPassword = PasswordUtils.createHash(newPassword);
+        } catch (PasswordUtils.CannotPerformOperationException e) {
+            log.error(e.getMessage(), e);
+            throw new FailureException("失败！内部服务器错误");
+        }
+        AccountDO accountDO = new AccountDO();
+        accountDO.setPasswd(newPassword);
+        AccountDOExample example = new AccountDOExample();
+        example.createCriteria().andUuidEqualTo(accountDTO.getUuid());
+        accountDOMapper.updateByExampleSelective(accountDO, example);
+        return true;
+    }
+
     @Override
     public AccountDTO getAccountById(String uuid) {
         if (!BeanUtils.isEmpty(uuid)) {

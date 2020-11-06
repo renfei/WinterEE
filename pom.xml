@@ -49,15 +49,15 @@
 
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/renfei-net/WinterEE/issues</url>
+        <url>https://github.com/renfei/WinterEE/issues</url>
     </issueManagement>
 
     <inceptionYear>2020</inceptionYear>
 
     <scm>
-        <connection>scm:git:git://github.com/renfei-net/WinterEE.git</connection>
-        <developerConnection>scm:git:git@github.com:renfei-net/WinterEE.git</developerConnection>
-        <url>https://github.com/renfei-net/WinterEE</url>
+        <connection>scm:git:git://github.com/renfei/WinterEE.git</connection>
+        <developerConnection>scm:git:git@github.com:renfei/WinterEE.git</developerConnection>
+        <url>https://github.com/renfei/WinterEE</url>
     </scm>
 
     <developers>
