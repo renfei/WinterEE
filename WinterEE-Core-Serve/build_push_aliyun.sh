@@ -11,8 +11,8 @@
 # [Repositories Address]：镜像仓库的地址
 
 mvn clean package && \
-docker build -t core:1.0.0 . && \
-docker login --username=i@renfei.net registry.cn-beijing.aliyuncs.com && \
-docker tag `docker images -q --filter reference=core:1.0.0` registry.cn-beijing.aliyuncs.com/winteree/core:1.0.0 && \
-docker push registry.cn-beijing.aliyuncs.com/winteree/core:1.0.0 && \
-docker logout registry.cn-beijing.aliyuncs.com
+docker build -t winteree-core:1.0.0 . && \
+docker login --username=i@renfei.net registry.cn-hangzhou.aliyuncs.com && \
+docker tag `docker images -q --filter reference=winteree-core:1.0.0` registry.cn-hangzhou.aliyuncs.com/privately/winteree-core:1.0.0 && \
+docker push registry.cn-hangzhou.aliyuncs.com/privately/winteree-core:1.0.0 && \
+docker logout registry.cn-hangzhou.aliyuncs.com

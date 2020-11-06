@@ -1,5 +1,7 @@
 package com.winteree.core.controller;
 
+import com.winteree.api.exception.FailureException;
+import com.winteree.api.exception.ForbiddenException;
 import lombok.extern.slf4j.Slf4j;
 import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
@@ -27,6 +29,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     APIResult handleException(Exception exception) {
         log.error(exception.getMessage(), exception);
-        return APIResult.builder().code(StateCode.Error).message("服务暂时不可用").build();
+        if (exception instanceof FailureException) {
+            return APIResult.builder().code(StateCode.Failure).message(exception.getMessage()).build();
+        } else if (exception instanceof ForbiddenException) {
+            return APIResult.builder().code(StateCode.Forbidden).message(exception.getMessage()).build();
+        } else {
+            return APIResult.builder().code(StateCode.Error).message("服务暂时不可用").build();
+        }
     }
 }
