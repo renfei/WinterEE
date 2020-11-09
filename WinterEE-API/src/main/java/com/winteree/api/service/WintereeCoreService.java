@@ -713,7 +713,7 @@ public interface WintereeCoreService {
      * @return 文章列表
      */
     @GetMapping("/cms/posts/list")
-    APIResult<ListData<CmsPostsDTO>> getCmsPostList(@RequestBody CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO);
+    APIResult<ListData<CmsPostsDTO>> getCmsPostList(CmsPostSearchCriteriaVO cmsPostSearchCriteriaVO);
 
     /**
      * 根据栏目ID获取文章列表（前台）
