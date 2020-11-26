@@ -3,9 +3,9 @@ package com.winteree.uaa.controller;
 import com.winteree.api.entity.AccountSignUpDTO;
 import com.winteree.uaa.service.AccountService;
 import net.renfei.sdk.entity.APIResult;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>Title: OauthController</p>
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author RenFei
  * @date : 2020-07-21 21:41
  */
-@Controller
+@RestController
 public class OauthController {
     private final AccountService accountService;
 
@@ -29,7 +29,7 @@ public class OauthController {
      * @return
      */
     @PostMapping("/oauth/sign_up")
-    APIResult signUp(@RequestBody AccountSignUpDTO accountSignUpDTO) {
+    public APIResult signUp(@RequestBody AccountSignUpDTO accountSignUpDTO) {
         return accountService.signUp(accountSignUpDTO);
     }
 }

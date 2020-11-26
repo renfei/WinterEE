@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 账号服务
@@ -143,6 +144,7 @@ public class AccountServiceImpl implements AccountService {
         accountDO.setErrorCount(0);
         accountDO.setLastName(accountDO.getLastName());
         accountDO.setFirstName(accountDO.getFirstName());
+        accountDO.setUuid(UUID.randomUUID().toString().toUpperCase());
         accountDOMapper.insertSelective(accountDO);
         return APIResult.builder().code(StateCode.OK).message("OK").data(accountDO.getUuid()).build();
     }

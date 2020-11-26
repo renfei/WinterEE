@@ -149,6 +149,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
     public OrganizationDO getCompanyByUuid(String uuid) {
         OrganizationDOExample example = new OrganizationDOExample();
         example.createCriteria()
+                .andDelFlagEqualTo("0")
                 .andOrgTypeEqualTo(OrgEnum.COMPANY.value())
                 .andUuidEqualTo(uuid);
         return ListUtils.getOne(organizationDOMapper.selectByExample(example));
@@ -169,6 +170,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             organizationDOExample.createCriteria()
                     .andTenantUuidEqualTo(tenantUuid)
                     .andParentUuidEqualTo(tenantUuid)
+                    .andDelFlagEqualTo("0")
                     .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
             List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
             for (OrganizationDO organizationDO : organizationDOS
@@ -185,6 +187,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             criteria
                     .andTenantUuidEqualTo(tenantUuid)
                     .andParentUuidEqualTo(tenantUuid)
+                    .andDelFlagEqualTo("0")
                     .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
             // 验证数据权限范围，是全部还是本公司
             DataScopeEnum dataScopeEnum = roleService.getDataScope();
@@ -229,6 +232,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             //只有平台超管才能夸租户管理，并且获取所有公司
             organizationDOExample.createCriteria()
                     .andTenantUuidEqualTo(tenantUuid)
+                    .andDelFlagEqualTo("0")
                     .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
             List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
             for (OrganizationDO organizationDO : organizationDOS
@@ -243,6 +247,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
             criteria
                     .andTenantUuidEqualTo(tenantUuid)
+                    .andDelFlagEqualTo("0")
                     .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
             // 验证数据权限范围，是全部还是本公司
             DataScopeEnum dataScopeEnum = roleService.getDataScope();
@@ -288,6 +293,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             organizationDOExample.createCriteria()
                     .andTenantUuidEqualTo(tenantUuid)
                     .andParentUuidEqualTo(tenantUuid)
+                    .andDelFlagEqualTo("0")
                     .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
             List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
             for (OrganizationDO organizationDO : organizationDOS
@@ -304,6 +310,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             criteria
                     .andTenantUuidEqualTo(tenantUuid)
                     .andParentUuidEqualTo(tenantUuid)
+                    .andDelFlagEqualTo("0")
                     .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
             // 验证数据权限范围，是全部还是本公司
             DataScopeEnum dataScopeEnum = roleService.getDataScope();
@@ -401,6 +408,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             }
         }
         criteria.andUuidEqualTo(organizationVO.getUuid())
+                .andDelFlagEqualTo("0")
                 .andOrgTypeEqualTo(OrgEnum.COMPANY.value());
         OrganizationDO organizationDO = ListUtils.getOne(organizationDOMapper.selectByExample(organizationDOExample));
         if (organizationDO != null) {
@@ -418,7 +426,8 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             organizationDO.setUpdateBy(accountDTO.getUuid());
             organizationDO.setRemarks(organizationVO.getRemarks());
             organizationDO.setUpdateTime(new Date());
-            // 暂不提供删除功能 organizationDO.setDelFlag(organizationVO.getDelFlag());
+            // 暂不提供删除功能
+            organizationDO.setDelFlag(organizationVO.getDelFlag());
             organizationDOExample = new OrganizationDOExample();
             organizationDOExample.createCriteria().andUuidEqualTo(organizationDO.getUuid());
             int number = organizationDOMapper.updateByExampleSelective(organizationDO, organizationDOExample);
@@ -461,6 +470,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             OrganizationDOExample organizationDOExample = new OrganizationDOExample();
             OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
             criteria
+                    .andDelFlagEqualTo("0")
                     .andTenantUuidEqualTo(organizationVO.getTenantUuid())
                     .andParentUuidEqualTo(organizationVO.getUuid());
             if (orgEnum != null) {
@@ -494,6 +504,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
             OrganizationDOExample organizationDOExample = new OrganizationDOExample();
             OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
             criteria
+                    .andDelFlagEqualTo("0")
                     .andTenantUuidEqualTo(org.getTenantUuid())
                     .andParentUuidEqualTo(org.getUuid());
             if (orgEnum != null) {
@@ -543,7 +554,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
     private void getSubsidiary(String tenantUuid, String officeUuid, List<OrganizationVO> organizationVOS, OrgEnum orgEnum) {
         OrganizationDOExample organizationDOExample = new OrganizationDOExample();
         OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
-        criteria.andTenantUuidEqualTo(tenantUuid).andParentUuidEqualTo(officeUuid);
+        criteria.andDelFlagEqualTo("0").andTenantUuidEqualTo(tenantUuid).andParentUuidEqualTo(officeUuid);
         if (orgEnum != null) {
             criteria.andOrgTypeEqualTo(orgEnum.value());
         }
@@ -595,6 +606,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
     public OrganizationDO getDepartmentByUuid(String uuid) {
         OrganizationDOExample example = new OrganizationDOExample();
         example.createCriteria()
+                .andDelFlagEqualTo("0")
                 .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value())
                 .andUuidEqualTo(uuid);
         return ListUtils.getOne(organizationDOMapper.selectByExample(example));
@@ -619,6 +631,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
                 recursion = true;
                 //只有平台超管才能夸租户管理，并且获取所有公司
                 organizationDOExample.createCriteria()
+                        .andDelFlagEqualTo("0")
                         .andTenantUuidEqualTo(tenantUuid)
                         .andParentUuidEqualTo(companyUuid)
                         .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
@@ -633,6 +646,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
                 tenantUuid = accountDTO.getTenantUuid();
                 OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
                 criteria
+                        .andDelFlagEqualTo("0")
                         .andTenantUuidEqualTo(tenantUuid)
                         .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
                 // 验证数据权限范围，是全部还是本公司
@@ -688,6 +702,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
                 organizationDOExample.createCriteria()
                         .andTenantUuidEqualTo(tenantUuid)
                         .andParentUuidEqualTo(companyUuid)
+                        .andDelFlagEqualTo("0")
                         .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
                 List<OrganizationDO> organizationDOS = organizationDOMapper.selectByExample(organizationDOExample);
                 for (OrganizationDO organizationDO : organizationDOS
@@ -700,6 +715,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
                 tenantUuid = accountDTO.getTenantUuid();
                 OrganizationDOExample.Criteria criteria = organizationDOExample.createCriteria();
                 criteria
+                        .andDelFlagEqualTo("0")
                         .andTenantUuidEqualTo(tenantUuid)
                         .andOrgTypeEqualTo(OrgEnum.DEPARTMENT.value());
                 // 验证数据权限范围，是全部还是本公司
