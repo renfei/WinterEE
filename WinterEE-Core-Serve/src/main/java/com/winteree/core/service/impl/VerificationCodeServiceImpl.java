@@ -1,5 +1,7 @@
 package com.winteree.core.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.winteree.api.entity.ValidationType;
 import com.winteree.api.entity.VerificationCodeDTO;
 import com.winteree.core.config.WintereeCoreConfig;
@@ -9,6 +11,7 @@ import com.winteree.core.dao.entity.VerificationCodeDOExample;
 import com.winteree.core.service.BaseService;
 import com.winteree.core.service.VerificationCodeService;
 import net.renfei.sdk.utils.Builder;
+import net.renfei.sdk.utils.DateUtils;
 import net.renfei.sdk.utils.ListUtils;
 import net.renfei.sdk.utils.StringUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -46,6 +49,52 @@ public class VerificationCodeServiceImpl extends BaseService implements Verifica
         verificationCodeDTO.setUsable(true);
         verificationCodeDTO.setCreateTime(new Date());
         return verificationCodeDOMapper.insertSelective(convert(verificationCodeDTO));
+    }
+
+    public boolean verifyRate(String userName) {
+        VerificationCodeDOExample example = new VerificationCodeDOExample();
+        VerificationCodeDOExample.Criteria criteria = example.createCriteria();
+        criteria.andCreateTimeGreaterThanOrEqualTo(DateUtils.nextMinutes(-1));
+        if (StringUtils.isChinaPhone(userName)) {
+            criteria.andPhoneEqualTo(userName);
+        } else if (StringUtils.isEmail(userName)) {
+            criteria.andEmailEqualTo(userName);
+        } else {
+            // 用户名没有验证码
+            return false;
+        }
+        Page page = PageHelper.startPage(1, 1);
+        verificationCodeDOMapper.selectByExample(example);
+        if (page.getTotal() > 2) {
+            return false;
+        }
+        example = new VerificationCodeDOExample();
+        VerificationCodeDOExample.Criteria criteria2 = example.createCriteria();
+        criteria2.andCreateTimeGreaterThanOrEqualTo(DateUtils.nextHours(-1));
+        if (StringUtils.isChinaPhone(userName)) {
+            criteria2.andPhoneEqualTo(userName);
+        } else if (StringUtils.isEmail(userName)) {
+            criteria2.andEmailEqualTo(userName);
+        }
+        page = PageHelper.startPage(1, 1);
+        verificationCodeDOMapper.selectByExample(example);
+        if (page.getTotal() > wintereeCoreConfig.getAliyunSms().getSendRateHour()) {
+            return false;
+        }
+        example = new VerificationCodeDOExample();
+        VerificationCodeDOExample.Criteria criteria3 = example.createCriteria();
+        criteria3.andCreateTimeGreaterThanOrEqualTo(DateUtils.nextDay(-1));
+        if (StringUtils.isChinaPhone(userName)) {
+            criteria3.andPhoneEqualTo(userName);
+        } else if (StringUtils.isEmail(userName)) {
+            criteria3.andEmailEqualTo(userName);
+        }
+        page = PageHelper.startPage(1, 1);
+        verificationCodeDOMapper.selectByExample(example);
+        if (page.getTotal() > wintereeCoreConfig.getAliyunSms().getSendRateDay()) {
+            return false;
+        }
+        return true;
     }
 
     /**

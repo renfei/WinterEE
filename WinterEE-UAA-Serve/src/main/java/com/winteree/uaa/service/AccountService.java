@@ -1,6 +1,7 @@
 package com.winteree.uaa.service;
 
 import com.winteree.api.entity.AccountSignUpDTO;
+import com.winteree.api.exception.FailureException;
 import com.winteree.uaa.dao.entity.AccountDO;
 import net.renfei.sdk.entity.APIResult;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +23,7 @@ public interface AccountService {
      * @return
      */
     APIResult signUp(AccountSignUpDTO accountSignUpDTO);
+
     /**
      * 根据用户名获取账号对象
      *
@@ -55,4 +57,6 @@ public interface AccountService {
      * @return 权限列表
      */
     List<GrantedAuthority> getGrantedAuthority(AccountDO accountDO);
+
+    void sendVerificationCode(String phoneOrEmail, String tenantUuid) throws FailureException;
 }

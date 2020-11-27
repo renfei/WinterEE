@@ -108,6 +108,8 @@ winteree:
       signName: test
       templateCode: text
       templateParam: {}
+      sendRateHour: 30
+      sendRateDay: 300
     aliyunGreen:
       endpointName: cn-beijing
       regionId: cn-beijing

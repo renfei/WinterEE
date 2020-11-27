@@ -54,6 +54,8 @@ public class WintereeCoreConfig {
     public static class AliyunSms{
         private String signName;
         private String templateCode;
+        private Integer sendRateHour;
+        private Integer sendRateDay;
     }
 
     @Data

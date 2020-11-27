@@ -1,11 +1,11 @@
 package com.winteree.uaa.controller;
 
 import com.winteree.api.entity.AccountSignUpDTO;
+import com.winteree.api.exception.FailureException;
 import com.winteree.uaa.service.AccountService;
+import net.renfei.sdk.comm.StateCode;
 import net.renfei.sdk.entity.APIResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>Title: OauthController</p>
@@ -31,5 +31,19 @@ public class OauthController {
     @PostMapping("/oauth/sign_up")
     public APIResult signUp(@RequestBody AccountSignUpDTO accountSignUpDTO) {
         return accountService.signUp(accountSignUpDTO);
+    }
+
+    @GetMapping("/oauth/verificationCode")
+    public APIResult sendVerificationCode(@RequestParam("phoneOrEmail") String phoneOrEmail,
+                                          @RequestParam("tenantUuid") String tenantUuid) {
+        try {
+            accountService.sendVerificationCode(phoneOrEmail, tenantUuid);
+        } catch (FailureException failureException) {
+            return APIResult.builder()
+                    .code(StateCode.Failure)
+                    .message(failureException.getMessage())
+                    .build();
+        }
+        return APIResult.success();
     }
 }

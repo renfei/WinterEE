@@ -439,6 +439,10 @@ public class WintereeCoreServiceImpl extends BaseController implements WintereeC
         VerificationCodeDTO verificationCodeDTO = new VerificationCodeDTO();
         // 调用发送服务发送验证码
         if (StringUtils.isChinaPhone(userName)) {
+            // 判断发送频率，一分钟内只能发送一条
+            if (!verificationCodeService.verifyRate(userName)) {
+                return APIResult.builder().code(StateCode.Failure).message("发送频率已达上限，请稍后再试").build();
+            }
             verificationCodeDTO.setPhone(userName);
             // 短信服务
             if ("aliyun".equals(wintereeCoreConfig.getSmsService())) {

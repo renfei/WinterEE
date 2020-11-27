@@ -19,6 +19,8 @@ public interface VerificationCodeService {
      */
     int saveVerificationCode(VerificationCodeDTO verificationCodeDTO);
 
+    boolean verifyRate(String userName);
+
     /**
      * 获取验证码并标记验证码为已使用状态
      *

@@ -56,4 +56,12 @@ public interface WintereeUaaService {
      */
     @GetMapping("/oauth/check_token")
     String checkToken(@RequestParam("token") String token);
+
+    /**
+     * 发送验证码
+     * @param phoneOrEmail
+     * @return
+     */
+    @GetMapping("/oauth/verificationCode")
+    public APIResult sendVerificationCode(@RequestParam("phoneOrEmail") String phoneOrEmail);
 }

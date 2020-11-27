@@ -3,6 +3,7 @@ package com.winteree.uaa.service.impl;
 import com.winteree.api.entity.AccountSignUpDTO;
 import com.winteree.api.entity.ValidationType;
 import com.winteree.api.entity.VerificationCodeDTO;
+import com.winteree.api.exception.FailureException;
 import com.winteree.uaa.client.WintereeCoreServiceClient;
 import com.winteree.uaa.config.WintereeUaaConfig;
 import com.winteree.uaa.dao.AccountDOMapper;
@@ -234,6 +235,30 @@ public class AccountServiceImpl implements AccountService {
             authority = authority.substring(0, authority.length() - 1);
         }
         return AuthorityUtils.commaSeparatedStringToAuthorityList(authority);
+    }
+
+    @Override
+    public void sendVerificationCode(String phoneOrEmail, String tenantUuid) throws FailureException {
+        if (BeanUtils.isEmpty(phoneOrEmail)) {
+            throw new FailureException("请输入正确的手机号或邮箱地址");
+        }
+        if (StringUtils.isChinaPhone(phoneOrEmail)) {
+            // 检查我站是否存在该用户
+            if (findAccountByPhoneNumber(phoneOrEmail) == null) {
+                return;
+            }
+        } else if (StringUtils.isEmail(phoneOrEmail)) {
+            // 检查我站是否存在该用户
+            if (findAccountByEmail(phoneOrEmail) == null) {
+                return;
+            }
+        } else {
+            throw new FailureException("请输入正确的手机号或邮箱地址");
+        }
+        APIResult result = wintereeCoreServiceClient.sendVerificationCode(phoneOrEmail, tenantUuid, ValidationType.SIGNIN.value());
+        if (!StateCode.OK.getCode().equals(result.getCode())) {
+            throw new FailureException(result.getMessage());
+        }
     }
 
     /**
