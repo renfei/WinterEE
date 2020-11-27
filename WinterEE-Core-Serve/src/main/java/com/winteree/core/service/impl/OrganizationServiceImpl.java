@@ -447,7 +447,7 @@ public class OrganizationServiceImpl extends BaseService implements Organization
      * @return
      */
     private int updateCompanyGeospatial(OrganizationVO organizationVO, OrganizationDO organizationDO, int number) {
-        if (organizationVO.getLatitude().equals(BigDecimal.valueOf(0)) && organizationVO.getLongitude().equals(BigDecimal.valueOf(0))) {
+        if (BigDecimal.valueOf(0).equals(organizationVO.getLatitude()) && BigDecimal.valueOf(0).equals(organizationVO.getLongitude())) {
         } else {
             GeospatialDO geospatialDO = new GeospatialDO();
             geospatialDO.setLongitude(organizationVO.getLongitude());

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +13,8 @@ import java.util.List;
  */
 @Data
 @ApiModel(value = "账户对象", description = "账户数据传输对象")
-public class AccountDTO {
+public class AccountDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "账户唯一编号", example = "9369919A-F95E-44CF-AB0A-6BCD1D933403")
     private String uuid;
     @ApiModelProperty(value = "所属租户唯一编号", example = "BC21F895-63DA-4E94-9D9E-D4CD2DCFB189")
