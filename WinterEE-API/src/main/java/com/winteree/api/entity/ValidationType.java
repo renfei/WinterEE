@@ -11,15 +11,15 @@ public enum ValidationType {
     /**
      * 登陆验证码
      */
-    SIGNIN("signin"),
+    SIGNIN("SIGNIN"),
     /**
      * 注册证码
      */
-    SIGNUP("signup"),
+    SIGNUP("SIGNUP"),
     /**
      * 重置密码验证码
      */
-    RESETPWD("resetpwd");
+    RESETPWD("RESETPWD");
     private final String type;
 
     ValidationType(String type) {

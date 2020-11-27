@@ -59,9 +59,11 @@ public interface WintereeUaaService {
 
     /**
      * 发送验证码
+     *
      * @param phoneOrEmail
      * @return
      */
     @GetMapping("/oauth/verificationCode")
-    public APIResult sendVerificationCode(@RequestParam("phoneOrEmail") String phoneOrEmail);
+    APIResult sendVerificationCode(@RequestParam("phoneOrEmail") String phoneOrEmail,
+                                   @RequestParam("tenantUuid") String tenantUuid);
 }

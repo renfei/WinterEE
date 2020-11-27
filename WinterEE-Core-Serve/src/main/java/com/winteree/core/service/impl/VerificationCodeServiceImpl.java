@@ -51,6 +51,7 @@ public class VerificationCodeServiceImpl extends BaseService implements Verifica
         return verificationCodeDOMapper.insertSelective(convert(verificationCodeDTO));
     }
 
+    @Override
     public boolean verifyRate(String userName) {
         VerificationCodeDOExample example = new VerificationCodeDOExample();
         VerificationCodeDOExample.Criteria criteria = example.createCriteria();
