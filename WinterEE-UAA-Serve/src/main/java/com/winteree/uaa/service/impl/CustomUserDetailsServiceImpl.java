@@ -184,7 +184,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
         AccountDO accountDO = null;
         if (net.renfei.sdk.utils.StringUtils.isEmail(name)) {
             accountDO = accountService.findAccountByEmail(name);
-        } else if (net.renfei.sdk.utils.StringUtils.isEmail(name)) {
+        } else if (net.renfei.sdk.utils.StringUtils.isChinaPhone(name)) {
             accountDO = accountService.findAccountByPhoneNumber(name);
         } else {
             accountDO = accountService.findAccountByUsername(name);
